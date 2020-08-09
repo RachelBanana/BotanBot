@@ -50,18 +50,22 @@ def to_eng(m):
 ## on setting up and disconnecting
 @client.event
 async def on_ready():
-    lg_ch.send("Botan is ready!")
+    await lg_ch.send("Botan is ready!")
     print("Botan is ready!")
 
 @client.event
 async def on_connect():
-    lg_ch.send("Botan is connected to discord as {0.user}.".format(client))
+    await lg_ch.send("Botan is connected to discord as {0.user}.".format(client))
     print("Botan is connected to discord as {0.user}.".format(client))
 
 @client.event
 async def on_disconnect():
-    lg_ch.send("Botan is snoozing off from discord!")
+    await lg_ch.send("Botan is snoozing off from discord!")
     print("Botan is snoozing off from discord!")
+
+@client.event
+async def on_error(err):
+    await lg_ch.send(err)
 
 ## public commands
 
