@@ -131,8 +131,12 @@ async def post(res, msg):
     await channel.send(content = None , embed = embed)
 
 async def read(res, msg):
-    for embed in res.embeds:
-        await res.send(embed.description)
+    messages = await res.channel.history(limit = 3).flatten()
+    for m in messages:
+        if message.author == client.user:
+            continue
+        for embed in m.embeds:
+            await res.send(embed.description)
 
 ## hidden developer commands
 async def to_bed(res, msg):
