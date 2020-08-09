@@ -3,18 +3,22 @@ import discord
 from googletrans import Translator
 
 # python built-in libraries
+import os
 import json
 import random
 from datetime import datetime as dtime
 from datetime import timezone
 
 # Customizable Settings
-config_file = "config.json"
-with open(config_file) as f:
-    config_data = json.load(f)
+
+"""For local testing purpose"""
+# config_file = "config.json"
+# with open(config_file) as f:
+#     config_data = json.load(f)
+# token = config_data["token"]
 
 prefix = "$"
-token = config_data["token"]
+token = os.getenv("TOKEN")
 embed_color = 0xB400E5
 to_bed_channel = 740894878019616842
 owner = "RachelBanana#1637"
