@@ -133,16 +133,16 @@ async def post(res, msg):
     await channel.send(content = None , embed = embed)
 
 async def read(res, msg):
-    messages = await res.channel.history(limit = 2).flatten()
-    for m in messages:
-        if m.author == client.user:
-            continue
+    channel = res.channel
+    if msg:
+        msg = msg.strip()
+        channel = discord.utils.get(res.guild.text_channels, name = msg)
 
-        channel = client.get_channel(translated_tweets_ch)
-        for embed in m.embeds:
-            embed.title = to_eng(embed.title).text
-            embed.description = to_eng(embed.description).text
-            await channel.send(content = None, embed = embed)
+    m = await res.channel.history(limit = 2).flatten()[1]
+    for embed in m.embeds:
+        embed.title = to_eng(embed.title).text
+        embed.description = to_eng(embed.description).text
+        await channel.send(content = None, embed = embed)
 
 ## hidden developer commands
 async def to_bed(res, msg):
@@ -152,16 +152,22 @@ async def to_bed(res, msg):
     await channel.send("*Botan will sleep now*\nOyasuminasai!")
 
 ## command names
+aliases = {
+    "hi": "greet",
+    "hello": "greet",
+    "bday": "birthday",
+    "trans": "translate",
+    "jp": "japanese"
+}
+
+
 commands = {
-    "hello": greet,
-    "hi": greet,
+    "greet": greet,
     "gao": gao,
     "debut": debut,
-    "bday": birthday,
     "birthday": birthday,
     "translate": translate,
-    "trans": translate,
-    "jp": trans_to_jap,
+    "japanese": trans_to_jap,
     "gotobed": to_bed
 }
 
@@ -190,6 +196,9 @@ async def on_message(res):
     cmd, *msg = res.content[len(prefix):].split(" ", 1)
     cmd = cmd.strip().lower()
     msg = msg[0] if msg else ""
+
+    # change any command alias to original command name
+    cmd = aliases.get(cmd, cmd)
 
     # if public command exists, perform action
     action = commands.get(cmd, None)
