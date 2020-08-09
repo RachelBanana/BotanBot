@@ -55,7 +55,7 @@ async def on_connect():
 async def on_disconnect():
     print("Botan is snoozing off from discord!")
 
-## main messaging commands
+## public commands
 
 async def greet(res, msg):
     await res.channel.send("Hello!")
@@ -106,6 +106,16 @@ async def trans_to_jap(res, msg):
     embed = discord.Embed(title = "Translated to Japanese", description = m, colour = embed_color)
     await res.channel.send(content = None, embed = embed)
 
+## admin commands
+async def post(res, msg):
+    m = msg.split("\n")
+    if len(m) < 3:
+        await message.channel.send("Need more arguments!")
+        return
+    channel = discord.utils.get(res.guild.text_channels, name= m[0].strip()) 
+    embed = discord.Embed(title = m[1], description = "\n".join(m[2:]), colour = embed_color)
+    await channel.send(content = None , embed = embed)
+
 ## hidden developer commands
 async def to_bed(res, msg):
     if str(res.author) != owner:
@@ -127,18 +137,32 @@ commands = {
     "gotobed": to_bed
 }
 
+admin_commands = {
+    "post": post
+}
+
+## on messaging
 @client.event
 async def on_message(res):
     # checks if message needs attention (not bot, has prefix)
     if res.author == client.user or not res.content.startswith(prefix):
         return
 
+    # get the command and message text
     cmd, *msg = res.content[len(prefix):].split(" ", 1)
+    cmd = cmd.strip().lower()
+    msg = msg if msg else ""
 
-    # if command exists, perform action
-    action = commands.get(cmd.lower(), None)
+    # if public command exists, perform action
+    action = commands.get(cmd, None)
     if action:
-        msg = msg if msg else ""
+        await action(res, msg)
+    
+    # check for permission and if admin command exists, perform action
+    if not res.author.guild_permissions.administrator:
+        return
+    action = admin_commands.get(cmd, None)
+    if action:
         await action(res, msg)
 
 client.run(token)
