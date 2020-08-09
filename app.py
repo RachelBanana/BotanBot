@@ -88,7 +88,6 @@ async def translate(res, msg):
     if not msg:
         await res.channel.send("But there's nothing to translate!")
         return
-    msg = msg[0]
     translated = to_eng(msg).text
     embed = discord.Embed(title = "Translated to English", description = translated, colour = embed_color)
     await res.channel.send(content = None, embed = embed)
@@ -97,7 +96,6 @@ async def trans_to_jap(res, msg):
     if not msg:
         await res.channel.send("Try again, but with actual words!")
         return
-    msg = msg[0]  
     translated = to_jap(msg)
     pronunciation = translated.pronunciation
     if not isinstance(pronunciation, str):
@@ -151,7 +149,7 @@ async def on_message(res):
     # get the command and message text
     cmd, *msg = res.content[len(prefix):].split(" ", 1)
     cmd = cmd.strip().lower()
-    msg = msg if msg else ""
+    msg = msg[0] if msg else ""
 
     # if public command exists, perform action
     action = commands.get(cmd, None)
