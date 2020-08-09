@@ -15,16 +15,17 @@ from datetime import timezone
 # config_file = "config.json"
 # with open(config_file) as f:
 #     config_data = json.load(f)
-# token = config_data["token"]
 
-prefix = "$"
 token = os.getenv("TOKEN")
-embed_color = 0xB400E5
+owner = os.getenv("OWNER")
+prefix = os.getenv("PREFIX")
+embed_color = int(os.getenv("EMBED_COLOR"), 16)
 to_bed_channel = 740894878019616842
-owner = "RachelBanana#1637"
+log_channel = 741908598870769735
 
 # Setting up server
 client = discord.Client()
+lg_ch = client.get_channel(log_channel)
 
 # Utility Functions
 
@@ -49,14 +50,17 @@ def to_eng(m):
 ## on setting up and disconnecting
 @client.event
 async def on_ready():
+    lg_ch.send("Botan is ready!")
     print("Botan is ready!")
 
 @client.event
 async def on_connect():
+    lg_ch.send("Botan is connected to discord as {0.user}.".format(client))
     print("Botan is connected to discord as {0.user}.".format(client))
 
 @client.event
 async def on_disconnect():
+    lg_ch.send("Botan is snoozing off from discord!")
     print("Botan is snoozing off from discord!")
 
 ## public commands
