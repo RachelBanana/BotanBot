@@ -99,7 +99,7 @@ async def debut(res, msg):
 async def birthday(res, msg):
     bday = dtime(2020, 9, 8, tzinfo = timezone.utc)
     days, hours, minutes = time_until(bday)
-    m = "Botan-sama's birthday is on 8th of September, just {} more day {} to go!".format(days, "s" * (days>1))
+    m = "Botan-sama's birthday is on 8th of September, just {} more day{} to go!".format(days, "s" * (days>1))
     await res.channel.send(m)
 
 async def translate(res, msg):
@@ -140,6 +140,7 @@ async def read(res, msg):
 
     m = await res.channel.history(limit = 2).flatten()[1]
     for embed in m.embeds:
+        await channel.send("has embed", embed = embed)
         embed.title = to_eng(embed.title).text
         embed.description = to_eng(embed.description).text
         await channel.send(content = None, embed = embed)
