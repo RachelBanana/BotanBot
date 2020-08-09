@@ -25,7 +25,7 @@ log_channel = 741908598870769735
 
 # Setting up server
 client = discord.Client()
-lg_ch = client.get_channel(log_channel)
+lg_ch = None
 
 # Utility Functions
 
@@ -55,6 +55,7 @@ async def on_ready():
 
 @client.event
 async def on_connect():
+    lg_ch = client.get_channel(log_channel)
     await lg_ch.send("Botan is connected to discord as {0.user}.".format(client))
     print("Botan is connected to discord as {0.user}.".format(client))
 
