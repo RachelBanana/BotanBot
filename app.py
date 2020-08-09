@@ -25,7 +25,6 @@ log_channel = 741908598870769735
 
 # Setting up server
 client = discord.Client()
-lg_ch = None
 
 # Utility Functions
 
@@ -50,6 +49,7 @@ def to_eng(m):
 ## on setting up and disconnecting
 @client.event
 async def on_ready():
+    lg_ch = client.get_channel(log_channel)
     await lg_ch.send("Botan is ready!")
     print("Botan is ready!")
 
@@ -61,11 +61,13 @@ async def on_connect():
 
 @client.event
 async def on_disconnect():
+    lg_ch = client.get_channel(log_channel)
     await lg_ch.send("Botan is snoozing off from discord!")
     print("Botan is snoozing off from discord!")
 
 @client.event
 async def on_error(err):
+    lg_ch = client.get_channel(log_channel)
     await lg_ch.send(err)
 
 ## public commands
