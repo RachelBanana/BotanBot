@@ -138,11 +138,9 @@ async def read(res, msg):
         msg = msg.strip()
         channel = discord.utils.get(res.guild.text_channels, name = msg)
 
-    messages = await res.channel.history(limit = 3).flatten()
+    messages = await res.channel.history(limit = 2).flatten()
     for m in messages:
-        await channel.send(m)
         for embed in m.embeds:
-            await channel.send("has embed", embed = embed)
             embed.title = to_eng(embed.title).text
             embed.description = to_eng(embed.description).text
             await channel.send(content = None, embed = embed)
