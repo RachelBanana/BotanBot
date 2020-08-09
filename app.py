@@ -136,7 +136,7 @@ async def read(res, msg):
         if m.author == client.user:
             continue
         for embed in m.embeds:
-            await res.send(embed.description)
+            await res.channel.send(embed.description)
 
 ## hidden developer commands
 async def to_bed(res, msg):
