@@ -22,6 +22,8 @@ prefix = os.getenv("PREFIX")
 embed_color = int(os.getenv("EMBED_COLOR"), 16)
 to_bed_channel = 740894878019616842
 log_channel = 741908598870769735
+pingcord = "Pingcord#3283"
+translated_tweets_ch = 741945787042496614
 
 # Setting up server
 client = discord.Client()
@@ -131,12 +133,16 @@ async def post(res, msg):
     await channel.send(content = None , embed = embed)
 
 async def read(res, msg):
-    messages = await res.channel.history(limit = 3).flatten()
+    messages = await res.channel.history(limit = 2).flatten()
     for m in messages:
         if m.author == client.user:
             continue
+
+        channel = client.get_channel(translated_tweets_ch)
         for embed in m.embeds:
-            await res.channel.send(embed.description)
+            embed.title = to_eng(embed.title).text
+            embed.description = to_eng(embed.description).text
+            await channel.send(content = None, embed = embed)
 
 ## hidden developer commands
 async def to_bed(res, msg):
@@ -167,6 +173,15 @@ admin_commands = {
 ## on messaging
 @client.event
 async def on_message(res):
+    # read twitter tweets from botan
+    if str(res.author) == pingcord:
+        channel = client.get_channel(translated_tweets_ch)
+        for embed in res.embeds:
+            embed.title = to_eng(embed.title).text
+            embed.description = to_eng(embed.description).text
+            await channel.send(content = None, embed = embed)
+
+
     # checks if message needs attention (not bot, has prefix)
     if res.author == client.user or not res.content.startswith(prefix):
         return
