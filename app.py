@@ -133,7 +133,7 @@ async def post(res, msg):
 async def read(res, msg):
     messages = await res.channel.history(limit = 3).flatten()
     for m in messages:
-        if message.author == client.user:
+        if m.author == client.user:
             continue
         for embed in m.embeds:
             await res.send(embed.description)
