@@ -46,7 +46,7 @@ def to_eng(m):
 
 # Main Events
 
-## on setting up and disconnecting
+## on setting up, disconnecting, and errors
 @client.event
 async def on_ready():
     lg_ch = client.get_channel(log_channel)
@@ -69,6 +69,7 @@ async def on_disconnect():
 async def on_error(err):
     lg_ch = client.get_channel(log_channel)
     await lg_ch.send(err)
+    print(err)
 
 ## public commands
 
@@ -129,6 +130,10 @@ async def post(res, msg):
     embed = discord.Embed(title = m[1], description = "\n".join(m[2:]), colour = embed_color)
     await channel.send(content = None , embed = embed)
 
+async def read(res, msg):
+    for embed in res.embeds:
+        await res.send(embed.description)
+
 ## hidden developer commands
 async def to_bed(res, msg):
     if str(res.author) != owner:
@@ -151,7 +156,8 @@ commands = {
 }
 
 admin_commands = {
-    "post": post
+    "post": post,
+    "read": read
 }
 
 ## on messaging
