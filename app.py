@@ -170,9 +170,8 @@ async def meme(res, msg):
     
     cwd = os.path.dirname(__file__)
     meme_file = os.path.join(img_dir, file_name)
-    save_file = os.path.join(save_dir, file_name + "_" + str(random.randint(10,99)))
+    save_file = os.path.join(save_dir, str(random.randint(10,99)) + file_name)
 
-    await res.channel.send(meme_file + save_file)
     try:
         img = Image.open(meme_file)
     except IOError:
