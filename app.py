@@ -82,7 +82,7 @@ async def help_command(res, msg):
     msg = aliases.get(msg, msg)
     if msg in help_doc:
         cmd_doc = help_doc[msg]
-        embed = discord.Embed(title = "Help Menu: {} Command".format(msg), description = cmd_doc["desc"])
+        embed = discord.Embed(title = "Help Menu: '{}' Command".format(msg), description = cmd_doc["desc"])
         embed.add_field(name = "Usage", value = cmd_doc["usage"])
         if cmd_doc["alias"]:
             embed.add_field(name = "Aliases", value = ", ".join(cmd_doc["alias"]))
