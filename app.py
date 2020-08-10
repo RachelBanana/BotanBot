@@ -154,7 +154,7 @@ async def meme(res, msg):
         await res.channel.send(err_msg)
         return
 
-    meme_cmd, *meme_args = [m.strip() for m in msg.split("\n")]
+    meme_cmd, *meme_args = [m.strip() for m in msg.split("\n") if m]
 
     if meme_cmd not in meme_dict:
         await res.channel.send(err_msg)

@@ -30,7 +30,7 @@
         "usage": "$japanese {text}"
     },
     "meme": {
-        "desc": "Generate customized meme contents.\nAvailable memes:\nwoke",
+        "desc": "Generate customized meme contents.\n\n__Available memes:__\nwoke",
         "alias": [],
         "usage": "$meme {meme}\n{first argument}\n{second argument}\n..."
     }
