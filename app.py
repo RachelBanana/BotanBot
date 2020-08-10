@@ -79,6 +79,7 @@ async def on_error(err):
 ## public commands
 async def help_command(res, msg):
     msg = msg.strip().lower()
+    msg = aliases.get(msg, msg)
     if msg in help_doc:
         cmd_doc = help_doc[msg]
         embed = discord.Embed(title = "Help Menu: {} Command".format(msg), description = cmd_doc["desc"])
@@ -88,6 +89,7 @@ async def help_command(res, msg):
     else:
         embed = discord.Embed(title = "Help Menu: Available Commands", description = "\n".join(help_doc))
         embed.add_field(name = "More Help", value = "$help {command name}")
+    embed.colour = embed_color
     await res.channel.send(content = None, embed = embed)
 
 async def greet(res, msg):
