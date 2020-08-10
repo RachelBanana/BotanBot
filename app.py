@@ -84,7 +84,7 @@ async def help_command(res, msg):
         embed = discord.Embed(title = "Help Menu: {} Command".format(msg), description = cmd_doc["desc"])
         embed.add_field(name = "Usage", value = cmd_doc["usage"])
         if cmd_doc["alias"]:
-            embed.add_field(name = "Aliases", value = cmd_doc["alias"])
+            embed.add_field(name = "Aliases", value = ", ".join(cmd_doc["alias"]))
     else:
         embed = discord.Embed(title = "Help Menu: Available Commands", description = "\n".join(help_doc))
         embed.add_field(name = "More Help", value = "$help {command name}")
