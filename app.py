@@ -88,6 +88,7 @@ async def help_command(res, msg):
     else:
         embed = discord.Embed(title = "Help Menu: Available Commands", description = "\n".join(help_doc))
         embed.add_field(name = "More Help", value = "$help {command name}")
+    await res.channel.send(content = None, embed = embed)
 
 async def greet(res, msg):
     await res.channel.send("やほー!\nHello!")
