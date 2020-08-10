@@ -183,7 +183,7 @@ async def meme(res, msg):
     await res.channel.send("here!")
     idraw = ImageDraw.Draw(img)
     await res.channel.send("here!")
-    font = ImageFont.truetype("arial.ttf", size = 26)
+    font = ImageFont.truetype(size = 26)
     await res.channel.send("here!")
     for pos, arg in zip(positions, meme_args):
         txt_w, txt_h = idraw.textsize(arg, font)
