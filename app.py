@@ -173,14 +173,16 @@ async def meme(res, msg):
     save_file = os.path.join(save_dir, str(random.randint(10,99)) + file_name)
 
     try:
+        await res.channel.send("here!")
         img = Image.open(meme_file)
     except IOError:
         await res.channel.send("I'm sorry! Botan can't find the meme now!\nTry again later!")
         return
     
     width, height = img.size
-
+    await res.channel.send("here!")
     idraw = ImageDraw.Draw(img)
+    await res.channel.send("here!")
     font = ImageFont.truetype("arial.ttf", size = 26)
     await res.channel.send("here!")
     for pos, arg in zip(positions, meme_args):
