@@ -1,0 +1,33 @@
+{
+    "greet": {
+        "desc": "Basic greetings.",
+        "alias": ["hi", "hello"],
+        "usage": "$greet"
+    },
+    "gao": {
+        "desc": "Make a Botan-style roar!",
+        "alias": [],
+        "usage": "$gao"
+    },
+    "debut": {
+        "desc": "Check time left until debut.",
+        "alias": [],
+        "usage": "$debut"
+    },
+    "birthday": {
+        "desc": "Find out about Botan's birthday.",
+        "alias": ["bday"],
+        "usage": "$birthday"
+    },
+    "translate": {
+        "desc": "Translate any text to english.",
+        "alias": ["trans"],
+        "usage": "$translate {text}"
+    },
+    "japanese": {
+        "desc": "Translate any text to japanese with pronunciation.",
+        "alias": ["jp"],
+        "usage": "$japanese {text}"
+    }
+
+}

@@ -25,8 +25,11 @@ log_channel = 741908598870769735
 pingcord = "Pingcord#3283"
 translated_tweets_ch = 741945787042496614
 
-# Setting up server
+# Setting up server and data
 client = discord.Client()
+with open("help.json") as f:
+    # set up help documentation
+    help_doc = json.load(f)
 
 # Utility Functions
 
@@ -74,9 +77,20 @@ async def on_error(err):
     print(err)
 
 ## public commands
+async def help_command(res, msg):
+    msg = msg.strip().lower()
+    if msg in help_doc:
+        cmd_doc = help_doc[msg]
+        embed = discord.Embed(title = "Help Menu: {} Command".format(msg), description = cmd_doc["desc"])
+        embed.add_field(name = "Usage", value = cmd_doc["usage"])
+        if cmd_doc["alias"]:
+            embed.add_field(name = "Aliases", value = cmd_doc["alias"])
+    else:
+        embed = discord.Embed(title = "Help Menu: Available Commands", description = "\n".join(help_doc))
+        embed.add_field(name = "More Help", value = "$help {command name}")
 
 async def greet(res, msg):
-    await res.channel.send("Hello!")
+    await res.channel.send("やほー!\nHello!")
 
 async def gao(res, msg):
     ri = random.randint
@@ -163,6 +177,7 @@ aliases = {
 
 
 commands = {
+    "help": help_command,
     "greet": greet,
     "gao": gao,
     "debut": debut,
