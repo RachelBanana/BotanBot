@@ -29,6 +29,7 @@ translated_tweets_ch = 741945787042496614
 
 img_dir = "images"
 save_dir = "dumps"
+fonts_dir = "fonts"
 
 # Setting up server and data
 client = discord.Client()
@@ -168,22 +169,19 @@ async def meme(res, msg):
         await res.channel.send("You need {} more arguments!".format(len(positions)-len(meme_args)))
         return
     
-    cwd = os.path.dirname(__file__)
     meme_file = os.path.join(img_dir, file_name)
     save_file = os.path.join(save_dir, str(random.randint(10,99)) + file_name)
 
     try:
-        await res.channel.send("here!")
         img = Image.open(meme_file)
     except IOError:
         await res.channel.send("I'm sorry! Botan can't find the meme now!\nTry again later!")
         return
     
     width, height = img.size
-    await res.channel.send("here!")
     idraw = ImageDraw.Draw(img)
-    await res.channel.send("here!")
-    font = ImageFont.truetype(size = 26)
+    font_ttf = os.path.join(fonts_dir, "OpenSans-Regular.ttf")
+    font = ImageFont.truetype(font_ttf, size = 26)
     await res.channel.send("here!")
     for pos, arg in zip(positions, meme_args):
         txt_w, txt_h = idraw.textsize(arg, font)
