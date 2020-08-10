@@ -168,8 +168,11 @@ async def meme(res, msg):
         await res.channel.send("You need {} more arguments!".format(len(positions)-len(meme_args)))
         return
     
+    await res.channel.send("heere")
     cwd = os.path.dirname(__file__)
+    await res.channel.send("heere")
     meme_file = os.path.join(img_dir, file_name)
+    await res.channel.send("heere")
     save_file = os.path.join(save_dir, file_name + "_" + str(random.randint(10,99)))
 
     await res.channel.send(meme_file, save_file)
