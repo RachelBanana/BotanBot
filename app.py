@@ -165,7 +165,8 @@ async def meme(res, msg):
     positions = meme_info["positions"]
 
     if len(meme_args) < len(positions):
-        await res.channel.send("You need {} more arguments!".format(positions-meme_args))
+        await res.channel.send("You need {} more arguments!".format(len(positions)-len(meme_args)))
+        return
     
     meme_file = os.path.join(img_dir, file_name)
     save_file = os.path.join(save_dir, file_name + "_" + str(random.randint(10,99)))
