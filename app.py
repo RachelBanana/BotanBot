@@ -182,7 +182,6 @@ async def meme(res, msg):
     idraw = ImageDraw.Draw(img)
     font_ttf = os.path.join(fonts_dir, "OpenSans-Regular.ttf")
     font = ImageFont.truetype(font_ttf, size = 26)
-    await res.channel.send("here!")
     for pos, arg in zip(positions, meme_args):
         txt_w, txt_h = idraw.textsize(arg, font)
         idraw.text(
@@ -191,7 +190,6 @@ async def meme(res, msg):
             font=font, 
             fill=(0,0,0,1)
         )
-    await res.channel.send("here!")
     img.save(save_file)
     await res.channel.send(file = discord.File(save_file))
 
