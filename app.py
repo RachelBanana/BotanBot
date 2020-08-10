@@ -1,9 +1,11 @@
 # external libraries
 import discord
 from googletrans import Translator
+from PIL import Image, ImageDraw, ImageFont
 
 # python built-in libraries
 import os
+import sys
 import json
 import random
 from datetime import datetime as dtime
@@ -25,11 +27,17 @@ log_channel = 741908598870769735
 pingcord = "Pingcord#3283"
 translated_tweets_ch = 741945787042496614
 
+img_dir = "images"
+save_dir = "dumps"
+
 # Setting up server and data
 client = discord.Client()
 with open("help.json") as f:
     # set up help documentation
     help_doc = json.load(f)
+with open("meme.json") as f:
+    # set up meme data
+    meme_dict = json.load(f)
 
 # Utility Functions
 
@@ -139,6 +147,50 @@ async def trans_to_jap(res, msg):
     embed = discord.Embed(title = "Translated to Japanese", description = m, colour = embed_color)
     await res.channel.send(content = None, embed = embed)
 
+async def meme(res, msg):
+    err_msg = "Please provide a correct meme argument! (ex: $meme woke)"
+
+    if not msg:
+        await res.channel.send(err_msg)
+        return
+
+    meme_cmd, *meme_args = [m.strip() for m in msg.split("\n")]
+
+    if meme_cmd not in meme_dict:
+        await res.channel.send(err_msg)
+        return
+    
+    meme_info = meme_dict[meme_cmd]
+    file_name = meme_info["file"]
+    positions = meme_info["positions"]
+
+    if len(meme_args) < len(positions):
+        await res.channel.send("You need {} more arguments!".format(positions-meme_args))
+    
+    meme_file = os.path.join(img_dir, file_name)
+    save_file = os.path.join(save_dir, file_name + "_" + str(random.randint(10,99)))
+
+    try:
+        img = Image.open(meme_file)
+    except IOError:
+        await res.channel.send("I'm sorry! Botan can't find the meme now!\nTry again later!")
+        return
+    
+    width, height = img.size
+
+    idraw = ImageDraw.Draw(img)
+    font = ImageFont.truetype("arial.ttf", size = 26)
+    for pos, arg in zip(positions, meme_args):
+        txt_w, txt_h = idraw.textsize(arg, font)
+        idraw.text(
+            (width*pos[0]-txt_w/2, height*pos[1]-txt_h/2), 
+            arg, 
+            font=font, 
+            fill=(0,0,0,1)
+        )
+    img.save(save_file)
+    await res.channel.send(file = discord.File(save_file))
+
 ## admin commands
 async def post(res, msg):
     m = msg.split("\n")
@@ -187,6 +239,7 @@ commands = {
     "birthday": birthday,
     "translate": translate,
     "japanese": trans_to_jap,
+    "meme": meme,
     "gotobed": to_bed
 }
 
