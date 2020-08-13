@@ -196,11 +196,12 @@ async def meme(res, msg):
 async def post(res, msg):
     m = msg.split("\n")
     if len(m) < 3:
-        await message.channel.send("Need more arguments!")
+        await res.channel.send("Need more arguments!")
         return
     channel = discord.utils.get(res.guild.text_channels, name= m[0].strip()) 
     embed = discord.Embed(title = m[1], description = "\n".join(m[2:]), colour = embed_color)
     if res.attachments:
+        await res.channel.send(res.attachments)
         embed.set_image(res.attachments[0].url)
     await channel.send(content = None , embed = embed)
 
