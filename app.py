@@ -3,6 +3,9 @@ import discord
 from googletrans import Translator
 from PIL import Image, ImageDraw, ImageFont
 
+import pymongo
+from pymongo import MongoClient
+
 # python built-in libraries
 import os
 import sys
@@ -18,6 +21,7 @@ from datetime import timezone
 # with open(config_file) as f:
 #     config_data = json.load(f)
 
+## discord settings
 token = os.getenv("TOKEN")
 owner = os.getenv("OWNER")
 prefix = os.getenv("PREFIX")
@@ -26,6 +30,17 @@ log_channel = 741908598870769735
 pingcord = "Pingcord#3283"
 translated_tweets_ch = 741945787042496614
 
+## database settings
+db_url = "mongodb+srv://{}:{}@botan.lkk4p.mongodb.net/{}?retryWrites=true&w=majority"
+db_name = "botanDB"
+db_user = os.getenv("DB_USER")
+db_pass = os.getenv("DB_PASS")
+cluster = MongoClient(db_url.format(db_user, db_pass, db_name))
+
+db = cluster[db_name]
+db_artworks = db["artworks"]
+
+## local files settings
 img_dir = "images"
 save_dir = "dumps"
 fonts_dir = "fonts"
