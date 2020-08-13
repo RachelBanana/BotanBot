@@ -209,7 +209,7 @@ async def meme(res, msg):
 
 async def botan_art(res, msg):
     await res.channel.send("checking")
-    artwork = db_artworks.aggregate({"$sample": {"size": 1}})
+    artwork = db_artworks.aggregate([{"$sample": {"size": 1}}])
     await res.channel.send("checking")
     artwork = artwork["url"] if artwork else "There's nothing in the database!"
     await res.channel.send("checking")
