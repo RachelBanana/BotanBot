@@ -208,8 +208,11 @@ async def meme(res, msg):
     await res.channel.send(file = discord.File(save_file))
 
 async def botan_art(res, msg):
+    await res.channel.send("checking")
     artwork = db_artworks.aggregate({"$sample": {"size": 1}})
+    await res.channel.send("checking")
     artwork = artwork["url"] if artwork else "There's nothing in the database!"
+    await res.channel.send("checking")
     await res.channel.send(artwork)
 
 ## admin commands
