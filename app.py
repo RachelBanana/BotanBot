@@ -201,8 +201,7 @@ async def post(res, msg):
     channel = discord.utils.get(res.guild.text_channels, name= m[0].strip()) 
     embed = discord.Embed(title = m[1], description = "\n".join(m[2:]), colour = embed_color)
     if res.attachments:
-        await res.channel.send(res.attachments[0].url)
-        embed.set_image(res.attachments[0].url)
+        embed.set_image(url = res.attachments[0].url)
     await channel.send(content = None , embed = embed)
 
 async def read(res, msg):
