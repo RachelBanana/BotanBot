@@ -207,6 +207,11 @@ async def meme(res, msg):
     img.save(save_file)
     await res.channel.send(file = discord.File(save_file))
 
+async def botan_art(res, msg):
+    artwork = db_artworks.aggregate({"$sample": {"size": 1}})
+    artwork = artwork["url"] if artwork else "There's nothing in the database!"
+    await res.channel.send(artwork)
+
 ## admin commands
 async def post(res, msg):
     m = msg.split("\n")
@@ -232,6 +237,14 @@ async def read(res, msg):
             embed.description = to_eng(embed.description).text
             await channel.send(content = None, embed = embed)
 
+### database manipulation
+async def add_art(res, msg):
+    if db_artworks.find_one({"url": msg}):
+        await res.channel.send("There's already an existing art with the same url!")
+        return
+    db_artworks.insert_one({"url": msg})
+    await res.channel.send("Added one new artwork to database!")
+
 ## hidden developer commands
 
 
@@ -241,7 +254,8 @@ aliases = {
     "hello": "greet",
     "bday": "birthday",
     "trans": "translate",
-    "jp": "japanese"
+    "jp": "japanese",
+    "addart": "add_art"
 }
 
 
@@ -253,12 +267,14 @@ commands = {
     "birthday": birthday,
     "translate": translate,
     "japanese": trans_to_jap,
-    "meme": meme
+    "meme": meme,
+    "botan": botan_art
 }
 
 admin_commands = {
     "post": post,
-    "read": read
+    "read": read,
+    "add_art": add_art
 }
 
 ## on messaging

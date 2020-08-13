@@ -33,6 +33,10 @@
         "desc": "Generate customized meme contents.\n\n__Available memes:__\nwoke\nwoken",
         "alias": [],
         "usage": "$meme {meme}\n{first argument}\n{second argument}\n..."
+    },
+    "botan": {
+        "desc": "Randomly displays an artwork of Botan-sama.",
+        "alias": [],
+        "usage": "$botan"
     }
-
 }
