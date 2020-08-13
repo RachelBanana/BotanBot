@@ -22,7 +22,6 @@ token = os.getenv("TOKEN")
 owner = os.getenv("OWNER")
 prefix = os.getenv("PREFIX")
 embed_color = int(os.getenv("EMBED_COLOR"), 16)
-to_bed_channel = 740894878019616842
 log_channel = 741908598870769735
 pingcord = "Pingcord#3283"
 translated_tweets_ch = 741945787042496614
@@ -201,6 +200,8 @@ async def post(res, msg):
         return
     channel = discord.utils.get(res.guild.text_channels, name= m[0].strip()) 
     embed = discord.Embed(title = m[1], description = "\n".join(m[2:]), colour = embed_color)
+    if res.attachments:
+        embed.set_image(res.attachments[0].url)
     await channel.send(content = None , embed = embed)
 
 async def read(res, msg):
@@ -217,11 +218,7 @@ async def read(res, msg):
             await channel.send(content = None, embed = embed)
 
 ## hidden developer commands
-async def to_bed(res, msg):
-    if str(res.author) != owner:
-        return
-    channel = client.get_channel(to_bed_channel)
-    await channel.send("*Botan will sleep now*\nOyasuminasai!")
+
 
 ## command names
 aliases = {
@@ -241,8 +238,7 @@ commands = {
     "birthday": birthday,
     "translate": translate,
     "japanese": trans_to_jap,
-    "meme": meme,
-    "gotobed": to_bed
+    "meme": meme
 }
 
 admin_commands = {
