@@ -208,9 +208,9 @@ async def meme(res, msg):
     await res.channel.send(file = discord.File(save_file))
 
 async def botan_art(res, msg):
-    artwork = db_artworks.aggregate([{"$sample": {"size": 1}}])
-    for a in artwork:
-        await res.channel.send(a)
+    artwork_cursor = db_artworks.aggregate([{"$sample": {"size": 1}}])
+    for a in artwork_cursor:
+        await res.channel.send(a["url"])
 
 ## admin commands
 async def post(res, msg):
