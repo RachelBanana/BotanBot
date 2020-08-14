@@ -132,7 +132,7 @@ async def debut(res, msg):
     #     minutes,
     #     "s" * (minutes > 1)
     # )
-    m = "21時から初配信、21時から初配信、21時から初配信、21時から初配信、21時から初配信、21時から初配信、21時から初配信…"
+    m = "21時から初配信、21時から初配信、21時から初配信、21時から初配信\n21時から初配信、21時から初配信、21時から初配信…"
     await res.channel.send(m)
 
 async def birthday(res, msg):
