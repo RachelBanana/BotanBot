@@ -126,12 +126,13 @@ async def gao(res, msg):
 async def debut(res, msg):
     debut_day = dtime(2020, 8, 14, 12, 0, 0, 0, timezone.utc)
     days, hours, minutes = time_until(debut_day)
-    m = "{} hour{}, and {} minute{} left until Botan-sama's Debut Stream!".format(
-        hours,
-        "s" * (hours > 1),
-        minutes,
-        "s" * (minutes > 1)
-    )
+    # m = "{} hour{}, and {} minute{} left until Botan-sama's Debut Stream!".format(
+    #     hours,
+    #     "s" * (hours > 1),
+    #     minutes,
+    #     "s" * (minutes > 1)
+    # )
+    m = "21時から初配信、21時から初配信、21時から初配信、21時から初配信、21時から初配信、21時から初配信、21時から初配信…"
     await res.channel.send(m)
 
 async def birthday(res, msg):
