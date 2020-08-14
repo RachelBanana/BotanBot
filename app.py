@@ -124,18 +124,8 @@ async def gao(res, msg):
     await res.channel.send(m if ri(0, 5) else "*Botan's too lazy to gao now*")
 
 async def debut(res, msg):
-    debut_day = dtime(2020, 8, 14, 12, 0, 0, 0, timezone.utc)
-    today = dtime.now(tz = timezone.utc)
-    if today > debut_day:
-        m = "Botan's debut stream is happening nooow! Go watch!"
-    else:
-        days, hours, minutes = time_until(debut_day)
-        m = "{} minute{} left until Botan-sama's Debut Stream ahhh!".format(
-            minutes,
-            "s" * (minutes > 1)
-        )
-        if days > 0:
-            m += "\nOh wait I meant one hour more!"
+    m = "Botan-sama's debut was on 14th August 2020, she's achieved "
+    m += "a total of 134k subscribers and a live views of 110k on Youtube when her live stream ended."
     await res.channel.send(m)
 
 async def birthday(res, msg):
