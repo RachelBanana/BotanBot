@@ -130,7 +130,7 @@ async def debut(res, msg):
         m = "Botan's debut stream is happening nooow! Go watch!"
     else:
         days, hours, minutes = time_until(debut_day)
-        m = "{} minute{} left until Botan-sama's Debut Stream!".format(
+        m = "{} minute{} left until Botan-sama's Debut Stream ahhh!".format(
             minutes,
             "s" * (minutes > 1)
         )
