@@ -273,6 +273,7 @@ aliases = {
 commands = {
     "help": help_command,
     "greet": greet,
+    "doya": doya,
     "gao": gao,
     "debut": debut,
     "birthday": birthday,

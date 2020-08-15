@@ -4,6 +4,11 @@
         "alias": ["hi", "hello"],
         "usage": "$greet"
     },
+    "doya": {
+        "desc": "Doya!",
+        "alias": [],
+        "usage": "$doya"
+    },
     "gao": {
         "desc": "Make a Botan-style roar!",
         "alias": [],
