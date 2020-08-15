@@ -115,8 +115,12 @@ async def help_command(res, msg):
     embed.colour = embed_color
     await res.channel.send(content = None, embed = embed)
 
+### command message commands
 async def greet(res, msg):
     await res.channel.send("やほー!\nHello!")
+
+async def doya(res, msg):
+    await res.channel.send("Doyaa~! doya doya doya doya~!")
 
 async def gao(res, msg):
     ri = random.randint
@@ -134,6 +138,7 @@ async def birthday(res, msg):
     m = "Botan-sama's birthday is on 8th of September, just {} more day{} to go!".format(days, "s" * (days>1))
     await res.channel.send(m)
 
+### translation commands
 async def translate(res, msg):
     if not msg:
         await res.channel.send("But there's nothing to translate!")
@@ -154,6 +159,7 @@ async def trans_to_jap(res, msg):
     embed = discord.Embed(title = "Translated to Japanese", description = m, colour = embed_color)
     await res.channel.send(content = None, embed = embed)
 
+### meme and art commands
 async def meme(res, msg):
     err_msg = "Please provide a correct meme argument! (ex: $meme woke)"
 
