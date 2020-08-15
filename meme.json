@@ -5,6 +5,7 @@
             [0.75, 0.25], 
             [0.75, 0.75]
         ],
+        "wrapsize": 0.5,
         "font": {
             "name": "OpenSans-Regular.ttf",
             "size": 26,
@@ -17,6 +18,7 @@
             [0.75, 0.25], 
             [0.75, 0.75]
         ],
+        "wrapsize": 0.5,
         "font": {
             "name": "OpenSans-Regular.ttf",
             "size": 26,
@@ -28,6 +30,7 @@
         "positions": [
             [0.25, 0.83]
         ],
+        "wrapsize": 0.5,
         "font": {
             "name": "ChanceryCursive.ttf",
             "size": 26,

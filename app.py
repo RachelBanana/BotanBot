@@ -171,6 +171,7 @@ async def meme(res, msg):
     meme_info = meme_dict[meme_cmd]
     file_name = meme_info["file"]
     positions = meme_info["positions"]
+    wrapsize = meme_info["wrapsize"]
     meme_font = meme_info["font"]
 
     if len(meme_args) < len(positions):
@@ -187,14 +188,24 @@ async def meme(res, msg):
         return
     
     width, height = img.size
+    wraplength = wrapsize * width
+
     idraw = ImageDraw.Draw(img)
     font_ttf = os.path.join(fonts_dir, meme_font["name"])
     font = ImageFont.truetype(font_ttf, size = meme_font["size"])
+
     for pos, arg in zip(positions, meme_args):
-        txt_w, txt_h = idraw.textsize("test message\nahah", font)
+        m, *words = arg.split(" ")
+        # wrap text if longer than wraplength
+        for word in words:
+            if idraw.textsize(m + " " + word, font)[0] > wraplength:
+                m += "\n" + word
+            else:
+                m += " " + word
+        txt_w, txt_h = idraw.textsize(m, font)
         idraw.text(
             (width*pos[0]-txt_w/2, height*pos[1]-txt_h/2), 
-            "test message\nahah", 
+            m, 
             font = font, 
             fill = tuple(meme_font["fill"])
         )
