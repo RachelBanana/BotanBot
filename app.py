@@ -44,6 +44,7 @@ db_artworks = db["artworks"]
 img_dir = "images"
 save_dir = "dumps"
 fonts_dir = "fonts"
+voices_dir = "voices"
 
 # Setting up server and data
 client = discord.Client()
@@ -120,7 +121,8 @@ async def greet(res, msg):
     await res.channel.send("やほー!\nHello!")
 
 async def doya(res, msg):
-    await res.channel.send("Doyaa~! doya doya doya doya~!")
+    doya_file = os.path.join(voices_dir, "doya.mp3")
+    await res.channel.send("Doyaa~! doya doya doya doya~!", file = doya_file)
 
 async def gao(res, msg):
     ri = random.randint
