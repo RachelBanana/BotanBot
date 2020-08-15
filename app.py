@@ -191,7 +191,7 @@ async def meme(res, msg):
     font_ttf = os.path.join(fonts_dir, meme_font["name"])
     font = ImageFont.truetype(font_ttf, size = meme_font["size"])
     for pos, arg in zip(positions, meme_args):
-        txt_w, txt_h = idraw.textsize(arg, font)
+        txt_w, txt_h = idraw.textsize("test message\nahah", font)
         idraw.text(
             (width*pos[0]-txt_w/2, height*pos[1]-txt_h/2), 
             arg, 
