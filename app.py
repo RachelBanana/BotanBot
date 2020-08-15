@@ -194,7 +194,7 @@ async def meme(res, msg):
         txt_w, txt_h = idraw.textsize("test message\nahah", font)
         idraw.text(
             (width*pos[0]-txt_w/2, height*pos[1]-txt_h/2), 
-            arg, 
+            "test message\nahah", 
             font = font, 
             fill = tuple(meme_font["fill"])
         )
