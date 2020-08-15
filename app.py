@@ -178,7 +178,7 @@ async def meme(res, msg):
         return
     
     meme_file = os.path.join(img_dir, file_name)
-    save_file = os.path.join(save_dir, str(random.randint(10,99)) + file_name)
+    save_file = os.path.join(save_dir, str(random.randint(1,20)) + file_name)
 
     try:
         img = Image.open(meme_file)

@@ -22,5 +22,16 @@
             "size": 26,
             "fill": [0, 0, 0, 1]
         }
+    },
+    "fade": {
+        "file": "botan_fade.png",
+        "positions": [
+            [0.25, 0.83]
+        ],
+        "font": {
+            "name": "ChanceryCursive.ttf",
+            "size": 26,
+            "fill": [0, 0, 0, 1]
+        }
     }
 }
