@@ -4,13 +4,23 @@
         "positions": [
             [0.75, 0.25], 
             [0.75, 0.75]
-        ]
+        ],
+        "font": {
+            "name": "OpenSans-Regular.ttf",
+            "size": 26,
+            "fill": [0, 0, 0, 1]
+        }
     },
     "woken": {
         "file": "botan_woken.jpg",
         "positions": [
             [0.75, 0.25], 
             [0.75, 0.75]
-        ]
+        ],
+        "font": {
+            "name": "OpenSans-Regular.ttf",
+            "size": 26,
+            "fill": [0, 0, 0, 1]
+        }
     }
 }
