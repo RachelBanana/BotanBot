@@ -199,9 +199,9 @@ async def meme(res, msg):
             (width*pos[0]-txt_w/2, height*pos[1]-txt_h/2), 
             arg, 
             font = font, 
-            fill = (0, 0, 0, 1)
+            fill = [0, 0, 0, 1]
         )
-    await res.channel.send(meme_font["fill"])
+    await res.channel.send(type(meme_font["fill"]))
     img.save(save_file)
     await res.channel.send(file = discord.File(save_file))
 
