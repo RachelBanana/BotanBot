@@ -172,6 +172,7 @@ async def meme(res, msg):
     file_name = meme_info["file"]
     positions = meme_info["positions"]
     meme_font = meme_info["font"]
+    await res.channel.send(meme_font)
 
     if len(meme_args) < len(positions):
         await res.channel.send("You need {} more arguments!".format(len(positions)-len(meme_args)))
@@ -189,7 +190,9 @@ async def meme(res, msg):
     width, height = img.size
     idraw = ImageDraw.Draw(img)
     font_ttf = os.path.join(fonts_dir, meme_font["name"])
+    await res.channel.send(meme_font["name"])
     font = ImageFont.truetype(font_ttf, size = meme_font["size"])
+    await res.channel.send(meme_font["size"])
     for pos, arg in zip(positions, meme_args):
         txt_w, txt_h = idraw.textsize(arg, font)
         idraw.text(
@@ -198,6 +201,7 @@ async def meme(res, msg):
             font = font, 
             fill = meme_font["fill"]
         )
+    await res.channel.send(meme_font["fill"])
     img.save(save_file)
     await res.channel.send(file = discord.File(save_file))
 
