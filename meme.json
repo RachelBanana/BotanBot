@@ -28,7 +28,7 @@
     "fade": {
         "file": "botan_fade.png",
         "positions": [
-            [0.25, 0.83]
+            [0.27, 0.83]
         ],
         "wrapsize": 0.5,
         "font": {
