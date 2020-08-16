@@ -297,6 +297,7 @@ async def on_message(res):
     if "fGqYbmtMccI" in res.content:
         admin_logs = discord.utils.get(res.guild.text_channels, name = "admin-logs")
         await res.delete()
+        m = "**User**\n{}\n**Action**\nimmediate message deletion\n**Message**\n{}".format(str(res.author), res.content)
         embed = discord.Embed(title = "Suspicious Link Detected", description = res.content)
         await admin_logs.send(content = None, embed = embed)
         return
