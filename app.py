@@ -54,6 +54,9 @@ with open("help.json") as f:
 with open("meme.json") as f:
     # set up meme data
     meme_dict = json.load(f)
+with open("blacklist.json") as f:
+    # set up blacklist
+    blacklist = json.load(f)
 
 # Utility Functions
 
@@ -294,10 +297,19 @@ admin_commands = {
 ## on messaging
 @client.event
 async def on_message(res):
-    if "fGqYbmtMccI" in res.content:
+    if any(True for ban_word in blacklist["ban_words"] if ban_word in res.content):
         admin_logs = discord.utils.get(res.guild.text_channels, name = "admin-logs")
         await res.delete()
-        m = "**User**\n{}\n**Action**\nimmediate message deletion\n**Message**\n{}".format(str(res.author), res.content)
+        m = "\n".join([
+            "**User**",
+            str(res.author),
+            "Channel",
+            res.channel.name,
+            "**Action**",
+            "immediate message deletion",
+            "**Message**",
+            res.content
+        ])
         embed = discord.Embed(title = "Suspicious Link Detected", description = m)
         await admin_logs.send(content = None, embed = embed)
         return
