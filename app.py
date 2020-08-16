@@ -303,7 +303,7 @@ async def on_message(res):
         m = "\n".join([
             "**User**",
             str(res.author),
-            "Channel",
+            "**Channel**",
             res.channel.name,
             "**Action**",
             "immediate message deletion",
