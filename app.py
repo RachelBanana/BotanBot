@@ -127,6 +127,11 @@ async def doya(res, msg):
     doya_file = os.path.join(voices_dir, "doya.mp3")
     await res.channel.send("Doyaa~! doya doya doya doya~!", file = discord.File(doya_file))
 
+async def score_me(res, msg):
+    for i in range(random.randint(3, 7)):
+        await res.channel.send(100)
+    await res.channel.send("[RESTRICTED]")
+
 async def gao(res, msg):
     ri = random.randint
     m = "G" + "a" * ri(1, 7) + "o" * ri(1, 3) + "~" + "!" * ri(2, 4) + " Rawr!" * ri(0, 1)
@@ -285,7 +290,8 @@ commands = {
     "translate": translate,
     "japanese": trans_to_jap,
     "meme": meme,
-    "botan": botan_art
+    "botan": botan_art,
+    "100": score_me
 }
 
 admin_commands = {
@@ -297,7 +303,8 @@ admin_commands = {
 ## on messaging
 @client.event
 async def on_message(res):
-    if any(True for ban_word in blacklist["ban_words"] if ban_word in res.content):
+    # check for banned links
+    if any(True for ban_link in blacklist["ban_links"] if ban_link in res.content):
         admin_logs = discord.utils.get(res.guild.text_channels, name = "admin-logs")
         await res.delete()
         m = "\n".join([
