@@ -131,8 +131,9 @@ async def doya(res, msg):
 async def score_me(res, msg):
     edit_msg = await res.channel.send(":100:")
     for i in range(2, random.randint(2, 20)):
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.2)
         await edit_msg.edit(content = ":100: " * i)
+    await asynchio.sleep(0.3)
     await edit_msg.edit(content = "[RESTRICTED]")
 
 async def gao(res, msg):
