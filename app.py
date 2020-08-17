@@ -142,7 +142,7 @@ async def score_me(res, msg):
 async def sleepy(res, msg):
     counter["sleepy"] += 1
     db_settings.update_one({"name": "counter"}, {"$set": {"sleepy": counter["sleepy"]}})
-    await res.channel.send(counter["sleepy"])
+    await res.channel.send(":BotanSleepy:\n{}".format(counter["sleepy"]))
 
 async def gao(res, msg):
     ri = random.randint
