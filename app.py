@@ -11,6 +11,7 @@ import os
 import sys
 import json
 import random
+import asyncio
 from datetime import datetime as dtime
 from datetime import timezone
 
@@ -128,15 +129,11 @@ async def doya(res, msg):
     await res.channel.send("Doyaa~! doya doya doya doya~!", file = discord.File(doya_file))
 
 async def score_me(res, msg):
-    for i in range(random.randint(2, 4)):
-        await res.channel.send(":100:")
-        if i == 4:
-            flag = random.randint(0,10)
-            if flag > 4:
-                for j in range(flag):
-                    await res.channel.send(":100:" * j)
-                await res.channel.send("@#$%$%$%$@")
-    await res.channel.send("[RESTRICTED]")
+    edit_msg = await res.channel.send(":100:")
+    for i in range(2, random.randint(2, 20)):
+        await asyncio.sleep(0.2)
+        await edit_msg.edit(content = ":100: " * i)
+    await edit_msg.edit(content = "[RESTRICTED]")
 
 async def gao(res, msg):
     ri = random.randint
