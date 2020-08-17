@@ -319,10 +319,14 @@ admin_commands = {
 ## on messaging
 @client.event
 async def on_message(res):
+    # checks if bot
+    if res.author == client.user:
+        return
+
     # check if dm
-    # if isinstance(res.channel, discord.DMChannel):
-    #     await res.channel.send("*A horny person appears! Botan flees.*")
-    #     return
+    if isinstance(res.channel, discord.DMChannel):
+        await res.channel.send("*A horny person appears! Botan flees.*")
+        return
 
     # check for banned links
     if any(True for ban_link in blacklist["ban_links"] if ban_link in res.content):
@@ -352,8 +356,8 @@ async def on_message(res):
             await channel.send(content = None, embed = embed)
 
 
-    # checks if message needs attention (not bot, has prefix)
-    if res.author == client.user or not res.content.startswith(prefix):
+    # checks if message needs attention (has prefix)
+    if not res.content.startswith(prefix):
         return
 
     # get the command and message text
