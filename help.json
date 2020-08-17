@@ -43,5 +43,10 @@
         "desc": "Randomly displays an artwork of Botan-sama.",
         "alias": [],
         "usage": "$botan"
+    },
+    "100": {
+        "desc": "Botan scores you with a 100!",
+        "alias": [],
+        "usage": "$100"
     }
 }

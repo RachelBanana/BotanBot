@@ -129,7 +129,7 @@ async def doya(res, msg):
 
 async def score_me(res, msg):
     for i in range(random.randint(3, 7)):
-        await res.channel.send(100)
+        await res.channel.send(":100:")
     await res.channel.send("[RESTRICTED]")
 
 async def gao(res, msg):
