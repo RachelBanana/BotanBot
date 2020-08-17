@@ -128,7 +128,7 @@ async def doya(res, msg):
     await res.channel.send("Doyaa~! doya doya doya doya~!", file = discord.File(doya_file))
 
 async def score_me(res, msg):
-    for i in range(random.randint(3, 7)):
+    for i in range(random.randint(2, 4)):
         await res.channel.send(":100:")
     await res.channel.send("[RESTRICTED]")
 
