@@ -319,6 +319,10 @@ admin_commands = {
 ## on messaging
 @client.event
 async def on_message(res):
+    # check if dm
+    if not isinstance(res.channel, discord.ChannelType.DMChannel):
+        res.channel.send("*A horny person appears! Botan flees.*")
+
     # check for banned links
     if any(True for ban_link in blacklist["ban_links"] if ban_link in res.content):
         admin_logs = discord.utils.get(res.guild.text_channels, name = "admin-logs")
