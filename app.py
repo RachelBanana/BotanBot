@@ -130,6 +130,12 @@ async def doya(res, msg):
 async def score_me(res, msg):
     for i in range(random.randint(2, 4)):
         await res.channel.send(":100:")
+        if i == 4:
+            flag = random.randint(0,10)
+            if flag > 4:
+                for j in range(flag):
+                    await res.channel.send(":100:" * j)
+            await res.channel.send("@#$%$%$%$@")
     await res.channel.send("[RESTRICTED]")
 
 async def gao(res, msg):
