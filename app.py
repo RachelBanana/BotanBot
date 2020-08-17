@@ -320,8 +320,9 @@ admin_commands = {
 @client.event
 async def on_message(res):
     # check if dm
-    if not isinstance(res.channel, discord.DMChannel):
-        res.channel.send("*A horny person appears! Botan flees.*")
+    if isinstance(res.channel, discord.DMChannel):
+        await res.channel.send("*A horny person appears! Botan flees.*")
+        return
 
     # check for banned links
     if any(True for ban_link in blacklist["ban_links"] if ban_link in res.content):
