@@ -135,7 +135,7 @@ async def score_me(res, msg):
             if flag > 4:
                 for j in range(flag):
                     await res.channel.send(":100:" * j)
-            await res.channel.send("@#$%$%$%$@")
+                await res.channel.send("@#$%$%$%$@")
     await res.channel.send("[RESTRICTED]")
 
 async def gao(res, msg):
