@@ -40,6 +40,9 @@ cluster = MongoClient(db_url.format(db_user, db_pass, db_name))
 
 db = cluster[db_name]
 db_artworks = db["artworks"]
+db_settings = db["settings"]
+
+counter = db_settings.find_one({"name": "counter"})
 
 ## local files settings
 img_dir = "images"
@@ -135,6 +138,11 @@ async def score_me(res, msg):
         await edit_msg.edit(content = ":100: " * i)
     await asyncio.sleep(0.3)
     await edit_msg.edit(content = "[RESTRICTED]")
+
+async def sleepy(res, msg):
+    counter["sleepy"] += 1
+    db_settings.update_one({"name": "counter"}, {"$set": {"sleepy": counter["sleepy"]}})
+    await res.channel.send(counter["sleepy"])
 
 async def gao(res, msg):
     ri = random.randint
@@ -295,7 +303,8 @@ commands = {
     "japanese": trans_to_jap,
     "meme": meme,
     "botan": botan_art,
-    "100": score_me
+    "100": score_me,
+    "sleepy": sleepy
 }
 
 admin_commands = {

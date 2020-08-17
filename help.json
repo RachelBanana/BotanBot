@@ -48,5 +48,10 @@
         "desc": "Botan scores you with a 100!",
         "alias": [],
         "usage": "$100"
+    },
+    "sleepy": {
+        "desc": "Find out how many times are Bodans sleepy so far.",
+        "alias": [],
+        "usage": "$sleepy"
     }
 }
