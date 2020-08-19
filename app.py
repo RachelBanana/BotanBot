@@ -181,8 +181,8 @@ async def subscribers(res, msg):
         id = botan_ch_id
     )
     yt_stats = request.execute()["items"][0]["statistics"]
-    m = "Shishiro Botan currently has {} subscribers and a total of {} views on her YouTube channel."
-    await res.channel.send(m.format(yt_stats["subscriberCount"], yt_stats["viewCount"]))
+    m = "Shishiro Botan currently has {:,} subscribers and a total of {:,} views on her YouTube channel."
+    await res.channel.send(m.format(int(yt_stats["subscriberCount"]), int(yt_stats["viewCount"])))
 
 ### translation commands
 async def translate(res, msg):
