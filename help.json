@@ -53,5 +53,10 @@
         "desc": "Find out how many times are Bodans sleepy so far.",
         "alias": [],
         "usage": "$sleepy"
+    },
+    "subscribers": {
+        "desc": "Check subscribers count of Botan's YouTube channel",
+        "alias": ["subs", "subscriber"],
+        "usage": "$subscribers"
     }
 }

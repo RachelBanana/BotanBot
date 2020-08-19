@@ -2,6 +2,7 @@
 import discord
 from googletrans import Translator
 from PIL import Image, ImageDraw, ImageFont
+import googleapiclient.discovery
 
 import pymongo
 from pymongo import MongoClient
@@ -43,6 +44,15 @@ db_artworks = db["artworks"]
 db_settings = db["settings"]
 
 counter = db_settings.find_one({"name": "counter"})
+
+## youtube api settings
+yt_key = os.getenv("YT_KEY")
+botan_ch_id = os.getenv("BOTAN_CH_ID")
+api_service_name = "youtube"
+api_version = "v3"
+
+youtube = googleapiclient.discovery.build(
+    api_service_name, api_version, developerKey = yt_key)
 
 ## local files settings
 img_dir = "images"
@@ -163,6 +173,16 @@ async def birthday(res, msg):
     days, hours, minutes = time_until(bday)
     m = "Botan-sama's birthday is on 8th of September, just {} more day{} to go!".format(days, "s" * (days>1))
     await res.channel.send(m)
+
+### Youtube data commands
+async def subscribers(res, msg):
+    request = youtube.channels().list(
+        part = "statistics",
+        id = botan_ch_id
+    )
+    yt_stats = request.execute()["items"][0]["statistics"]
+    m = "Shishiro Botan currently has {} subscribers and a total of {} views on her YouTube channel."
+    await res.channel.send(m.format(yt_stats["subscriberCount"], yt_stats["viewCount"]))
 
 ### translation commands
 async def translate(res, msg):
@@ -292,7 +312,9 @@ aliases = {
     "bday": "birthday",
     "trans": "translate",
     "jp": "japanese",
-    "addart": "add_art"
+    "addart": "add_art",
+    "subs": "subscribers",
+    "subscriber": "subscribers"
 }
 
 
@@ -308,7 +330,8 @@ commands = {
     "meme": meme,
     "botan": botan_art,
     "100": score_me,
-    "sleepy": sleepy
+    "sleepy": sleepy,
+    "subscribers": subscribers
 }
 
 admin_commands = {
