@@ -201,7 +201,7 @@ async def subscribers(res, msg):
 async def live_streams(res, msg):
     req_list = youtube.search().list(
         part = "snippet",
-        channelId = "UCvaTdHTWBGv3MKj3KVqJVCw",
+        channelId = botan_ch_id,
         eventType = "upcoming",
         maxResults = 25,
         type = "video"
