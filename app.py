@@ -220,7 +220,9 @@ async def live_streams(res, msg):
         maxResults = 25,
         type = "video"
     )
+    await res.channel.send(live_req)
     live_res = live_req.execute()["items"]
+    await res.channel.send(live_res)
     if live_res:
         vid_id = live_res[0]["id"]["videoId"]
         vid_url = "https://www.youtube.com/watch?v=" + vid_id
