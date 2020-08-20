@@ -60,8 +60,8 @@
         "usage": "$subscribers"
     },
     "stream": {
-        "desc": "Check Botan's streaming status on YouTube",
+        "desc": "Check Botan's or other vtubers' streaming status on YouTube",
         "alias": ["live"],
-        "usage": "$stream"
+        "usage": "$stream {optional:name}"
     }
 }
