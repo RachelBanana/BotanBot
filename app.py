@@ -202,6 +202,8 @@ async def subscribers(res, msg):
     await res.channel.send(m.format(int(yt_stats["subscriberCount"]), int(yt_stats["viewCount"])))
 
 async def live_streams(res, msg):
+
+    # Check which VTuber channel to search for
     msg = msg.strip().lower()
     ch_id = botan_ch_id
     vtuber_name = "Botan-sama"
@@ -209,7 +211,30 @@ async def live_streams(res, msg):
     if msg in vtubers:
         ch_id = vtubers[msg]["ch_id"]
         vtuber_name = msg.capitalize()
+    
+    # Look for live streams
+    live_req = youtube.search().list(
+        part = "snippet",
+        channelId = ch_id,
+        eventType = "live",
+        maxResults = 25,
+        type = "video"
+    )
+    live_res = live_req.execute()["items"]
+    if live_res:
+        vid_id = live_res[0]["id"]["videoId"]
+        vid_url = "https://www.youtube.com/watch?v=" + vid_id
+        if vtuber_name == "Botan-sama":
+            if random.randint(0,1):
+                m = "Omg {} is live now!! What are you doing here??! Get over to the following link to send your red SC!\n{}"
+            else:
+                m = "Sorry, I am too busy watching {}'s live stream now. Find another free bot.\n{}"
+        else:
+            m = "{} is live now. Link here:\n{}"
+        await res.channel.send(m.format(vtuber_name, vid_url))
+        return
 
+    # Look for upcoming streams
     req_list = youtube.search().list(
         part = "snippet",
         channelId = ch_id,
