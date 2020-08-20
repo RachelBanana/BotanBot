@@ -214,6 +214,7 @@ async def live_streams(res, msg):
         return
 
     for vid in res_list:
+        await res.channel.send(vid)
         vid_id = vid["id"]["videoId"]
         req_vid = youtube.videos().list(
             part="liveStreamingDetails",
