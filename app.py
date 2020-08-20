@@ -207,15 +207,13 @@ async def live_streams(res, msg):
         type = "video"
     )
     res_list = req_list.execute()["items"]
-    await res.channel.send(res_list)
 
     no_stream_msg  = "Sorry, Botan-sama doesn't have any scheduled live streams now!"
-    if not res.list:
+    if not res_list:
         await res.channel.send(no_stream_msg)
         return
 
     for vid in res_list:
-        await res.channel.send(vid)
         vid_id = vid["id"]["videoId"]
         req_vid = youtube.videos().list(
             part="liveStreamingDetails",
