@@ -224,6 +224,7 @@ async def live_streams(res, msg):
         await res.channel.send(no_stream_msg)
         return
 
+    stream_flag = False
     for vid in res_list:
         vid_id = vid["id"]["videoId"]
         req_vid = youtube.videos().list(
@@ -234,11 +235,13 @@ async def live_streams(res, msg):
         dt_string = res_vid["items"][0]["liveStreamingDetails"]["scheduledStartTime"]
         d1 = dtime.strptime(dt_string,"%Y-%m-%dT%H:%M:%SZ").replace(tzinfo = timezone.utc)
         if dtime.now(tz = timezone.utc) > d1:
-            await res.channel.send(no_stream_msg)
-            return
+            continue
+        stream_flag = True
         vid_url = "https://www.youtube.com/watch?v=" + vid_id
         timeleft = time_to_string(*time_until(d1))
         await res.channel.send("{} left until {}'s next stream! Link here:\n{}".format(timeleft, vtuber_name, vid_url))
+    if not stream_flag:
+        await res.channel.send(no_stream_msg)
 
 ### translation commands
 async def translate(res, msg):
