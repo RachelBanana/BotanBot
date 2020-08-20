@@ -207,6 +207,7 @@ async def live_streams(res, msg):
         type = "video"
     )
     res_list = req_list.execute()["items"]
+    await res.channel.send(res_list)
 
     no_stream_msg  = "Sorry, Botan-sama doesn't have any scheduled live streams now!"
     if not res.list:
