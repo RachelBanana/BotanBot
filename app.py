@@ -73,6 +73,8 @@ with open("blacklist.json") as f:
     blacklist = json.load(f)
 
 # Utility Functions
+def n_to_unit(n, unit):
+    return (str(n) + " " + unit + "s"*(n>1) + " ")*(n>0)
 
 ## Time tools
 def days_hours_minutes(td):
@@ -81,6 +83,18 @@ def days_hours_minutes(td):
 def time_until(dt):
     today = dtime.now(tz = timezone.utc)
     return days_hours_minutes(dt - today)
+
+def time_to_string(d, h, m):
+    arr = [s for s in (n_to_unit(d, "day"), n_to_unit(h, "hour"), n_to_unit(m, "minute")) if s]
+    if len(arr) == 3:
+        msg = "{}, {}, and {}"
+    elif len(arr) == 2:
+        msg = "{} and {}"
+    elif len(arr) == 1:
+        msg = "{}"
+    else:
+        return ""
+    return msg.format(*arr)
 
 ## Translating tools
 gtl = Translator()
@@ -183,6 +197,38 @@ async def subscribers(res, msg):
     yt_stats = request.execute()["items"][0]["statistics"]
     m = "Shishiro Botan currently has {:,} subscribers and a total of {:,} views on her YouTube channel."
     await res.channel.send(m.format(int(yt_stats["subscriberCount"]), int(yt_stats["viewCount"])))
+
+async def live_streams(res, msg):
+    req_list = youtube.search().list(
+        part = "snippet",
+        channelId = botan_ch_id,
+        eventType = "upcoming",
+        maxResults = 25,
+        type = "video"
+    )
+    res_list = req_list.execute()["items"]
+
+    no_stream_msg  = "Sorry, Botan-sama doesn't have any scheduled live streams now!"
+    if not res.list:
+        await res.channel.send(no_stream_msg)
+        return
+
+    for vid in res_list:
+        vid_id = vid["id"]["videoId"]
+        req_vid = youtube.videos().list(
+            part="liveStreamingDetails",
+            id=vid_id
+        )
+        res_vid = req_vid.execute()
+        dt_string = res_vid["items"][0]["liveStreamingDetails"]["scheduledStartTime"]
+        d1 = datetime.datetime.strptime(dt_string,"%Y-%m-%dT%H:%M:%SZ").replace(tzinfo = timezone.utc)
+        if dtime.now(tz = timezone.utc) > d1:
+            await res.channel.send(no_stream_msg)
+            return
+        
+        vid_url = "https://www.youtube.com/watch?v=" + vid_id
+        timeleft = time_to_string(*time_until(d1))
+        await res.channel.send("{} left until Botan's next stream! Link here:\n{}".format(timeleft, vid_url))
 
 ### translation commands
 async def translate(res, msg):
@@ -314,7 +360,8 @@ aliases = {
     "jp": "japanese",
     "addart": "add_art",
     "subs": "subscribers",
-    "subscriber": "subscribers"
+    "subscriber": "subscribers",
+    "live": "stream"
 }
 
 
@@ -331,7 +378,8 @@ commands = {
     "botan": botan_art,
     "100": score_me,
     "sleepy": sleepy,
-    "subscribers": subscribers
+    "subscribers": subscribers,
+    "stream": live_streams
 }
 
 admin_commands = {

@@ -58,5 +58,10 @@
         "desc": "Check subscribers count of Botan's YouTube channel",
         "alias": ["subs", "subscriber"],
         "usage": "$subscribers"
+    },
+    "stream": {
+        "desc": "Check Botan's streaming status on YouTube",
+        "alias": ["live"],
+        "usage": "$stream"
     }
 }
