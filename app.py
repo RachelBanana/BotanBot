@@ -202,16 +202,24 @@ async def subscribers(res, msg):
     await res.channel.send(m.format(int(yt_stats["subscriberCount"]), int(yt_stats["viewCount"])))
 
 async def live_streams(res, msg):
+    msg = msg.strip().lower()
+    ch_id = botan_ch_id
+    vtuber_name = "Botan-sama"
+
+    if msg in vtubers:
+        ch_id = vtubers[msg]["ch_id"]
+        vtuber_name = msg.capitalize()
+
     req_list = youtube.search().list(
         part = "snippet",
-        channelId = botan_ch_id,
+        channelId = ch_id,
         eventType = "upcoming",
         maxResults = 25,
         type = "video"
     )
     res_list = req_list.execute()["items"]
 
-    no_stream_msg  = "Sorry, Botan-sama doesn't have any scheduled live streams now!"
+    no_stream_msg  = "Sorry, {} doesn't have any scheduled live streams now!".format(vtuber_name)
     if not res_list:
         await res.channel.send(no_stream_msg)
         return
@@ -230,7 +238,7 @@ async def live_streams(res, msg):
             return
         vid_url = "https://www.youtube.com/watch?v=" + vid_id
         timeleft = time_to_string(*time_until(d1))
-        await res.channel.send("{} left until Botan's next stream! Link here:\n{}".format(timeleft, vid_url))
+        await res.channel.send("{} left until {}'s next stream! Link here:\n{}".format(timeleft, vtuber_name, vid_url))
 
 ### translation commands
 async def translate(res, msg):
