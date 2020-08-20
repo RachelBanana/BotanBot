@@ -214,20 +214,23 @@ async def live_streams(res, msg):
         return
 
     for vid in res_list:
-        await res.channel.send(vid)
         vid_id = vid["id"]["videoId"]
         req_vid = youtube.videos().list(
             part="liveStreamingDetails",
             id=vid_id
         )
         res_vid = req_vid.execute()
+        await res.channel.send(res_vid)
         dt_string = res_vid["items"][0]["liveStreamingDetails"]["scheduledStartTime"]
+        await res.channel.send(dt_string)
         d1 = datetime.datetime.strptime(dt_string,"%Y-%m-%dT%H:%M:%SZ").replace(tzinfo = timezone.utc)
+        await res.channel.send(d1)
         if dtime.now(tz = timezone.utc) > d1:
             await res.channel.send(no_stream_msg)
             return
-        
+        await res.channel.send("eh")
         vid_url = "https://www.youtube.com/watch?v=" + vid_id
+        await res.channel.send(vid_url)
         timeleft = time_to_string(*time_until(d1))
         await res.channel.send("{} left until Botan's next stream! Link here:\n{}".format(timeleft, vid_url))
 
