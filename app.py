@@ -71,6 +71,9 @@ with open("meme.json") as f:
 with open("blacklist.json") as f:
     # set up blacklist
     blacklist = json.load(f)
+with open("vtubers.json") as f:
+    # set up vtubers information other than botan
+    vtubers = json.load(f)
 
 # Utility Functions
 def n_to_unit(n, unit):
