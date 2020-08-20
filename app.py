@@ -223,7 +223,7 @@ async def live_streams(res, msg):
         await res.channel.send(res_vid)
         dt_string = res_vid["items"][0]["liveStreamingDetails"]["scheduledStartTime"]
         await res.channel.send(dt_string)
-        d1 = datetime.datetime.strptime(dt_string,"%Y-%m-%dT%H:%M:%SZ").replace(tzinfo = timezone.utc)
+        d1 = dtime.strptime(dt_string,"%Y-%m-%dT%H:%M:%SZ").replace(tzinfo = timezone.utc)
         await res.channel.send(d1)
         if dtime.now(tz = timezone.utc) > d1:
             await res.channel.send(no_stream_msg)
