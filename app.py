@@ -193,13 +193,23 @@ async def birthday(res, msg):
 
 ### Youtube data commands
 async def subscribers(res, msg):
+    # Check which Vtuber channel to search for
+    msg = msg.strip().lower()
+    ch_id = botan_ch_id
+    vtuber_name = "Shishiro Botan"
+
+    if msg in vtubers:
+        ch_id = vtubers[msg]["ch_id"]
+        vtuber_name = msg.capitalize()
+
+    # Look for channel
     request = youtube.channels().list(
         part = "statistics",
-        id = botan_ch_id
+        id = ch_id
     )
     yt_stats = request.execute()["items"][0]["statistics"]
-    m = "Shishiro Botan currently has {:,} subscribers and a total of {:,} views on her YouTube channel."
-    await res.channel.send(m.format(int(yt_stats["subscriberCount"]), int(yt_stats["viewCount"])))
+    m = "{} currently has {:,} subscribers and a total of {:,} views on her YouTube channel."
+    await res.channel.send(m.format(vtuber_name, int(yt_stats["subscriberCount"]), int(yt_stats["viewCount"])))
 
 async def live_streams(res, msg):
 
