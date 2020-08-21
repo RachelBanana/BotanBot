@@ -397,6 +397,15 @@ async def add_art(res, msg):
     await res.channel.send("Added one new artwork to database!")
 
 ## hidden developer commands
+async def cross_server_post(res, msg):
+    if str(res.author) != owner:
+        return
+    m = msg.split("\n", 1)
+    if len(m) < 2:
+        await res.channel.send("Need at least {} more arguments!".format(2 - len(m)))
+        return
+    target_channel = client.get_channel(int(m[0]))
+    await target_channel.send(m[1])
 
 
 ## command names
@@ -433,7 +442,8 @@ commands = {
 admin_commands = {
     "post": post,
     "read": read,
-    "add_art": add_art
+    "add_art": add_art,
+    "xpost": cross_server_post
 }
 
 ## on messaging
