@@ -55,9 +55,9 @@
         "usage": "$sleepy"
     },
     "subscribers": {
-        "desc": "Check subscribers count of Botan's YouTube channel",
+        "desc": "Check subscribers count of Botan's or other vtubers' YouTube channel",
         "alias": ["subs", "subscriber"],
-        "usage": "$subscribers"
+        "usage": "$subscribers {optional:name}"
     },
     "stream": {
         "desc": "Check Botan's or other vtubers' streaming status on YouTube",
