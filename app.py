@@ -94,12 +94,14 @@ def n_to_unit(n, unit):
 def to_raw_text(msg):
     # given a message with mentions (users, channels) and emotes, convert to raw text
     def repl_username(m):
+        m = m.group(1)
         return client.get_user(int(m)).name
     def repl_channel(m):
+        m = m.group(1)
         return client.get_channel(int(m)).name
     msg = re.sub(r"<@!(\d+)>", repl_username, msg)
     msg = re.sub(r"<:\w+:\d+>", "", msg)
-    msg = re.sub(r"<#\d+>", repl_channel, msg)
+    msg = re.sub(r"<#(\d+)>", repl_channel, msg)
     return msg
 
 ## Time tools
