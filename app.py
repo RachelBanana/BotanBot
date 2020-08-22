@@ -10,6 +10,7 @@ from pymongo import MongoClient
 # python built-in libraries
 import os
 import sys
+import re
 import json
 import random
 import asyncio
@@ -89,6 +90,17 @@ for art in temp_artwork_cursor:
 # Utility Functions
 def n_to_unit(n, unit):
     return (str(n) + " " + unit + "s"*(n>1) + " ")*(n>0)
+
+def to_raw_text(msg):
+    # given a message with mentions (users, channels) and emotes, convert to raw text
+    def repl_username(m):
+        return client.get_user(int(m)).name
+    def repl_channel(m):
+        return client.get_channel(int(m)).name
+    msg = re.sub(r"<@!(\d+)>", repl_username, msg)
+    msg = re.sub(r"<:\w+:\d+>", "", msg)
+    msg = re.sub(r"<#\d+>", repl_channel, msg)
+    return msg
 
 ## Time tools
 def days_hours_minutes(td):
@@ -355,6 +367,9 @@ async def meme(res, msg):
     font = ImageFont.truetype(font_ttf, size = meme_font["size"])
 
     for pos, arg in zip(positions, meme_args):
+        # remove emotes, change all others mentions to raw text
+        arg = to_raw_text(arg)
+
         m, *words = arg.split(" ")
         # wrap text if longer than wraplength
         for word in words:
