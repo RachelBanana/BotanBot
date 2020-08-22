@@ -52,5 +52,18 @@
             "size": 19,
             "fill": [0, 0, 0, 1]
         }
+    },
+    "testimony": {
+        "file": "botan_testimony.png",
+        "positions": [
+            [0.5078, 0.8594]
+        ],
+        "wrapsize": 0.9,
+        "align": "left",
+        "font": {
+            "name": "OpenSans-Bold.ttf",
+            "size": 30,
+            "fill": [255, 255, 255, 1]
+        }
     }
 }
