@@ -10,7 +10,7 @@
         "font": {
             "name": "OpenSans-Regular.ttf",
             "size": 26,
-            "fill": [0, 0, 0, 1]
+            "fill": [0, 0, 0, 255]
         }
     },
     "woken": {
@@ -24,7 +24,7 @@
         "font": {
             "name": "OpenSans-Regular.ttf",
             "size": 26,
-            "fill": [0, 0, 0, 1]
+            "fill": [0, 0, 0, 255]
         }
     },
     "fade": {
@@ -37,7 +37,7 @@
         "font": {
             "name": "ChanceryCursive.ttf",
             "size": 26,
-            "fill": [0, 0, 0, 1]
+            "fill": [0, 0, 0, 255]
         }
     },
     "disgust": {
@@ -50,7 +50,7 @@
         "font": {
             "name": "ComicSans-Regular.ttf",
             "size": 19,
-            "fill": [0, 0, 0, 1]
+            "fill": [0, 0, 0, 255]
         }
     },
     "testimony": {
@@ -63,7 +63,7 @@
         "font": {
             "name": "ComicSans-Regular.ttf",
             "size": 60,
-            "fill": [255, 255, 255, 1]
+            "fill": [255, 255, 255, 255]
         }
     }
 }
