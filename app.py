@@ -165,10 +165,6 @@ async def help_command(res, msg):
 async def greet(res, msg):
     await res.channel.send("やほー!\nHello!")
 
-async def doya(res, msg):
-    doya_file = os.path.join(voices_dir, "doya.mp3")
-    await res.channel.send("Doyaa~! doya doya doya doya~!", file = discord.File(doya_file))
-
 async def voice(res, msg):
     if not msg:
         msg = random.choice(list(voices_dict))
@@ -452,7 +448,6 @@ aliases = {
 commands = {
     "help": help_command,
     "greet": greet,
-    "doya": doya,
     "gao": gao,
     "debut": debut,
     "birthday": birthday,
