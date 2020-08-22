@@ -1,6 +1,5 @@
 config.json
-test.py
-test2.py
 temp1.txt
 temp2.txt
 temp3.txt
+test*
