@@ -377,13 +377,18 @@ async def meme(res, msg):
     await res.channel.send(file = discord.File(save_file))
 
 async def botan_art(res, msg):
+    # pop one  from temp
     art_url = temp_art_deque.popleft()
     temp_art_set.remove(art_url)
     await res.channel.send(art_url)
-    new_art = list(db_artworks.aggregate([{"$sample": {"size": 1}}]))[0]
-    await res.channel.send(new_art)
-    
-        
+
+    # get a new art url from database to add to temp
+    new_art_url = list(db_artworks.aggregate([{"$sample": {"size": 1}}]))[0]["url"]
+    while new_art_url in temp_art_set:
+        new_art_url = list(db_artworks.aggregate([{"$sample": {"size": 1}}]))[0]["url"]
+    temp_art_set.add(new_art_url)
+    temp_art_deque.append(new_art_url)
+    await res.channel.send(temp_art_set)
 
 ## admin commands
 async def post(res, msg):
