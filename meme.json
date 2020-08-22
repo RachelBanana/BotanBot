@@ -61,7 +61,7 @@
         "wrapsize": 0.9,
         "align": "left",
         "font": {
-            "name": "OpenSans-Regular.ttf",
+            "name": "ComicSans-Regular.ttf",
             "size": 60,
             "fill": [255, 255, 255, 1]
         }
