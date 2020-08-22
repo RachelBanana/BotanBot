@@ -162,7 +162,7 @@ async def doya(res, msg):
 
 async def voice(res, msg):
     if not msg:
-        msg = random.choice(voices_dict)
+        msg = random.choice(voices_dict.keys())
     v_file_name = random.choice(voices_dict[msg]["clips"])
     voice_file = os.path.join(voices_dir, v_file_name)
     await res.channel.send(voices_dict[msg]["quote"], file = discord.File(voice_file))
