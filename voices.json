@@ -6,5 +6,13 @@
     "poi": {
         "quote": "Poi~",
         "clips": ["poi.mp3", "poi2.mp3", "poi3.mp3", "poi4.mp3"]
+    },
+    "yes": {
+        "quote": "Yess~",
+        "clips": ["yess.mp3"]
+    },
+    "yay": {
+        "quote": "Yaay~",
+        "clips": ["yay.mp3"]
     }
 }

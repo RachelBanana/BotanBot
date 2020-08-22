@@ -65,7 +65,7 @@
         "usage": "$stream {optional:name}"
     },
     "voice": {
-        "desc": "Sends cute Botan voice clips.",
+        "desc": "Sends cute Botan voice clips.\n\n**In Stock:**\ndoya\npoi\nyes\nyay",
         "alias": ["v"],
         "usage": "$voice {optional:clip name}"
     }
