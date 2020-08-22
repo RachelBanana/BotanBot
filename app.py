@@ -15,6 +15,7 @@ import random
 import asyncio
 from datetime import datetime as dtime
 from datetime import timezone
+from collections import deque
 
 # Customizable Settings
 
@@ -76,6 +77,14 @@ with open("vtubers.json") as f:
     vtubers = json.load(f)
 with open("voices.json") as f:
     voices_dict = json.load(f)
+
+# Temporary storage for artworks (only urls)
+temp_artwork_cursor = db_artworks.aggregate([{"$sample": {"size": 30}}])
+temp_art_deque = deque()
+temp_art_set = set()
+for art in temp_artwork_cursor:
+    temp_art_deque.append(art["url"])
+    temp_art_set.add(art["url"])
 
 # Utility Functions
 def n_to_unit(n, unit):
@@ -368,9 +377,13 @@ async def meme(res, msg):
     await res.channel.send(file = discord.File(save_file))
 
 async def botan_art(res, msg):
-    artwork_cursor = db_artworks.aggregate([{"$sample": {"size": 1}}])
-    for a in artwork_cursor:
-        await res.channel.send(a["url"])
+    art_url = temp_art_deque.popleft()
+    temp_art_set.remove(art_url)
+    await res.channel.send(art_url)
+    new_art = list(db_artworks.aggregate([{"$sample": {"size": 1}}]))[0]
+    await res.channel.send(new_art)
+    
+        
 
 ## admin commands
 async def post(res, msg):
