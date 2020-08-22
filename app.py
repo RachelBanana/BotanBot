@@ -346,6 +346,7 @@ async def meme(res, msg):
     file_name = meme_info["file"]
     positions = meme_info["positions"]
     wrapsize = meme_info["wrapsize"]
+    text_align = meme_info["align"]
     meme_font = meme_info["font"]
 
     if len(meme_args) < len(positions):
@@ -384,7 +385,8 @@ async def meme(res, msg):
             (width*pos[0]-txt_w/2, height*pos[1]-txt_h/2), 
             m, 
             font = font, 
-            fill = tuple(meme_font["fill"])
+            fill = tuple(meme_font["fill"]),
+            align = text_align
         )
     img.save(save_file)
     await res.channel.send(file = discord.File(save_file))
