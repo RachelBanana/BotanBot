@@ -36,5 +36,15 @@
             "size": 26,
             "fill": [0, 0, 0, 1]
         }
+    },
+    "disgust": {
+        "file": "botan_disgust.png",
+        "positions": [
+            [0.132, 0.581]
+        ],
+        "wrapsize": 0.184,
+        "font": "OpenSans-Regular.ttf",
+        "size": 15,
+        "fill": [0, 0, 0, 1]
     }
 }
