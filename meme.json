@@ -42,10 +42,10 @@
         "positions": [
             [0.132, 0.581]
         ],
-        "wrapsize": 0.184,
+        "wrapsize": 0.1835,
         "font": {
-            "name": "OpenSans-Regular.ttf",
-            "size": 18,
+            "name": "ComicSans-Regular.ttf",
+            "size": 19,
             "fill": [0, 0, 0, 1]
         }
     }
