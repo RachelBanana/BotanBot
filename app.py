@@ -388,7 +388,6 @@ async def botan_art(res, msg):
         new_art_url = list(db_artworks.aggregate([{"$sample": {"size": 1}}]))[0]["url"]
     temp_art_set.add(new_art_url)
     temp_art_deque.append(new_art_url)
-    await res.channel.send(temp_art_set)
 
 ## admin commands
 async def post(res, msg):
