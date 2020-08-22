@@ -61,8 +61,8 @@
         "wrapsize": 0.9,
         "align": "left",
         "font": {
-            "name": "OpenSans-Bold.ttf",
-            "size": 30,
+            "name": "OpenSans-Regular.ttf",
+            "size": 60,
             "fill": [255, 255, 255, 1]
         }
     }
