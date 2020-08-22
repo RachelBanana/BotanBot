@@ -74,6 +74,8 @@ with open("blacklist.json") as f:
 with open("vtubers.json") as f:
     # set up vtubers information other than botan
     vtubers = json.load(f)
+with open("voices.json") as f:
+    voices_dict = json.load(f)
 
 # Utility Functions
 def n_to_unit(n, unit):
@@ -157,6 +159,13 @@ async def greet(res, msg):
 async def doya(res, msg):
     doya_file = os.path.join(voices_dir, "doya.mp3")
     await res.channel.send("Doyaa~! doya doya doya doya~!", file = discord.File(doya_file))
+
+async def voice(res, msg):
+    if not msg:
+        msg = random.choice(voices_dict)
+    v_file_name = random.choice(voices_dict[msg]["clips"])
+    voice_file = os.path.join(voices_dir, v_file_name)
+    await res.channel.send(voices_dict[msg]["quote"], file = discord.File(voice_file))
 
 async def score_me(res, msg):
     edit_msg = await res.channel.send(":100:")
@@ -418,7 +427,8 @@ aliases = {
     "addart": "add_art",
     "subs": "subscribers",
     "subscriber": "subscribers",
-    "live": "stream"
+    "live": "stream",
+    "v": "voice"
 }
 
 
@@ -436,7 +446,8 @@ commands = {
     "100": score_me,
     "sleepy": sleepy,
     "subscribers": subscribers,
-    "stream": live_streams
+    "stream": live_streams,
+    "voice": voice
 }
 
 admin_commands = {

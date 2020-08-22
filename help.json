@@ -55,13 +55,18 @@
         "usage": "$sleepy"
     },
     "subscribers": {
-        "desc": "Check subscribers count of Botan's or other vtubers' YouTube channel",
+        "desc": "Check subscribers count of Botan's or other vtubers' YouTube channel.",
         "alias": ["subs", "subscriber"],
         "usage": "$subscribers {optional:name}"
     },
     "stream": {
-        "desc": "Check Botan's or other vtubers' streaming status on YouTube",
+        "desc": "Check Botan's or other vtubers' streaming status on YouTube.",
         "alias": ["live"],
         "usage": "$stream {optional:name}"
+    },
+    "voice": {
+        "desc": "Sends cute Botan voice clips.",
+        "alias": ["v"],
+        "usage": "$voice {optional:clip name}"
     }
 }

@@ -1,0 +1,10 @@
+{
+    "doya": {
+        "quote": "Doyaa~! doya doya doya doya~!",
+        "clips": ["doya.mp3"]
+    },
+    "poi": {
+        "quote": "Poi~",
+        "clips": ["poi.mp3", "poi2.mp3", "poi3.mp3", "poi4.mp3"]
+    }
+}
