@@ -558,7 +558,7 @@ async def background_main():
     while not client.is_closed():
         now = dtime.now(tz = timezone.utc) + timedelta(hours = 9)
         timestr = now.strftime("%d/%m/%Y, %H:%M")
-        await client.change_presence(activity=discord.Game(name=""))
+        await client.change_presence(activity=discord.Game(name=timestr))
         await asyncio.sleep(60)
 
 client.loop.create_task(background_main())
