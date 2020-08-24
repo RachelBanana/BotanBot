@@ -552,14 +552,23 @@ async def on_message(res):
     if action:
         await action(res, msg)
 
-# Coroutines
-async def background_main():
-    await client.wait_until_ready()
+# Coroutine Functions
+async def jst_clock():
     while not client.is_closed():
         now = dtime.now(tz = timezone.utc) + timedelta(hours = 9)
         timestr = now.strftime("%H:%M JST, %d/%m/%Y")
         await client.change_presence(activity=discord.Game(name=timestr))
-        await asyncio.sleep(60)
+        await asyncio.sleep(60)        
+
+# List Coroutines to be executed
+coroutines = (
+    jst_clock()
+)
+
+# Main Coroutine
+async def background_main():
+    await client.wait_until_ready()
+    await asyncio.gather(*coroutines)
 
 client.loop.create_task(background_main())
 client.run(token)
