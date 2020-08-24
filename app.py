@@ -15,7 +15,7 @@ import json
 import random
 import asyncio
 from datetime import datetime as dtime
-from datetime import timezone
+from datetime import timezone, timedelta
 from collections import deque
 
 # Customizable Settings
@@ -552,5 +552,15 @@ async def on_message(res):
     if action:
         await action(res, msg)
 
+# Coroutines
+async def background_main():
+    await client.wait_until_ready()
+    while not client.is_closed():
+        now = dtime.now(tz = timezone.utc) + timedelta(hours = 9)
+        timestr = now.strftime("%d/%m/%Y, %H:%M")
+        await client.change_presence(activity=discord.Game(name=""))
+        await asyncio.sleep(60)
+
+client.loop.create_task(background_main())
 client.run(token)
 
