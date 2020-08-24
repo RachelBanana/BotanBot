@@ -568,7 +568,7 @@ coroutines = (
 # Main Coroutine
 async def background_main():
     await client.wait_until_ready()
-    await asyncio.gather(*coroutines)
+    await asyncio.gather(coroutines)
 
 client.loop.create_task(background_main())
 client.run(token)
