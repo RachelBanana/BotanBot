@@ -32,6 +32,7 @@ prefix = os.getenv("PREFIX")
 embed_color = int(os.getenv("EMBED_COLOR"), 16)
 log_channel = 741908598870769735
 pingcord = "Pingcord#3283"
+tweets_ch = 740896881827381259
 translated_tweets_ch = 741945787042496614
 
 ## database settings
@@ -519,8 +520,8 @@ async def on_message(res):
         return
 
 
-    # read twitter tweets from botan
-    if str(res.author) == pingcord:
+    # read twitter tweets from botan (is pingcord and is in tweets channel)
+    if str(res.author) == pingcord and res.channel.id == tweets_ch:
         channel = client.get_channel(translated_tweets_ch)
         for embed in res.embeds:
             embed.title = to_eng(embed.title).text
