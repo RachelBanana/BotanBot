@@ -60,7 +60,7 @@
         "usage": "$stream {optional:name}"
     },
     "voice": {
-        "desc": "Sends cute Botan voice clips.\n\n**In Stock:**\ndoya\npoi\nyes\nyay",
+        "desc": "Sends cute Botan voice clips.\n\n**In Stock:**\ndoya\npoi\nyes\nyay\nok\narigatou\nhyaaa\nty",
         "alias": ["v"],
         "usage": "$voice {optional:clip name}"
     },

@@ -14,5 +14,21 @@
     "yay": {
         "quote": "Yaay~",
         "clips": ["yay.mp3"]
+    },
+    "ok": {
+        "quote": "Ok",
+        "clips": ["ok.mp3"]
+    },
+    "arigatou": {
+        "quote": "Aah~ Arigatou~",
+        "clips": ["arigatou.mp3"]
+    },
+    "hyaaa": {
+        "quote": "Hyaaaa~!",
+        "clips": ["hyaaa.mp3"]
+    },
+    "ty": {
+        "quote": "TenQ~!",
+        "clips": ["thankyou.mp3"]
     }
 }
