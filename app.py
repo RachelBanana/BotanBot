@@ -3,6 +3,7 @@ import discord
 from googletrans import Translator
 from PIL import Image, ImageDraw, ImageFont
 import googleapiclient.discovery
+import requests
 
 import pymongo
 from pymongo import MongoClient
@@ -132,6 +133,20 @@ def to_jap(m):
 
 def to_eng(m):
     return gtl.translate(m)
+
+## Art Manipulation tools
+def add_corners(im, rad):
+    circle = Image.new('L', (rad * 2, rad * 2), 0)
+    draw = ImageDraw.Draw(circle)
+    draw.ellipse((0, 0, rad * 2, rad * 2), fill=255)
+    alpha = Image.new('L', im.size, 255)
+    w, h = im.size
+    alpha.paste(circle.crop((0, 0, rad, rad)), (0, 0))
+    alpha.paste(circle.crop((0, rad, rad, rad * 2)), (0, h - rad))
+    alpha.paste(circle.crop((rad, 0, rad * 2, rad)), (w - rad, 0))
+    alpha.paste(circle.crop((rad, rad, rad * 2, rad * 2)), (w - rad, h - rad))
+    im.putalpha(alpha)
+    return im
 
 # Main Events
 
@@ -338,7 +353,23 @@ async def trans_to_jap(res, msg):
 # blue 1565C0 100yen
 # pleb
 async def superchat(res, msg):
-    await res.channel.send(res.author.avatar_url)
+    # get avatar and resize 
+    avatar_url = res.author.avatar_url
+    av_img = Image.open(requests.get(avatar_url, stream=True).raw)
+    av_img = av_img.resize((83, 83))
+
+    # draw a mask to crop the ellipse
+    mask_im = Image.new("L", (83, 83), 0)
+    draw = ImageDraw.Draw(mask_im)
+    draw.ellipse((0, 0, 83, 83), fill=255)
+
+    # open background sc, and paste in the avatar and the cropping mask
+    back_im = Image.open(os.path.join(img_dir, "red_sc.png")).copy()
+    back_im.paste(av_img, (15, 15), mask_im)
+    save_file = os.path.join(save_dir, str(random.randint(1,20)) + "red_sc.png")
+    back_im.save(save_file)
+
+    await res.channel.send(file = discord.File(save_file))
 
 async def meme(res, msg):
     err_msg = "Please provide a correct meme argument! (ex: $meme woke)"
