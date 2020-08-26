@@ -63,5 +63,10 @@
         "desc": "Sends cute Botan voice clips.\n\n**In Stock:**\ndoya\npoi\nyes\nyay",
         "alias": ["v"],
         "usage": "$voice {optional:clip name}"
+    },
+    "superchat": {
+        "desc": "Create a customized superchat image.",
+        "alias": ["sc"],
+        "usage": "$superchat {money amount}\n{text}"
     }
 }

@@ -329,6 +329,17 @@ async def trans_to_jap(res, msg):
     await res.channel.send(content = None, embed = embed)
 
 ### meme and art commands
+# red D00000 E62117 10000-50000yen
+# magenta C2185B E91E63 5000-9999yen
+# orange E65100 F57C00 2000-4999yen
+# yellow FFB300 FFCA28 1000-1999yen
+# green 00BFA5 1DE9B6 500-999yen
+# light blue 00B8D4 00E5FF 200-499yen
+# blue 1565C0 100yen
+# pleb
+async def superchat(res, msg):
+    await res.channel.send(res.author.avatar)
+
 async def meme(res, msg):
     err_msg = "Please provide a correct meme argument! (ex: $meme woke)"
 
@@ -461,7 +472,8 @@ aliases = {
     "subs": "subscribers",
     "subscriber": "subscribers",
     "live": "stream",
-    "v": "voice"
+    "v": "voice",
+    "sc": "superchat"
 }
 
 
@@ -479,7 +491,8 @@ commands = {
     "sleepy": sleepy,
     "subscribers": subscribers,
     "stream": live_streams,
-    "voice": voice
+    "voice": voice,
+    "superchat": superchat
 }
 
 admin_commands = {
