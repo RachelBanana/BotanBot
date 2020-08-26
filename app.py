@@ -392,11 +392,19 @@ async def superchat(res, msg):
     font_ttf = os.path.join(fonts_dir, "Roboto-Regular.ttf")
     font = ImageFont.truetype(font_ttf, size = 45)
 
+    # write amount to img
+    idraw.text(
+        (118, 54),
+        amount,
+        font = font,
+        fill = (255, 255, 255, 255)
+    )
+
     # write text to img
     wraplength = 675
 
     m, *words = msg.split(" ")
-    # wrap text if longer than wraplength
+    ## wrap text if longer than wraplength
     for word in words:
         if idraw.textsize(m + " " + word, font)[0] > wraplength:
             m += "\n" + word
