@@ -344,14 +344,7 @@ async def trans_to_jap(res, msg):
     await res.channel.send(content = None, embed = embed)
 
 ### meme and art commands
-# red D00000 E62117 10000-50000yen
-# magenta C2185B E91E63 5000-9999yen
-# orange E65100 F57C00 2000-4999yen
-# yellow FFB300 FFCA28 1000-1999yen
-# green 00BFA5 1DE9B6 500-999yen
-# light blue 00B8D4 00E5FF 200-499yen
-# blue 1565C0 100yen
-# pleb
+
 async def superchat(res, msg):
     # error message if there is no msg
     err_msg = "Please provide a correct superchat argument! For example:\n$sc 10000\nsimping for botan"
@@ -367,9 +360,37 @@ async def superchat(res, msg):
         await res.channel.send(err_msg)
         return
     
-    # format amount to yen with 2 decimal places
+    # convert amount to number and round off
     amount = round(float(amount), 2)
 
+    if amount >= 10000:
+        # red D00000 E62117 10000-50000yen
+        sc_file_name = "red_sc.png"
+    elif amount >= 5000:
+        # magenta C2185B E91E63 5000-9999yen
+        sc_file_name = "mag_sc.png"
+    elif amount >= 2000:
+        # orange E65100 F57C00 2000-4999yen
+        sc_file_name = "org_sc.png"
+    elif amount >= 1000:
+        # yellow FFB300 FFCA28 1000-1999yen
+        sc_file_name = "yellow_sc.png"
+    elif amount >= 500:
+        # green 00BFA5 1DE9B6 500-999yen
+        sc_file_name = "green_sc.png"
+    elif amount >= 200:
+        # light blue 00B8D4 00E5FF 200-499yen
+        sc_file_name = "lightblue_sc.png"
+    elif amount >= 100:
+        # blue 1565C0 100-199yen
+        sc_file_name = "blue.png"
+        msg_args = []
+    else:
+        # pleb
+        await res.channel.send("You need more money to send a superchat!")
+        return
+
+    # format amount and msg
     amount = "JP¥{:,.2f}".format(amount).rstrip("0").rstrip(".")
     msg = to_raw_text("\n".join(msg_args))
 
@@ -384,7 +405,7 @@ async def superchat(res, msg):
     draw.ellipse((0, 0, 83, 83), fill=255)
 
     # open background sc, and paste in the avatar and the cropping mask
-    back_im = Image.open(os.path.join(img_dir, "red_sc.png")).copy()
+    back_im = Image.open(os.path.join(img_dir, sc_file_name)).copy()
     back_im.paste(av_img, (15, 15), mask_im)
 
     # add fonts
@@ -416,22 +437,23 @@ async def superchat(res, msg):
     )
 
     # write text to img
-    wraplength = 660
+    if msg:
+        wraplength = 660
 
-    m, *words = msg.split(" ")
-    ## wrap text if longer than wraplength
-    for word in words:
-        if idraw.textsize(m + " " + word, text_font)[0] > wraplength:
-            m += "\n" + word
-        else:
-            m += " " + word
-    txt_w, txt_h = idraw.textsize(m, text_font)
-    idraw.text(
-        (15, 129), 
-        m, 
-        font = text_font, 
-        fill = (255, 255, 255, 255)
-    )
+        m, *words = msg.split(" ")
+        ## wrap text if longer than wraplength
+        for word in words:
+            if idraw.textsize(m + " " + word, text_font)[0] > wraplength:
+                m += "\n" + word
+            else:
+                m += " " + word
+        txt_w, txt_h = idraw.textsize(m, text_font)
+        idraw.text(
+            (15, 129), 
+            m, 
+            font = text_font, 
+            fill = (255, 255, 255, 255)
+        )
 
     # crop img of excessive length
     final_height = (txt_h + 144) if msg else 114
