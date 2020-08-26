@@ -392,11 +392,11 @@ async def superchat(res, msg):
     name_font_ttf = os.path.join(fonts_dir, "Roboto-Light.ttf")
     name_font = ImageFont.truetype(name_font_ttf, size = 40)
 
-    amount_font_ttf = os.path.join(fonts_dir, "Roboto-Bold.ttf")
+    amount_font_ttf = os.path.join(fonts_dir, "Roboto-Black.ttf")
     amount_font = ImageFont.truetype(name_font_ttf, size = 40)
 
     text_font_ttf = os.path.join(fonts_dir, "Roboto-Regular.ttf")
-    text_font = ImageFont.truetype(text_font_ttf, size = 45)
+    text_font = ImageFont.truetype(text_font_ttf, size = 40)
 
     # write name to img
     nickname = res.author.display_name
@@ -433,6 +433,9 @@ async def superchat(res, msg):
         fill = (255, 255, 255, 255)
     )
 
+    # crop img of excessive length
+    final_height = txt_h + 144 if msg else 114
+    back_im = back_im.crop(0, 0, 690, final_height)
 
     # save image
     save_file = os.path.join(save_dir, str(random.randint(1,20)) + "red_sc.png")
