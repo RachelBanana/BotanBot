@@ -338,7 +338,7 @@ async def trans_to_jap(res, msg):
 # blue 1565C0 100yen
 # pleb
 async def superchat(res, msg):
-    await res.channel.send(res.author.avatar)
+    await res.channel.send(res.author.avatar_url)
 
 async def meme(res, msg):
     err_msg = "Please provide a correct meme argument! (ex: $meme woke)"
