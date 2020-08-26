@@ -363,27 +363,37 @@ async def superchat(res, msg):
     # convert amount to number and round off
     amount = round(float(amount), 2)
 
+    # determine sc backgroudn base on color
+    black = (0, 0, 0, 255)
+    white = (255, 255, 255, 255)
     if amount >= 10000:
         # red D00000 E62117 10000-50000yen
         sc_file_name = "red_sc.png"
+        fill = white
     elif amount >= 5000:
         # magenta C2185B E91E63 5000-9999yen
         sc_file_name = "mag_sc.png"
+        fill = white
     elif amount >= 2000:
         # orange E65100 F57C00 2000-4999yen
         sc_file_name = "org_sc.png"
+        fill = white
     elif amount >= 1000:
         # yellow FFB300 FFCA28 1000-1999yen
         sc_file_name = "yellow_sc.png"
+        fill = black
     elif amount >= 500:
         # green 00BFA5 1DE9B6 500-999yen
         sc_file_name = "green_sc.png"
+        fill = black
     elif amount >= 200:
         # light blue 00B8D4 00E5FF 200-499yen
         sc_file_name = "lightblue_sc.png"
+        fill = black
     elif amount >= 100:
         # blue 1565C0 100-199yen
         sc_file_name = "blue.png"
+        fill = white
         msg_args = []
     else:
         # pleb
@@ -425,7 +435,7 @@ async def superchat(res, msg):
         (118, 13),
         nickname,
         font = name_font,
-        fill = (255, 255, 255, 255)
+        fill = fill
     )
 
     # write amount to img
@@ -433,7 +443,7 @@ async def superchat(res, msg):
         (118, 61),
         amount,
         font = amount_font,
-        fill = (255, 255, 255, 255)
+        fill = fill
     )
 
     # write text to img
@@ -452,7 +462,7 @@ async def superchat(res, msg):
             (15, 129), 
             m, 
             font = text_font, 
-            fill = (255, 255, 255, 255)
+            fill = fill
         )
 
     # crop img of excessive length
