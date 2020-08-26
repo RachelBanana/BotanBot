@@ -353,6 +353,26 @@ async def trans_to_jap(res, msg):
 # blue 1565C0 100yen
 # pleb
 async def superchat(res, msg):
+    # error message if there is no msg
+    err_msg = "Please provide a correct superchat argument! For example:\n$sc 10000\nsimping for botan"
+    if not msg:
+        await res.channel.send(err_msg)
+        return
+
+    # split msg to money amount and text
+    amount, *msg_args = [m.strip() for m in msg.split("\n") if m]
+
+    # check if amount is a number
+    if not amount.replace('.','',1).isdigit():
+        await res.channel.send(err_msg)
+        return
+    
+    # format amount to yen with 2 decimal places
+    amount = round(float(amount), 2)
+
+    amount = "JP¥{:,.2f}".format(amount).rstrip("0").rstrip(".")
+    msg = to_raw_text("\n".join(msg_args))
+
     # get avatar and resize 
     avatar_url = res.author.avatar_url
     av_img = Image.open(requests.get(avatar_url, stream=True).raw)
@@ -366,6 +386,32 @@ async def superchat(res, msg):
     # open background sc, and paste in the avatar and the cropping mask
     back_im = Image.open(os.path.join(img_dir, "red_sc.png")).copy()
     back_im.paste(av_img, (15, 15), mask_im)
+
+    # add font
+    idraw = ImageDraw.Draw(back_im)
+    font_ttf = os.path.join(fonts_dir, "Roboto-Regular.ttf")
+    font = ImageFont.truetype(font_ttf, size = 45)
+
+    # write text to img
+    wraplength = 675
+
+    m, *words = msg.split(" ")
+    # wrap text if longer than wraplength
+    for word in words:
+        if idraw.textsize(m + " " + word, font)[0] > wraplength:
+            m += "\n" + word
+        else:
+            m += " " + word
+    txt_w, txt_h = idraw.textsize(m, font)
+    idraw.text(
+        (15, 129), 
+        m, 
+        font = font, 
+        fill = (255, 255, 255, 255)
+    )
+
+
+    # save image
     save_file = os.path.join(save_dir, str(random.randint(1,20)) + "red_sc.png")
     back_im.save(save_file)
 
