@@ -435,7 +435,7 @@ async def superchat(res, msg):
 
     # crop img of excessive length
     final_height = (txt_h + 144) if msg else 114
-    back_im = back_im.crop(0, 0, 690, final_height)
+    back_im = back_im.crop((0, 0, 690, final_height))
 
     # save image
     save_file = os.path.join(save_dir, str(random.randint(1,20)) + "red_sc.png")
