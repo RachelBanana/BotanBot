@@ -387,34 +387,46 @@ async def superchat(res, msg):
     back_im = Image.open(os.path.join(img_dir, "red_sc.png")).copy()
     back_im.paste(av_img, (15, 15), mask_im)
 
-    # add font
+    # add fonts
     idraw = ImageDraw.Draw(back_im)
-    font_ttf = os.path.join(fonts_dir, "Roboto-Regular.ttf")
-    font = ImageFont.truetype(font_ttf, size = 45)
+    name_font_ttf = os.path.join(fonts_dir, "Roboto-Light.ttf")
+    name_font = ImageFont.truetype(name_font_ttf, size = 40)
+
+    amount_font_ttf = os.path.join(fonts_dir, "Roboto-Bold.ttf")
+    amount_font = ImageFont.truetype(name_font_ttf, size = 40)
+
+    text_font_ttf = os.path.join(fonts_dir, "Roboto-Regular.ttf")
+    text_font = ImageFont.truetype(text_font_ttf, size = 45)
+
+    # write name to img
+    nickname = res.author.display_name
+    idraw.text(
+        (118, 13)
+    )
 
     # write amount to img
     idraw.text(
-        (118, 54),
+        (118, 61),
         amount,
-        font = font,
+        font = amount_font,
         fill = (255, 255, 255, 255)
     )
 
     # write text to img
-    wraplength = 675
+    wraplength = 660
 
     m, *words = msg.split(" ")
     ## wrap text if longer than wraplength
     for word in words:
-        if idraw.textsize(m + " " + word, font)[0] > wraplength:
+        if idraw.textsize(m + " " + word, text_font)[0] > wraplength:
             m += "\n" + word
         else:
             m += " " + word
-    txt_w, txt_h = idraw.textsize(m, font)
+    txt_w, txt_h = idraw.textsize(m, text_font)
     idraw.text(
         (15, 129), 
         m, 
-        font = font, 
+        font = text_font, 
         fill = (255, 255, 255, 255)
     )
 
