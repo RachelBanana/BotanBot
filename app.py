@@ -401,7 +401,10 @@ async def superchat(res, msg):
     # write name to img
     nickname = res.author.display_name
     idraw.text(
-        (118, 13)
+        (118, 13),
+        nickname,
+        font = name_font,
+        fill = (255, 255, 255, 255)
     )
 
     # write amount to img
