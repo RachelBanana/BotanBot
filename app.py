@@ -589,12 +589,12 @@ async def add_art(res, msg):
     await res.channel.send("Added one new artwork to database!")
 
 async def del_art(res, msg):
-    target_art = await db_artworks.find_one({"url": msg})
+    target_art = db_artworks.find_one({"url": msg})
     if not target_art:
         await res.channel.send("Can't find anything similar in the database!")
         return
     await res.channel.send("Found artwork, deleting now!")
-    await db_artworks.delete_one(target_art)
+    db_artworks.delete_one(target_art)
     await res.channel.send("Artwork successfully deleted.")
     pass
 
