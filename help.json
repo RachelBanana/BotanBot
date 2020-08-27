@@ -2,71 +2,95 @@
     "greet": {
         "desc": "Basic greetings.",
         "alias": ["hi", "hello"],
-        "usage": "$greet"
+        "usage": "$greet",
+        "extra_fields": []
     },
     "gao": {
         "desc": "Make a Botan-style roar!",
         "alias": [],
-        "usage": "$gao"
+        "usage": "$gao",
+        "extra_fields": []
     },
     "debut": {
         "desc": "Check time left until debut.",
         "alias": [],
-        "usage": "$debut"
+        "usage": "$debut",
+        "extra_fields": []
     },
     "birthday": {
         "desc": "Find out about Botan's birthday.",
         "alias": ["bday"],
-        "usage": "$birthday"
+        "usage": "$birthday",
+        "extra_fields": []
     },
     "translate": {
         "desc": "Translate any text to english.",
         "alias": ["trans"],
-        "usage": "$translate {text}"
+        "usage": "$translate {text}",
+        "extra_fields": []
     },
     "japanese": {
         "desc": "Translate any text to japanese with pronunciation.",
         "alias": ["jp"],
-        "usage": "$japanese {text}"
+        "usage": "$japanese {text}",
+        "extra_fields": []
     },
     "meme": {
-        "desc": "Generate customized meme contents.\n\n__Available memes:__\nwoke\nwoken\nfade\ndisgust\ntestimony",
+        "desc": "Generate customized meme contents.",
         "alias": [],
-        "usage": "$meme {meme}\n{first argument}\n{second argument}\n..."
+        "usage": "$meme {meme}\n{first argument}\n{second argument}\n...",
+        "extra_fields": [
+            {
+                "name": "Available Memes",
+                "value": ["woke", "woken", "fade", "disgust", "testimony"]
+            }
+        ]
     },
     "botan": {
         "desc": "Randomly displays an artwork of Botan-sama.",
         "alias": [],
-        "usage": "$botan"
+        "usage": "$botan",
+        "extra_fields": []
     },
     "100": {
         "desc": "Botan scores you with a 100!",
         "alias": [],
-        "usage": "$100"
+        "usage": "$100",
+        "extra_fields": []
     },
     "sleepy": {
         "desc": "Find out how many times are Bodans sleepy so far.",
         "alias": [],
-        "usage": "$sleepy"
+        "usage": "$sleepy",
+        "extra_fields": []
     },
     "subscribers": {
         "desc": "Check subscribers count of Botan's or other vtubers' YouTube channel.",
         "alias": ["subs", "subscriber"],
-        "usage": "$subscribers {optional:name}"
+        "usage": "$subscribers {optional:name}",
+        "extra_fields": []
     },
     "stream": {
         "desc": "Check Botan's or other vtubers' streaming status on YouTube.",
         "alias": ["live"],
-        "usage": "$stream {optional:name}"
+        "usage": "$stream {optional:name}",
+        "extra_fields": []
     },
     "voice": {
-        "desc": "Sends cute Botan voice clips.\n\n**In Stock:**\ndoya\npoi\nyes\nyay\nok\narigatou\nhyaaa\nty",
+        "desc": "Sends cute Botan voice clips.",
         "alias": ["v"],
-        "usage": "$voice {optional:clip name}"
+        "usage": "$voice {optional:clip name}",
+        "extra_fields": [
+            {
+                "name": "In Stock",
+                "value": ["doya", "poi", "yes", "yay", "ok", "arigatou", "hyaaa", "ty"]
+            }
+        ]
     },
     "superchat": {
         "desc": "Create a customized superchat image.",
         "alias": ["sc"],
-        "usage": "$superchat {money amount}\n{text}"
+        "usage": "$superchat {money amount}\n{text}",
+        "extra_fields": []
     }
 }
