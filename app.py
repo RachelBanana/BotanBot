@@ -562,7 +562,7 @@ async def post(res, msg):
         return
     channel = discord.utils.get(res.guild.text_channels, name= m[0].strip()) 
     embed = discord.Embed(title = m[1], description = "\n".join(m[2:]), colour = embed_color)
-    embed.set_footer("message by {}".format(res.author.mention))
+    embed.set_footer(text="message by {}".format(res.author.mention))
     if res.attachments:
         embed.set_image(url = res.attachments[0].url)
     await channel.send(content = None , embed = embed)
