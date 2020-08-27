@@ -35,6 +35,7 @@ log_channel = 741908598870769735
 pingcord = "Pingcord#3283"
 tweets_ch = 740896881827381259
 translated_tweets_ch = 741945787042496614
+fanart_ch = 740888816268738630
 
 ## database settings
 db_url = "mongodb+srv://{}:{}@botan.lkk4p.mongodb.net/{}?retryWrites=true&w=majority"
@@ -691,7 +692,13 @@ async def on_message(res):
             embed.title = to_eng(embed.title).text
             embed.description = to_eng(embed.description).text
             await channel.send(content = None, embed = embed)
-
+        
+    # if channel is fanart channel, automatically detects new tweets artwork.
+    if res.channel.id == fanart_ch and not res.content.startwith(prefix):
+        match = re.search(r"https://twitter.com/[a-zA-Z0-9_]+/status/[0-9]+", res.content)
+        if match:
+            await add_art(res, match.group())
+        return
 
     # checks if message needs attention (has prefix)
     if not res.content.startswith(prefix):
