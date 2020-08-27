@@ -83,7 +83,7 @@
         "extra_fields": [
             {
                 "name": "In Stock",
-                "value": ["doya", "poi", "yes", "yay", "ok", "arigatou", "hyaaa", "ty"]
+                "value": "doya, poi, yes, yay, ok, arigatou, hyaaa, ty"
             }
         ]
     },
