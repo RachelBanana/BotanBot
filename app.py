@@ -588,6 +588,16 @@ async def add_art(res, msg):
     db_artworks.insert_one({"url": msg})
     await res.channel.send("Added one new artwork to database!")
 
+async def del_art(res, msg):
+    target_art = await db_artworks.find_one({"url": msg})
+    if not target_art:
+        await res.channel.send("Can't find anything similar in the database!")
+        return
+    await res.channel.send("Found artwork, deleting now!")
+    await db_artworks.delete_one(target_art)
+    await res.channel.send("Artwork successfully deleted.")
+    pass
+
 ## hidden developer commands
 async def cross_server_post(res, msg):
     if str(res.author) != owner:
@@ -608,6 +618,7 @@ aliases = {
     "trans": "translate",
     "jp": "japanese",
     "addart": "add_art",
+    "delart": "del_art",
     "subs": "subscribers",
     "subscriber": "subscribers",
     "live": "stream",
@@ -638,6 +649,7 @@ admin_commands = {
     "post": post,
     "read": read,
     "add_art": add_art,
+    "del_art": del_art,
     "xpost": cross_server_post
 }
 
