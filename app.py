@@ -184,7 +184,7 @@ async def help_command(res, msg):
         embed = discord.Embed(title = "Help Menu: '{}' Command".format(msg), description = cmd_doc["desc"])
         for field in cmd_doc["extra_fields"]:
             field_msg = "\n".join(field["value"]) if isinstance(field["value"], list) else field["value"]
-            embed.add_field(name = field["name"], value = field_msg)
+            embed.add_field(name = field["name"], value = field_msg, inline = False)
         embed.add_field(name = "Usage", value = cmd_doc["usage"])
         if cmd_doc["alias"]:
             embed.add_field(name = "Aliases", value = ", ".join(cmd_doc["alias"]))
