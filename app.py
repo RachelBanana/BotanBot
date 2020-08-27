@@ -35,7 +35,7 @@ log_channel = 741908598870769735
 pingcord = "Pingcord#3283"
 tweets_ch = 740896881827381259
 translated_tweets_ch = 741945787042496614
-fanart_ch = 735145401094504538
+fanart_ch = 740888816268738630
 
 ## database settings
 db_url = "mongodb+srv://{}:{}@botan.lkk4p.mongodb.net/{}?retryWrites=true&w=majority"
@@ -695,7 +695,6 @@ async def on_message(res):
         
     # if channel is fanart channel, automatically detects new tweets artwork.
     if res.channel.id == fanart_ch and not res.content.startswith(prefix):
-        await res.channel.send("here")
         match = re.search(r"https://twitter.com/[a-zA-Z0-9_]+/status/[0-9]+", res.content)
         if match:
             await add_art(res, match.group())
