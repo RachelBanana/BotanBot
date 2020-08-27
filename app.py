@@ -694,7 +694,7 @@ async def on_message(res):
             await channel.send(content = None, embed = embed)
         
     # if channel is fanart channel, automatically detects new tweets artwork.
-    if res.channel.id == fanart_ch and not res.content.startwith(prefix):
+    if res.channel.id == fanart_ch and not res.content.startswith(prefix):
         await res.channel.send("here")
         match = re.search(r"https://twitter.com/[a-zA-Z0-9_]+/status/[0-9]+", res.content)
         if match:
