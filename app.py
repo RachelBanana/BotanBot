@@ -577,9 +577,7 @@ async def system_read(res, msg):
         return
     ann_ch = client.get_channel(announcement_ch)
     m = await ann_ch.fetch_message(int(msg))
-    await res.channel.send(m)
-    await res.channel.send(m.type == discord.MessageType.premium_guild_subscription)
-    await res.channel.send(m.system_content)
+    await res.channel.send(m.author.name)
 
 async def read(res, msg):
     channel = res.channel
