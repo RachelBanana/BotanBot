@@ -730,14 +730,9 @@ async def on_message(res):
 @client.event
 async def on_member_update(before, after):
     # If member has a role change (role added or deleted)
-    lg_ch = client.get_channel(log_channel)
-    lg_ch.send("here")
     if len(before.roles) != len(after.roles):
-        lg_ch.send("here")
         old_roles = set(role.id for role in before.roles)
         new_roles = set(role.id for role in after.roles)
-        lg_ch.send(old_roles)
-        lg_ch.send(new_roles)
         # If member gets server booster (Lion Tamer) role
         if 748842249030336542 in (new_roles - old_roles):
             await after.send("Thank you for boosting the server!")
