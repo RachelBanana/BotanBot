@@ -572,6 +572,12 @@ async def post(res, msg):
         embed.set_image(url = res.attachments[0].url)
     await channel.send(content = None , embed = embed)
 
+async def system_read(res, msg):
+    if not msg.isdigit():
+        return
+    m = discord.abc.Messageable.fetch_message(int(msg))
+    await res.channel.send(m)
+
 async def read(res, msg):
     channel = res.channel
     if msg:
@@ -659,6 +665,7 @@ booster_commands = {
 admin_commands = {
     "post": post,
     "read": read,
+    "xread": system_read,
     "add_art": add_art,
     "del_art": del_art,
     "xpost": cross_server_post
@@ -670,6 +677,19 @@ async def on_message(res):
     # checks if bot
     if res.author == client.user:
         return
+    
+    # checks if system message
+    if res.is_system():
+        mt = discord.MessageType
+        boosted_types = {
+            mt.premium_guild_subscription,
+            mt.premium_guild_tier_1,
+            mt.premium_guild_tier_2,
+            mt.premium_guild_tier_3
+        }
+        # check if system message is a nitro boost
+        if res.type in boosted_types:
+            pass
 
     # check if dm
     if isinstance(res.channel, discord.DMChannel):
