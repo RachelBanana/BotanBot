@@ -856,7 +856,11 @@ async def on_member_update(before, after):
         # If member loses Lion Tamer role
         elif 748842249030336542 in (old_roles - new_roles):
             title = "Lion Tamer's subscription expired"
-            await after.send("Your server boosting privilege is up!")
+            m = "Hi {}, I would like to inform you that your **Lion Tamer**'s role privileges have just expired.".format(booster_nickname(after))
+            m += " You may renew this subscription by boosting the server again, but regardless of your decision, it has been great to have you with me!"
+            m += " Thank you so much for your patronage!"
+            embed = discord.Embed(title = title, description = m, colour = embed_color)
+            await after.send(content = None, embed = embed)
             return
         
 
