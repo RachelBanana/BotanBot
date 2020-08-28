@@ -619,6 +619,15 @@ async def del_art(res, msg):
     pass
 
 ## booster commands
+"""booster's data template
+    "id": res.author.id,
+    "nickname": "",
+    "boosts_count": 1,
+    "custom_role": {
+        "name": "",
+        "color": -1
+    }
+"""
 async def new_booster_nickname(res, msg):
     if not msg:
         await res.channel.send("Please provide a nickname after the ``nickname`` command!")
@@ -626,7 +635,9 @@ async def new_booster_nickname(res, msg):
     db_boosters.update_one({"id": res.author.id}, {"$set": {"nickname": msg}})
     await res.channel.send("Noted, I will refer to you as {} from now on.".format(booster_nickname(res.author)))
 
-async def new_booster_role(res, msg):
+async def new_booster_color_role(res, msg):
+    # check if there is an existing color role
+    await res.channel.send("I'm sorry, this functionality is WIP now!")
     pass
 
 async def booster_news(res, msg):
@@ -685,7 +696,7 @@ commands = {
 booster_commands = {
     "greet": greet,
     "nickname": new_booster_nickname,
-    "role": new_booster_role,
+    "role": new_booster_color_role,
     "news": booster_news,
     "help": booster_help
 }
@@ -846,7 +857,7 @@ async def on_member_update(before, after):
         old_roles = set(role.id for role in before.roles)
         new_roles = set(role.id for role in after.roles)
         # If member gets server booster (Lion Tamer) role
-        if 748842249030336542 in (new_roles - old_roles):
+        if booster_role in (new_roles - old_roles):
             title = "New Lion Tamer"
             m = "Thank you for boosting the server, {}!".format(after.name)
             m += " As a token of appreciation from us, you are now granted access to the top secret **Lion Tamer**'s role privileges!"
@@ -859,7 +870,7 @@ async def on_member_update(before, after):
             await after.send(content = None, embed = embed)
             return
         # If member loses Lion Tamer role
-        elif 748842249030336542 in (old_roles - new_roles):
+        elif booster_role in (old_roles - new_roles):
             title = "Lion Tamer's subscription expired"
             m = "Hi {}, I would like to inform you that your **Lion Tamer**'s role privileges have just expired.".format(booster_nickname(after))
             m += " You may renew this subscription by boosting the server again, but regardless of your decision, it has been great to have you with me!"
