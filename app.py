@@ -820,10 +820,20 @@ async def on_member_update(before, after):
         new_roles = set(role.id for role in after.roles)
         # If member gets server booster (Lion Tamer) role
         if 748842249030336542 in (new_roles - old_roles):
-            await after.send("Thank you for boosting the server!")
+            title = "New Lion Tamer"
+            m = "Thank you for boosting the server, {}!".format(after.name)
+            m += " As a token of appreciation from us, you are now granted access to the top secret **Lion Tamer**'s role privileges!"
+            m += " Here are some commands you may use in this DM channel with me (prefix not required):"
+            m += "\n\n``nickname {new name}``: Change your nickname so I can refer to you differently!"
+            m += "\n``role {role name} {color in hex code}``: Create a custom color role for yourself in the server."
+            m += "\n``news``: Check for any upcoming events, server updates that are yet to (or will never) be announced to the public!"
+            m += "\n``help``: I can do more things! Use this commands to find out."
+            embed = discord.Embed(title = title, description = m, colour = embed_color)
+            await after.send(content = None, embed = embed)
             return
         # If member loses Lion Tamer role
         elif 748842249030336542 in (old_roles - new_roles):
+            title = "Lion Tamer's subscription expired"
             await after.send("Your server boosting privilege is up!")
             return
         
