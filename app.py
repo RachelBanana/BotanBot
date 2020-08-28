@@ -750,7 +750,7 @@ async def on_message(res):
         if not (booster_role in (role.id for role in author.roles) or str(res.author) == owner):
             # if previous booster, use different message
             if db_boosters.find_one({"id": res.author.id}):
-                m = "Hi {}! Thanks again for supporting me in the past!\n".format(res.author.name)
+                m = "Hi {}! Thanks again for supporting me in the past!\n".format(booster_nickname(author))
                 m += "I'm sorry but you need the Lion Tamer role again to use any of my commands here...*cries*"
             else:
                 m = "*A horny person appears! Botan flees.*"
@@ -772,7 +772,8 @@ async def on_message(res):
             return
 
         # else, send a generic message 
-        await res.channel.send("Welcome back, master!")
+        m = "I'm sorry {}, I didn't quite catch what you said! Can you say it again in a different way? Or use the ``help`` menu to find out about what I can do more!"
+        await res.channel.send(m.format(booster_nickname(author)))
         return
 
     # check for banned links
