@@ -31,6 +31,7 @@ token = os.getenv("TOKEN")
 owner = os.getenv("OWNER")
 prefix = os.getenv("PREFIX")
 embed_color = int(os.getenv("EMBED_COLOR"), 16)
+guild_id = 740886590716510280
 log_channel = 741908598870769735
 pingcord = "Pingcord#3283"
 tweets_ch = 740896881827381259
@@ -665,7 +666,12 @@ async def on_message(res):
 
     # check if dm
     if isinstance(res.channel, discord.DMChannel):
-        await res.channel.send("*A horny person appears! Botan flees.*")
+        # check if sender is nitro booster
+        author = client.get_guild(guild_id).get_member(res.author.id)
+        if 748842249030336542 not in (role.id for role in author.roles):
+            await res.channel.send("*A horny person appears! Botan flees.*")
+            return
+        await res.channel.send("Welcome back, master!")
         return
 
     # check for banned links
