@@ -36,6 +36,8 @@ pingcord = "Pingcord#3283"
 tweets_ch = 740896881827381259
 translated_tweets_ch = 741945787042496614
 fanart_ch = 740888816268738630
+booster_role = 741427676409233430
+announcement_ch = 740887547651162211
 
 ## database settings
 db_url = "mongodb+srv://{}:{}@botan.lkk4p.mongodb.net/{}?retryWrites=true&w=majority"
@@ -723,6 +725,19 @@ async def on_message(res):
     action = admin_commands.get(cmd, None)
     if action:
         await action(res, msg)
+
+# On members updating their profiles
+@client.event
+async def on_member_update(before, after):
+    # If member has a role change (role added or deleted)
+    if len(before.roles) != len(after.roles):
+        old_roles = set(role.id for role in before.roles)
+        new_roles = set(role.id for role in after.roles)
+        # If member gets server booster (Lion Tamer) role
+        if 748842249030336542 in (new_roles - old_roles):
+            await after.send("Thank you for boosting the server!")
+            return
+        
 
 # Coroutine Functions
 async def jst_clock():
