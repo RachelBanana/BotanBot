@@ -667,7 +667,7 @@ async def on_message(res):
     # check if dm
     if isinstance(res.channel, discord.DMChannel):
         # check if sender is nitro booster
-        author = client.get_guild(guild_id).get_member(res.author.id)
+        author = client.get_guild(730929488103211069).get_member(res.author.id)
         if 748842249030336542 not in (role.id for role in author.roles):
             await res.channel.send("*A horny person appears! Botan flees.*")
             return
