@@ -572,6 +572,7 @@ async def post(res, msg):
         embed.set_image(url = res.attachments[0].url)
     await channel.send(content = None , embed = embed)
 
+### a test function to check how system messages work
 async def system_read(res, msg):
     if not msg.isdigit():
         return
@@ -690,7 +691,12 @@ async def on_message(res):
         }
         # check if system message is a nitro boost
         if res.type in boosted_types:
-            pass
+            ann_ch = res.guild.get_channel(announcement_ch)
+            m = "{} just fed the lion!".format(res.author.mention)
+            if res.type != mt.premium_guild_subscription:
+                m += " {} has achieved **Level {}**!\nThank you so much, we could never make it without your selfless contribution!".format(res.guild.name, res.guild.premium_tier)
+            embed = discord.Embed(title = "New Nitro Boost", description = m, colour = 0xf47fff)
+            await ann_ch.send(content = None, embed = embed)
 
     # check if dm
     if isinstance(res.channel, discord.DMChannel):
