@@ -50,6 +50,7 @@ cluster = MongoClient(db_url.format(db_user, db_pass, db_name))
 db = cluster[db_name]
 db_artworks = db["artworks"]
 db_settings = db["settings"]
+db_boosters = db["boosters"]
 
 counter = db_settings.find_one({"name": "counter"})
 
@@ -602,6 +603,8 @@ async def del_art(res, msg):
     await res.channel.send("Artwork successfully deleted.")
     pass
 
+## booster commands
+
 ## hidden developer commands
 async def cross_server_post(res, msg):
     if str(res.author) != owner:
@@ -649,6 +652,10 @@ commands = {
     "superchat": superchat
 }
 
+booster_commands = {
+    "greet": greet
+}
+
 admin_commands = {
     "post": post,
     "read": read,
@@ -666,11 +673,31 @@ async def on_message(res):
 
     # check if dm
     if isinstance(res.channel, discord.DMChannel):
-        # check if sender is nitro booster
-        author = client.get_guild(730929488103211069).get_member(res.author.id)
-        if 748842249030336542 not in (role.id for role in author.roles):
+        
+        # get guild and author member info in botan guild
+        botan_guild = client.get_guild(guild_id)
+        author = botan_guild.get_member(res.author.id)
+
+        # return if not nitro booster or owner
+        if not (booster_role in (role.id for role in author.roles) or str(res.author) == owner):
             await res.channel.send("*A horny person appears! Botan flees.*")
             return
+
+        # get command and message text (don't need prefix)
+        cmd, *msg = res.content.split(" ", 1)
+        cmd = cmd.strip().lower()
+        msg = msg[0] if msg else ""
+
+        # change any command alias to original command name
+        cmd = aliases.get(cmd, cmd)
+
+        # if public command exists, perform action
+        action = booster_commands.get(cmd, None)
+        if action:
+            await action(res, msg)
+            return
+
+        # else, send a generic message 
         await res.channel.send("Welcome back, master!")
         return
 
