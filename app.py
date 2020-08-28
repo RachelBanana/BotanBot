@@ -576,7 +576,7 @@ async def system_read(res, msg):
     if not msg.isdigit():
         return
     ann_ch = client.get_channel(announcement_ch)
-    m = ann_ch.fetch_message(int(msg))
+    m = await ann_ch.fetch_message(int(msg))
     await res.channel.send(m)
     await res.channel.send(m.type == discord.MessageType.premium_guild_subscription)
     await res.channel.send(m.system_content)
