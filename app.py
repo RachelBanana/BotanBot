@@ -691,12 +691,32 @@ async def on_message(res):
         }
         # check if system message is a nitro boost
         if res.type in boosted_types:
+            # make a server announcement of boost
             ann_ch = res.guild.get_channel(announcement_ch)
             m = "{} just fed the lion!".format(res.author.mention)
             if res.type != mt.premium_guild_subscription:
                 m += " {} has achieved **Level {}**!\nThank you so much, we could never make it without your selfless contribution!".format(res.guild.name, res.guild.premium_tier)
             embed = discord.Embed(title = "New Nitro Boost", description = m, colour = 0xf47fff)
             await ann_ch.send(content = None, embed = embed)
+
+            # check if user exists in boosters collections, if not create a new one, else update boosts count
+            booster_data = db_boosters.find_one({"id": res.author.id})
+            if booster_data:
+                booster_data["boosts_count"] += 1
+                db_boosters.update_one({"id": res.author.id}, {"$set": {"boosts_count": booster_data["boosts_count"]}})
+            else:
+                booster_data = {
+                    "id": res.author.id,
+                    "nickname": "",
+                    "boosts_count": 1,
+                    "custom_role": {
+                        "name": "",
+                        "color": -1
+                    }
+                }
+                db_boosters.insert_one(booster_data)              
+            
+
 
     # check if dm
     if isinstance(res.channel, discord.DMChannel):
