@@ -619,6 +619,17 @@ async def del_art(res, msg):
     pass
 
 ## booster commands
+async def new_booster_nickname(res, msg):
+    pass
+
+async def new_booster_role(res, msg):
+    pass
+
+async def booster_news(res, msg):
+    pass
+
+async def booster_help(res, msg):
+    pass
 
 ## hidden developer commands
 async def cross_server_post(res, msg):
@@ -668,7 +679,11 @@ commands = {
 }
 
 booster_commands = {
-    "greet": greet
+    "greet": greet,
+    "nickname": new_booster_nickname,
+    "role": new_booster_role,
+    "news": booster_news,
+    "help": booster_help
 }
 
 admin_commands = {
