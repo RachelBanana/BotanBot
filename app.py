@@ -714,9 +714,8 @@ async def on_message(res):
                         "color": -1
                     }
                 }
-                db_boosters.insert_one(booster_data)              
-            
-
+                db_boosters.insert_one(booster_data)
+            return
 
     # check if dm
     if isinstance(res.channel, discord.DMChannel):
@@ -816,6 +815,10 @@ async def on_member_update(before, after):
         # If member gets server booster (Lion Tamer) role
         if 748842249030336542 in (new_roles - old_roles):
             await after.send("Thank you for boosting the server!")
+            return
+        # If member loses Lion Tamer role
+        elif 748842249030336542 in (old_roles - new_roles):
+            await after.send("Your server boosting privilege is up!")
             return
         
 
