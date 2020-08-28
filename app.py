@@ -620,16 +620,20 @@ async def del_art(res, msg):
 
 ## booster commands
 async def new_booster_nickname(res, msg):
-    pass
+    if not msg:
+        await res.channel.send("Please provide a nickname after the ``nickname`` command!")
+        return
+    db_boosters.update_one({"id": res.author.id}, {"$set": {"nickname": msg}})
+    await res.channel.send("Noted, I will refer to you as {} from now on.".format(booster_nickname(res.author)))
 
 async def new_booster_role(res, msg):
     pass
 
 async def booster_news(res, msg):
-    pass
+    await res.channel.send("We don't have any news right now!")
 
 async def booster_help(res, msg):
-    pass
+    await res.channel.send("I'm terribly sorry! This command is still a WIP!")
 
 ## hidden developer commands
 async def cross_server_post(res, msg):
@@ -772,7 +776,7 @@ async def on_message(res):
             return
 
         # else, send a generic message 
-        m = "I'm sorry {}, I didn't quite catch what you said! Can you say it again in a different way? Or use the ``help`` menu to find out about what I can do more!"
+        m = "Sorry {}, I didn't quite catch what you said! Can you say it again in a different way?\nOr use the ``help`` menu to find out more about what I can do!"
         await res.channel.send(m.format(booster_nickname(author)))
         return
 
