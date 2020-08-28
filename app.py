@@ -153,6 +153,13 @@ def add_corners(im, rad):
     im.putalpha(alpha)
     return im
 
+## Boosters utility tools
+def booster_nickname(user):
+    booster = db_boosters.find_one({"id": user.id})
+    if booster:
+        return booster["nickname"] or user.name
+    return user.name
+
 # Main Events
 
 ## on setting up, disconnecting, and errors
@@ -825,9 +832,9 @@ async def on_member_update(before, after):
             m += " As a token of appreciation from us, you are now granted access to the top secret **Lion Tamer**'s role privileges!"
             m += " Here are some commands you may use in this DM channel with me (prefix not required):"
             m += "\n\n``nickname {new name}``: Change your nickname so I can refer to you differently!"
-            m += "\n``role {role name} {color in hex code}``: Create a custom color role for yourself in the server."
-            m += "\n``news``: Check for any upcoming events, server updates that are yet to (or will never) be announced to the public!"
-            m += "\n``help``: I can do more things! Use this commands to find out."
+            m += "\n\n``role {role name} {color in hex code}``: Create a custom color role for yourself in the server."
+            m += "\n\n``news``: Check for any upcoming events, server updates that are yet to (or will never) be announced to the public!"
+            m += "\n\n``help``: I can do more things! Use this command to find out."
             embed = discord.Embed(title = title, description = m, colour = embed_color)
             await after.send(content = None, embed = embed)
             return
