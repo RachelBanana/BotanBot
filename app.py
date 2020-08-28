@@ -624,6 +624,7 @@ async def del_art(res, msg):
     "nickname": "",
     "boosts_count": 1,
     "custom_role": {
+        "id": -1,
         "name": "",
         "color": -1
     }
@@ -747,6 +748,7 @@ async def on_message(res):
                     "nickname": "",
                     "boosts_count": 1,
                     "custom_role": {
+                        "id": -1,
                         "name": "",
                         "color": -1
                     }
