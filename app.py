@@ -726,7 +726,13 @@ async def on_message(res):
 
         # return if not nitro booster or owner
         if not (booster_role in (role.id for role in author.roles) or str(res.author) == owner):
-            await res.channel.send("*A horny person appears! Botan flees.*")
+            # if previous booster, use different message
+            if db_boosters.find_one({"id": res.author.id}):
+                m = "Hi {}! Thanks again for supporting me in the past!\n".format(res.author.name)
+                m += "I'm sorry but you need the Lion Tamer role again to use any of my commands here...*cries*"
+            else:
+                m = "*A horny person appears! Botan flees.*"
+            await res.channel.send(m)
             return
 
         # get command and message text (don't need prefix)
