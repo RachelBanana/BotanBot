@@ -573,6 +573,7 @@ async def post(res, msg):
     await channel.send(content = None , embed = embed)
 
 async def system_read(res, msg):
+    await res.channel.send("here")
     if not msg.isdigit():
         return
     m = discord.abc.Messageable.fetch_message(int(msg))
