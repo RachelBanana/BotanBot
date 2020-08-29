@@ -763,7 +763,7 @@ async def mass_role_dm(res, msg):
     if len(m) < 2:
         await res.channel.send("Need at least {} more arguments!".format(2 - len(m)))
         return
-    target_role = botan_guild.get_role(m[0])
+    target_role = botan_guild.get_role(int(m[0]))
     for member in target_role.members:
         await member.send(m[1])
 
