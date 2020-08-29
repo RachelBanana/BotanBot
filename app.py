@@ -668,7 +668,7 @@ async def new_booster_color_role(res, msg):
             return
 
         # update new custom role id
-        author.add_roles(new_custom_role)
+        await author.add_roles(new_custom_role)
         custom_role_id = new_custom_role.id
         db_boosters.update_one({"id": res.author.id}, {"$set": {"custom_role": custom_role_id}})
         await res.channel.send("New custom role created!")
