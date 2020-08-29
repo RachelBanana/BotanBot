@@ -742,6 +742,16 @@ async def cross_server_post(res, msg):
     target_channel = client.get_channel(int(m[0]))
     await target_channel.send(m[1])
 
+async def direct_dm(res, msg):
+    if str(res.author) != owner:
+        return
+    m = msg.split("\n", 1)
+    if len(m) < 2:
+        await res.channel.send("Need at least {} more arguments!".format(2 - len(m)))
+        return
+    target_user = client.get_user(int(m[0]))
+    await target_user.send(m[1])
+
 
 ## command names
 aliases = {
@@ -793,7 +803,8 @@ admin_commands = {
     "xread": system_read,
     "add_art": add_art,
     "del_art": del_art,
-    "xpost": cross_server_post
+    "xpost": cross_server_post,
+    "xdm": direct_dm
 }
 
 ## on messaging
