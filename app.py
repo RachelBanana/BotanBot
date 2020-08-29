@@ -692,6 +692,20 @@ async def new_booster_color_role(res, msg):
             return
         await res.channel.send("Custom role edited!")
 
+async def del_booster_color_role(res, msg):
+    # retrieve booster data
+    custom_role_id = db_boosters.find_one({"id": res.author.id})["custom_role"]
+    botan_guild = client.get_guild(guild_id)
+
+    if custom_role_id == -1:
+        await res.channel.send("You don't seem to own a custom role yet! Please contact an admin if otherwise!")
+        return
+    
+    custom_role = botan_guild.get_role(custom_role_id)
+    await custom_role.delete(reason = "{} requested a custom role deletion".format(str(res.author)))
+    db_boosters.update_one({"id": res.author.id}, {"$set": {"custom_role": -1}})
+    await res.channel.send("Role deletion successful! You may add a custom role again anytime you want.")
+
 async def booster_news(res, msg):
     await res.channel.send("We don't have any news right now!")
 
@@ -750,7 +764,8 @@ booster_commands = {
     "nickname": new_booster_nickname,
     "role": new_booster_color_role,
     "news": booster_news,
-    "help": booster_help
+    "help": booster_help,
+    "delrole": del_booster_color_role
 }
 
 admin_commands = {
