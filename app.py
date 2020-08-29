@@ -785,9 +785,32 @@ async def mass_role_dm(res, msg):
     if len(m) < 2:
         await res.channel.send("Need at least {} more arguments!".format(2 - len(m)))
         return
-    target_role = botan_guild.get_role(int(m[0]))
-    for member in target_role.members:
-        await member.send(m[1])
+
+    instr, message = m
+    instr = instr.split(" ")
+
+    # get target_role
+    target_role = botan_guild.get_role(int(instr[0]))
+
+    if len(instr) > 1:
+        # if embed, send embed message
+        if instr[1].lower() == "embed":
+            # split message into title and description
+            message = message.split("\n")
+            if len(message) < 2:
+                await res.channel.send("need at least {} more arguments for embed message!".format(2 - len(message)))
+            
+            embed = discord.Embed(title = message[0], description = "\n".join(message[1:]), colour = embed_color)
+            
+            if res.attachments:
+                embed.set_image(url = res.attachments[0].url)
+
+            for member in target_role.members:
+                await member.send(content = None, embed = embed)
+    else:
+        # else send normal message
+        for member in target_role.members:
+            await member.send(message)
 
 ## command names
 aliases = {
