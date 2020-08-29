@@ -66,5 +66,9 @@
     "yaaan": {
         "quote": "Yaaan~",
         "clips": ["yaaan.mp3"]
+    },
+    "cry": {
+        "quote": "*Sad lion noises*",
+        "clips": ["cry.mp3", "cry2.mp3"]
     }
 }
