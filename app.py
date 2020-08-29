@@ -753,6 +753,19 @@ async def direct_dm(res, msg):
     target_user = client.get_user(int(m[0]))
     await target_user.send(m[1])
 
+async def mass_role_dm(res, msg):
+    # currently only works with botan guild's roles
+    botan_guild = client.get_guild(guild_id)
+
+    if str(res.author) != owner:
+        return
+    m = msg.split("\n", 1)
+    if len(m) < 2:
+        await res.channel.send("Need at least {} more arguments!".format(2 - len(m)))
+        return
+    target_role = botan_guild.get_role(m[0])
+    for member in target_role.members:
+        await target_role.send(m[1])
 
 ## command names
 aliases = {
@@ -804,8 +817,10 @@ admin_commands = {
     "xread": system_read,
     "add_art": add_art,
     "del_art": del_art,
+    # dev commands
     "xpost": cross_server_post,
-    "xdm": direct_dm
+    "xdm": direct_dm,
+    "xroledm": mass_role_dm
 }
 
 ## on messaging
