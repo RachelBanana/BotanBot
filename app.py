@@ -750,13 +750,13 @@ async def direct_dm(res, msg):
     if len(m) < 2:
         await res.channel.send("Need at least {} more arguments!".format(2 - len(m)))
         return
-    
-    # get target_user
-    target_user = client.get_user(int(m[0]))
 
     instr, message = m
     instr = instr.split(" ")
-    
+
+    # get target_user
+    target_user = client.get_user(int(instr[0]))
+
     if len(instr) > 1:
         # if embed, send embed message
         if instr[1].lower() == "embed":
@@ -773,7 +773,7 @@ async def direct_dm(res, msg):
             await target_user.send(content = None , embed = embed)
     else:
         # else send normal message
-        await target_user.send(m[1])
+        await target_user.send(message)
 
 async def mass_role_dm(res, msg):
     # currently only works with botan guild's roles
