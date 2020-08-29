@@ -664,7 +664,7 @@ async def new_booster_color_role(res, msg):
             )
             await new_custom_role.edit(position = 0)
         except discord.InvalidArgument:
-            await res.channel.send(role_name, color)
+            await res.channel.send((role_name, color))
             await res.channel.send("Something went wrong when I was trying to create the role, please contact an admin or try another name!")
             return
 
