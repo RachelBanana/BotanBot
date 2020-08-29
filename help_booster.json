@@ -14,7 +14,7 @@
     "role": {
         "desc": "Create or edit an existing custom color role for yourself in the server.\n\nExample: ``role \"Rachel\" #4285F4``",
         "alias": [],
-        "usage": "role \"{Optional:role name}\" {Optional:hex color code}",
+        "usage": "role \"{optional:role name}\" {optional:hex color code}",
         "extra_fields": []
     },
     "delrole": {
