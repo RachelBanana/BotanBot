@@ -685,7 +685,7 @@ async def new_booster_color_role(res, msg):
                 colour = color if color else discord.Colour.default(),
                 reason = "{} created new custom booster role".format(str(res.author))
             )
-            await new_custom_role.edit(position = 20)
+            await new_custom_role.edit(position = 22)
         except discord.InvalidArgument:
             await res.channel.send("Something went wrong when I was trying to create the role, please contact an admin or try another name!")
             return
@@ -750,8 +750,30 @@ async def direct_dm(res, msg):
     if len(m) < 2:
         await res.channel.send("Need at least {} more arguments!".format(2 - len(m)))
         return
+    
+    # get target_user
     target_user = client.get_user(int(m[0]))
-    await target_user.send(m[1])
+
+    instr, message = m
+    instr = instr.split(" ")
+    
+    if len(instr) > 1:
+        # if embed, send embed message
+        if instr[1].lower() == "embed":
+            # split message into title and description
+            message = message.split("\n")
+            if len(message) < 2:
+                await res.channel.send("need at least {} more arguments for embed message!".format(2 - len(message)))
+            
+            embed = discord.Embed(title = message[0], description = "\n".join(message[1:]), colour = embed_color)
+            
+            if res.attachments:
+                embed.set_image(url = res.attachments[0].url)
+
+            await target_user.send(content = None , embed = embed)
+    else:
+        # else send normal message
+        await target_user.send(m[1])
 
 async def mass_role_dm(res, msg):
     # currently only works with botan guild's roles
