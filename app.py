@@ -922,6 +922,7 @@ async def on_member_update(before, after):
         new_roles = set(role.id for role in after.roles)
         # If member gets server booster (Lion Tamer) role
         if booster_role in (new_roles - old_roles):
+            # Send dm introducing the perks
             title = "New Lion Tamer"
             m = "Thank you for boosting the server, {}!".format(after.name)
             m += " As a token of appreciation from us, you are now granted access to the top secret **Lion Tamer**'s role privileges!"
@@ -935,6 +936,17 @@ async def on_member_update(before, after):
             return
         # If member loses Lion Tamer role
         elif booster_role in (old_roles - new_roles):
+            # Get booster data
+            custom_role_id = db_boosters.find_one({"id": after.id})["custom_role"]
+            botan_guild = client.get_guild(guild_id)
+
+            # If custom role id is not -1, remove existing custom role
+            if custom_role_id != -1:
+                custom_role = botan_guild.get_role(custom_role_id)
+                await custom_role.delete(reason = "{}'s lion tamer's subscription expired".format(str(after)))
+                db_boosters.update_one({"id": after.id}, {"$set": {"custom_role": -1}})          
+
+            # Send dm informing the expiration
             title = "Lion Tamer's subscription expired"
             m = "Hi {}, I would like to inform you that your **Lion Tamer**'s role privileges have just expired.".format(booster_nickname(after))
             m += " You may renew this subscription by boosting the server again, but regardless of your decision, it has been great to have you with me!"
