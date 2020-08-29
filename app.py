@@ -765,7 +765,7 @@ async def mass_role_dm(res, msg):
         return
     target_role = botan_guild.get_role(m[0])
     for member in target_role.members:
-        await target_role.send(m[1])
+        await member.send(m[1])
 
 ## command names
 aliases = {
