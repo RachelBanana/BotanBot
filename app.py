@@ -623,11 +623,7 @@ async def del_art(res, msg):
     "id": res.author.id,
     "nickname": "",
     "boosts_count": 1,
-    "custom_role": {
-        "id": -1,
-        "name": "",
-        "color": -1
-    }
+    "custom_role": -1
 """
 async def new_booster_nickname(res, msg):
     if not msg:
@@ -637,9 +633,62 @@ async def new_booster_nickname(res, msg):
     await res.channel.send("Noted, I will refer to you as {} from now on.".format(booster_nickname(res.author)))
 
 async def new_booster_color_role(res, msg):
-    # check if there is an existing color role
-    await res.channel.send("I'm sorry, this functionality is WIP now!")
-    pass
+    # parse msg into role name and color code
+    err_msg = "Please provide the correct arguments required for creating a color role!"
+    match = re.fullmatch(r"(\"(?P<name>.+)\")? ?(#(?P<color>[0-9a-fA-F]{6}))?", msg)
+
+    if not match:
+        await res.channel.send(err_msg)
+        return
+
+    role_name, color = match.group("name", "color")
+    if not (role_name or color):
+        await res.channel.send(err_msg)
+        return
+    
+    if color:
+        color = discord.Colour(int(color, 16))
+
+    # retrieve booster data
+    custom_role_id = db_boosters.find_one({"id": res.author.id})["custom_role"]
+    botan_guild = client.get_guild(guild_id)
+
+    # if there is no existing color role
+    if custom_role_id == -1:
+        try:
+            new_custom_role = await botan_guild.create_role(
+                name = role_name if role_name else "Custom Color Role",
+                colour = color if color else discord.Colour.default(),
+                reason = "{} created new custom booster role".format(str(res.author))
+            )
+            await new_custom_role.edit(position = 0)
+        except discord.InvalidArgument:
+            await res.channel.send("Something went wrong when I was trying to create the role, please contact an admin or try another name!")
+            return
+
+        # update new custom role id
+        custom_role_id = new_custom_role.id
+        db_boosters.update_one({"id": res.author.id}, {"$set": {"custom_role": custom_role_id}})
+        await res.channel.send("New custom role created!")
+
+    # if there is an existing color role
+    else:
+        custom_role = botan_guild.get_role(custom_role_id)
+        
+        # if role not found, return message
+        if not custom_role:
+            await res.channel.send("I can't seem to find your existing role! Please contact an admin for troubleshooting.")
+            return
+
+        try:
+            await custom_role.edit(
+                name = role_name if role_name else custom_role.name,
+                colour = color if color else custom_role.colour
+            )
+        except discord.InvalidArgument:
+            await res.channel.send("Something went wrong when I was trying to edit the role, please contact an admin or try another name!")
+            return
+        await res.channel.send("Custom role edited!")
 
 async def booster_news(res, msg):
     await res.channel.send("We don't have any news right now!")
@@ -747,11 +796,7 @@ async def on_message(res):
                     "id": res.author.id,
                     "nickname": "",
                     "boosts_count": 1,
-                    "custom_role": {
-                        "id": -1,
-                        "name": "",
-                        "color": -1
-                    }
+                    "custom_role": -1
                 }
                 db_boosters.insert_one(booster_data)
             return
@@ -865,7 +910,7 @@ async def on_member_update(before, after):
             m += " As a token of appreciation from us, you are now granted access to the top secret **Lion Tamer**'s role privileges!"
             m += " Here are some commands you may use in this DM channel with me (prefix not required):"
             m += "\n\n``nickname {new name}``: Change your nickname so I can refer to you differently!"
-            m += "\n\n``role {role name} {color in hex code}``: Create a custom color role for yourself in the server."
+            m += "\n\n``role \"{role name}\" {color in hex code}``: Create a custom color role for yourself in the server."
             m += "\n\n``news``: Check for any upcoming events, server updates that are yet to (or will never) be announced to the public!"
             m += "\n\n``help``: I can do more things! Use this command to find out."
             embed = discord.Embed(title = title, description = m, colour = embed_color)
