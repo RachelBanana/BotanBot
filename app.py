@@ -84,7 +84,11 @@ with open("vtubers.json") as f:
     # set up vtubers information other than botan
     vtubers = json.load(f)
 with open("voices.json") as f:
+    # set up voice clips data
     voices_dict = json.load(f)
+with open("help_booster.json") as f:
+    # set up booster help doc
+    booster_help_doc = json.load(f)
 
 # Temporary storage for artworks (only urls)
 temp_artwork_cursor = db_artworks.aggregate([{"$sample": {"size": 30}}])
@@ -625,6 +629,24 @@ async def del_art(res, msg):
     "boosts_count": 1,
     "custom_role": -1
 """
+async def booster_help(res, msg):
+    msg = msg.strip().lower()
+    msg = aliases.get(msg, msg)
+    if msg in booster_help_doc:
+        cmd_doc = booster_help_doc[msg]
+        embed = discord.Embed(title = "Lion Tamer's Help Menu: '{}' Command".format(msg), description = cmd_doc["desc"])
+        for field in cmd_doc["extra_fields"]:
+            field_msg = "\n".join(field["value"]) if isinstance(field["value"], list) else field["value"]
+            embed.add_field(name = field["name"], value = field_msg, inline = False)
+        embed.add_field(name = "Usage", value = cmd_doc["usage"])
+        if cmd_doc["alias"]:
+            embed.add_field(name = "Aliases", value = ", ".join(cmd_doc["alias"]))
+    else:
+        embed = discord.Embed(title = "Lion Tamer's Help Menu: Available Commands", description = "\n".join(booster_help_doc))
+        embed.add_field(name = "More Help", value = "help {command name}")
+    embed.colour = embed_color
+    await res.channel.send(content = None, embed = embed)
+
 async def new_booster_nickname(res, msg):
     if not msg:
         await res.channel.send("Please provide a nickname after the ``nickname`` command!")
@@ -707,10 +729,7 @@ async def del_booster_color_role(res, msg):
     await res.channel.send("Role deletion successful! You may add a custom role again anytime you want.")
 
 async def booster_news(res, msg):
-    await res.channel.send("We don't have any news right now!")
-
-async def booster_help(res, msg):
-    await res.channel.send("I'm terribly sorry! This command is still a WIP!")
+    await res.channel.send("We don't have any news right now!\nPlease check again later.")
 
 ## hidden developer commands
 async def cross_server_post(res, msg):
@@ -929,7 +948,7 @@ async def on_member_update(before, after):
             m += " Here are some commands you may use in this DM channel with me (prefix not required):"
             m += "\n\n``nickname {new name}``: Change your nickname so I can refer to you differently!"
             m += "\n\n``role \"{role name}\" {color in hex code}``: Create a custom color role for yourself in the server."
-            m += "\n\n``news``: Check for any upcoming events, server updates that are yet to (or will never) be announced to the public!"
+            m += "\n\n``news``: Sneak peek on any upcoming events, server updates that are yet to be announced to the public!"
             m += "\n\n``help``: I can do more things! Use this command to find out."
             embed = discord.Embed(title = title, description = m, colour = embed_color)
             await after.send(content = None, embed = embed)
