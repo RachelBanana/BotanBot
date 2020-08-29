@@ -33,6 +33,7 @@ prefix = os.getenv("PREFIX")
 embed_color = int(os.getenv("EMBED_COLOR"), 16)
 guild_id = 740886590716510280
 log_channel = 741908598870769735
+dm_log_channel = 749264565958737930
 pingcord = "Pingcord#3283"
 tweets_ch = 740896881827381259
 translated_tweets_ch = 741945787042496614
@@ -850,6 +851,9 @@ async def on_message(res):
 
     # check if dm
     if isinstance(res.channel, discord.DMChannel):
+        # log content to dm log channel for record
+        dm_lg_ch = client.get_channel(dm_log_channel)
+        await dm_lg_ch.send("{}\n{}".format(str(res.author),res.content))
         
         # get guild and author member info in botan guild
         botan_guild = client.get_guild(guild_id)
