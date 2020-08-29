@@ -652,6 +652,7 @@ async def new_booster_color_role(res, msg):
     # retrieve booster data
     custom_role_id = db_boosters.find_one({"id": res.author.id})["custom_role"]
     botan_guild = client.get_guild(guild_id)
+    author = botan_guild.get_member(res.author.id)
 
     # if there is no existing color role
     if custom_role_id == -1:
@@ -663,10 +664,12 @@ async def new_booster_color_role(res, msg):
             )
             await new_custom_role.edit(position = 0)
         except discord.InvalidArgument:
+            await res.channel.send(role_name, color)
             await res.channel.send("Something went wrong when I was trying to create the role, please contact an admin or try another name!")
             return
 
         # update new custom role id
+        author.add_roles(new_custom_role)
         custom_role_id = new_custom_role.id
         db_boosters.update_one({"id": res.author.id}, {"$set": {"custom_role": custom_role_id}})
         await res.channel.send("New custom role created!")
