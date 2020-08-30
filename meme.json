@@ -65,5 +65,18 @@
             "size": 60,
             "fill": [255, 255, 255, 255]
         }
+    },
+    "stonks": {
+        "file": "botan_stonks.png",
+        "positions": [
+            [0.5, 0.0967]
+        ],
+        "wrapsize": 0.98,
+        "align": "center",
+        "font": {
+            "name": "ComicSans-Regular.ttf",
+            "size": 53,
+            "fill": [255, 255, 255, 255]
+        }        
     }
 }
