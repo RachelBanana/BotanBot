@@ -1022,9 +1022,10 @@ async def on_member_update(before, after):
             m += " As a token of appreciation from us, you are now granted access to the top secret **Lion Tamer**'s role privileges!"
             m += " Here are some commands you may use in this DM channel with me (prefix not required):"
             m += "\n\n``nickname {new name}``: Change your nickname so I can refer to you differently!"
-            m += "\n\n``role \"{role name}\" {color in hex code}``: Create a custom color role for yourself in the server."
-            m += "\n\n``news``: Sneak peek on any upcoming events, server updates that are yet to be announced to the public!"
-            m += "\n\n``help``: I can do more things! Use this command to find out."
+            m += "\n``role \"{role name}\" {color in hex code}``: Create a custom color role for yourself in the server."
+            m += "\n``news``: Sneak peek on any upcoming events, server updates that are yet to be announced to the public!"
+            m += "\n``help``: I can do more things! Use this command to find out."
+            m += "\n\nStay tune for more exclusive features in the foreseeable future, and thanks again for your patronage!"
             embed = discord.Embed(title = title, description = m, colour = embed_color)
             await after.send(content = None, embed = embed)
             return
