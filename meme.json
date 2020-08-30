@@ -74,8 +74,8 @@
         "wrapsize": 0.98,
         "align": "center",
         "font": {
-            "name": "ComicSans-Regular.ttf",
-            "size": 53,
+            "name": "OpenSans-Regular.ttf",
+            "size": 45,
             "fill": [255, 255, 255, 255]
         }        
     }
