@@ -895,7 +895,8 @@ async def on_message(res):
                 "{} tried to tame our lion goddess!\n...\n[Task Failed]\n...\nWell...At least they will make a good meal...\n\"Itadakimasu~!\"",
                 "Thank you for boosting the server, {}!\nWe give you a perfect score!\n\n" + ":100: :100: :100: :100: :100:\n" * 5,
                 "{} has just pledged their eternal loyalty to Botan's Gamer's Clan [SSRB], and swear in the name of our lion goddess that they will never be a C in games (cheater).\n\n\"Comrade!\" *Salutes*",
-                "{} starts using \"poi\" as their new battle roar cry whenever they throw grenades in COD, truly a Bodan!"
+                "{} starts using \"poi\" as their new battle roar cry whenever they throw grenades in COD, truly a Bodan!",
+                "{} has just purchased one month's worth of ~~Weed~~ Shiso Leaves from our ~~drug dealing~~ botanist lion, thank you for your support!"
             )
             m = random.choice(m_choices).format(res.author.mention)
 
