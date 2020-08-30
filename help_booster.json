@@ -6,9 +6,9 @@
         "extra_fields": []
     },
     "nickname": {
-        "desc": "Change your nickname so I can address you differently!",
+        "desc": "Show your current nickname or change it so I can address you differently!",
         "alias": [],
-        "usage": "nickname {name}",
+        "usage": "nickname {optional:name}",
         "extra_fields": []
     },
     "role": {

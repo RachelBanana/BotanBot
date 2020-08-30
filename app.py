@@ -650,7 +650,7 @@ async def booster_help(res, msg):
 
 async def new_booster_nickname(res, msg):
     if not msg:
-        await res.channel.send("Please provide a nickname after the ``nickname`` command!")
+        await res.channel.send("Your current nickname is {}. If you wish to change it, please provide an argument for the ``nickname`` command!".format(booster_nickname(res.author)))
         return
     db_boosters.update_one({"id": res.author.id}, {"$set": {"nickname": msg}})
     await res.channel.send("Noted, I will refer to you as {} from now on.".format(booster_nickname(res.author)))
