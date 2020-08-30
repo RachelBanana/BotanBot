@@ -1026,11 +1026,34 @@ async def on_member_join(member):
     # welcome message (only for botan server)
     if member.guild.id != guild_id:
         return
+    
+    # get data for welcome message
     wc_ch = client.get_channel(welcome_ch)
     r_ch = client.get_channel(rules_ch)
+    member_count  = member.guild.member_count
     m = "Paao~ Welcome to Shishiro Botan's Den, {}!\nPlease be sure to read the rules in {} and support our lion goddess Botan. ☀️"
     m = m.format(member.mention, r_ch.mention)
-    await wc_ch.send(m)
+
+    # get avatar and resize
+    avatar_url = member.avatar_url
+    av_img = Image.open(requests.get(avatar_url, stream=True).raw)
+    av_img = av_img.resize((250, 250))
+
+    # draw a mask to crop the ellipse
+    mask_im = Image.new("L", (250, 250), 0)
+    draw = ImageDraw.Draw(mask_im)
+    draw.ellipse((0, 0, 250, 250), fill=255)
+
+    # open background image, paste in the avatar and the cropping mask
+    bg_file_name = "welcome_background.png"
+    back_im = Image.open(os.path.join(img_dir, bg_file_name)).copy()
+    back_im.paste(av_img, (385, 50), mask_im)    
+
+    # save image
+    save_file = os.path.join(save_dir, str(random.randint(1,20)) + "wc_bg.png")
+    back_im.save(save_file)
+
+    await wc_ch.send(m, file = discord.File(save_file))
 
 # On members updating their profiles
 @client.event
