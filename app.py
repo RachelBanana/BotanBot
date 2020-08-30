@@ -1015,7 +1015,7 @@ async def on_member_update(before, after):
         old_roles = set(role.id for role in before.roles)
         new_roles = set(role.id for role in after.roles)
         # If member gets server booster (Lion Tamer) role
-        if booster_role in (new_roles - old_roles):
+        if booster_role in (new_roles - old_roles) or 748842249030336542 in (new_roles - old_roles):
             # Send dm introducing the perks
             title = "New Lion Tamer"
             m = "Thank you for boosting the server, {}!".format(after.name)
@@ -1027,10 +1027,12 @@ async def on_member_update(before, after):
             m += "\n``help``: I can do more things! Use this command to find out."
             m += "\n\nStay tune for more exclusive features in the foreseeable future, and thanks again for your patronage!"
             embed = discord.Embed(title = title, description = m, colour = embed_color)
+            embed.set_image(url = "https://pbs.twimg.com/media/Ef2UpVQXgAApSxP?format=jpg&name=large")
+            embed.set_footer(text = "image taken from @Shuuzo3 Twitter")
             await after.send(content = None, embed = embed)
             return
         # If member loses Lion Tamer role
-        elif booster_role in (old_roles - new_roles):
+        elif booster_role in (old_roles - new_roles) or 748842249030336542 in (new_roles - old_roles):
             # Get booster data
             custom_role_id = db_boosters.find_one({"id": after.id})["custom_role"]
             botan_guild = client.get_guild(guild_id)
