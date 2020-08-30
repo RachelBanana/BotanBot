@@ -888,7 +888,17 @@ async def on_message(res):
         if res.type in boosted_types:
             # make a server announcement of boost
             ann_ch = res.guild.get_channel(announcement_ch)
-            m = "{} just fed the lion!".format(res.author.mention)
+
+            ## randomly chooses one msg as boosting announcement
+            m_choices = (
+                "{} just fed the lioness! But Botan is still hungry... Run!!!",
+                "{} tried to tame our lion goddess!\n...\n[Task Failed]\n...\nWell...At least they will make a good meal...\n\"Itadakimasu~!\"",
+                "Thank you for boosting the server, {}!\nWe give you a perfect score!\n\n" + ":100: :100: :100: :100: :100:\n" * 5,
+                "{} has just pledged their eternal loyalty to Botan's Gamer's Clan [SSRB], and swear in the name of our lion goddess that they will never be a C in games (cheater).\n\n\"Comrade!\" *Salutes*",
+
+            )
+            m = random.choice(m_choices).format(res.author.mention)
+
             if res.type != mt.premium_guild_subscription:
                 m += " {} has achieved **Level {}**!\nThank you so much, we could never make it without your selfless contribution!".format(res.guild.name, res.guild.premium_tier)
             embed = discord.Embed(title = "New Nitro Boost", description = m, colour = 0xf47fff)
