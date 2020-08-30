@@ -1028,7 +1028,7 @@ async def on_member_join(member):
         return
     wc_ch = client.get_channel(welcome_ch)
     r_ch = client.get_channel(rules_ch)
-    m = "Paao~ Welcome to Shishiro Botan's Den, {}!\nPlease be sure to read the rules in {} and support our lion goddess Botan."
+    m = "Paao~ Welcome to Shishiro Botan's Den, {}!\nPlease be sure to read the rules in {} and support our lion goddess Botan. ☀️"
     m = m.format(member.mention, r_ch.mention)
     await wc_ch.send(m)
 
