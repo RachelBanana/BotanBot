@@ -1018,21 +1018,25 @@ async def on_member_update(before, after):
         if booster_role in (new_roles - old_roles) or 748842249030336542 in (new_roles - old_roles):
             # Send dm introducing the perks
             title = "New Lion Tamer"
-            m = "Thank you for boosting the server, {}!".format(after.name)
-            m += " As a token of appreciation from us, you are now granted access to the top secret **Lion Tamer**'s role privileges!"
-            m += " Here are some commands you may use in this DM channel with me (prefix not required):"
-            m += "\n\n``nickname {new name}``: Change your nickname so I can refer to you differently!"
-            m += "\n``role \"{role name}\" {color in hex code}``: Create a custom color role for yourself in the server."
-            m += "\n``news``: Sneak peek on any upcoming events, server updates that are yet to be announced to the public!"
-            m += "\n``help``: I can do more things! Use this command to find out."
-            m += "\n\nStay tune for more exclusive features in the foreseeable future, and thanks again for your patronage!"
+            m = [
+                "Thank you for boosting the server, {}!".format(after.name),
+                " As a token of appreciation from us, you are now granted access to the top secret **Lion Tamer**'s role privileges!",
+                " Here are some commands you may use in this DM channel with me (prefix not required):",
+                "\n\n``nickname``: Change your nickname so I can refer to you differently!",
+                "\n``role``: Create a custom color role for yourself in the server. Use the 'help role' command to for more information!",
+                "\n``news``: Sneak peek on any upcoming events, server updates that are yet to be announced to the public!",
+                "\n``help``: I can do more things! Use this command to find out.",
+                "\n\nStay tune for more exclusive features in the foreseeable future, and thanks again for your patronage!"
+            ]
+            m = "".join(m)
+            
             embed = discord.Embed(title = title, description = m, colour = embed_color)
             embed.set_image(url = "https://pbs.twimg.com/media/Ef2UpVQXgAApSxP?format=jpg&name=large")
             embed.set_footer(text = "image taken from @Shuuzo3 Twitter")
             await after.send(content = None, embed = embed)
             return
         # If member loses Lion Tamer role
-        elif booster_role in (old_roles - new_roles) or 748842249030336542 in (new_roles - old_roles):
+        elif booster_role in (old_roles - new_roles) or 748842249030336542 in (old_roles - new_roles):
             # Get booster data
             custom_role_id = db_boosters.find_one({"id": after.id})["custom_role"]
             botan_guild = client.get_guild(guild_id)
