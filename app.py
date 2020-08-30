@@ -40,6 +40,8 @@ translated_tweets_ch = 741945787042496614
 fanart_ch = 740888816268738630
 booster_role = 741427676409233430
 announcement_ch = 740887547651162211
+welcome_ch = 740888968089829447
+rules_ch = 740887522044805141
 
 ## database settings
 db_url = "mongodb+srv://{}:{}@botan.lkk4p.mongodb.net/{}?retryWrites=true&w=majority"
@@ -1017,6 +1019,18 @@ async def on_message(res):
     action = admin_commands.get(cmd, None)
     if action:
         await action(res, msg)
+
+# On members joining the server
+@client.event
+async def on_member_join(member):
+    # welcome message (only for botan server)
+    if member.guild.id != guild_id:
+        return
+    wc_ch = client.get_channel(welcome_ch)
+    r_ch = client.get_channel(rules_ch)
+    m = "Paao~ Welcome to Shishiro Botan's Den, {}!\nPlease be sure to read the rules in {} and support our lion goddess Botan."
+    m = m.format(member.mention, r_ch.mention)
+    await wc_ch.send(m)
 
 # On members updating their profiles
 @client.event
