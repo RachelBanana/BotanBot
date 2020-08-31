@@ -735,7 +735,7 @@ async def del_booster_color_role(res, msg):
 async def booster_news(res, msg):
     up_news_ch = client.get_channel(upcoming_news_channel)
     last_news = await up_news_ch.fetch_message(up_news_ch.last_message_id)
-    await res.channel.send(last_news.content)
+    await res.channel.send(last_news.content, embeds = last_news.embeds)
 
 ## hidden developer commands
 async def cross_server_post(res, msg):
