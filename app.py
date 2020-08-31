@@ -1057,7 +1057,7 @@ async def on_member_join(member):
     lg_ch = client.get_channel(log_channel)
     idraw = ImageDraw.Draw(back_im)
 
-    font_name = "uni-sans.heavy-caps.otf"
+    font_name = "OpenSans-Regular.ttf"
     # "uni-sans.heavy-caps.otf"
     font_ttf = os.path.join(fonts_dir, font_name)
 
