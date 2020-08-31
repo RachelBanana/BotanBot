@@ -1058,14 +1058,16 @@ async def on_member_join(member):
     idraw = ImageDraw.Draw(back_im)
 
     font_name = "uni-sans.heavy-caps.otf"
-    # "uni-sans.heavy-caps.otf"
     font_ttf = os.path.join(fonts_dir, font_name)
 
     welcome_font = ImageFont.truetype(font_ttf, size = 76)
     name_font = ImageFont.truetype(font_ttf, size = 37)
     count_font = ImageFont.truetype(font_ttf, size = 30)
 
-    shadow_fill = (0, 0, 0, 15)
+    # shadow layer
+    shadow_fill = (0, 0, 0, 10)
+    shadow_layer = Image.new('RGBA', back_im.size, (255,255,255,0))
+    s_layer = ImageDraw.Draw(shadow_layer)
 
     # write messages to image
     width, height = back_im.size
@@ -1078,10 +1080,10 @@ async def on_member_join(member):
         pos = ((width-txt_w)/2, y_pos - txt_h/2)
 
         # add shadow
-        idraw.text((pos[0] - 3, pos[1]), msg, font = font, fill = shadow_fill)
-        idraw.text((pos[0] + 3, pos[1]), msg, font = font, fill = shadow_fill)
-        idraw.text((pos[0], pos[1] - 3), msg, font = font, fill = shadow_fill)
-        idraw.text((pos[0], pos[1] + 3), msg, font = font, fill = shadow_fill)
+        s_layer.text((pos[0] - 3, pos[1]), msg, font = font, fill = shadow_fill)
+        s_layer.text((pos[0] + 3, pos[1]), msg, font = font, fill = shadow_fill)
+        s_layer.text((pos[0], pos[1] - 3), msg, font = font, fill = shadow_fill)
+        s_layer.text((pos[0], pos[1] + 3), msg, font = font, fill = shadow_fill)
 
         # draw text over
         idraw.text(
@@ -1090,10 +1092,12 @@ async def on_member_join(member):
             font = font,
             fill = (255, 255, 255, 255)
         )
+    
+    combined_im = Image.alpha_composite(back_im, shadow_layer)
 
     # save image
     save_file = os.path.join(save_dir, str(random.randint(1,20)) + "wc_bg.png")
-    back_im.save(save_file)
+    combined_im.save(save_file)
 
     await wc_ch.send(m, file = discord.File(save_file))
 
