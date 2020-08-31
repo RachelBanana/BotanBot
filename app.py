@@ -1,7 +1,7 @@
 # external libraries
 import discord
 from googletrans import Translator
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
 import googleapiclient.discovery
 import requests
 
@@ -1094,7 +1094,7 @@ async def on_member_join(member):
         )
     
     for _ in range(10):
-        shadow_layer = shadow_layer.filter(Image.Filter.Blur)
+        shadow_layer = shadow_layer.filter(ImageFilter.Blur)
     
     combined_im = Image.alpha_composite(back_im, shadow_layer)
 
