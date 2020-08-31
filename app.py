@@ -1054,9 +1054,10 @@ async def on_member_join(member):
     back_im.paste(av_img, (385, 50), mask_im)    
 
     # add fonts
+    lg_ch = client.get_channel(log_channel)
     idraw = ImageDraw.Draw(back_im)
 
-    font_name = "OpenSans-ExtraBold.ttf"
+    font_name = "uni-sans.heavy-caps.otf"
     # "uni-sans.heavy-caps.otf"
     font_ttf = os.path.join(fonts_dir, font_name)
 
@@ -1066,12 +1067,14 @@ async def on_member_join(member):
 
     # write messages to image
     width, height = back_im.size
+    await lg_ch.send((width, height))
     fonts = (welcome_font, name_font, count_font)
     y_positions = (354, 406, 450)
     msgs = ("WELCOME", str(member).upper(), "{}TH MEMBER!".format(member_count))
 
     for font, y_pos, msg in zip(fonts, y_positions, msgs):
         txt_w, txt_h = idraw.textsize(msg, font)
+        await lg_ch.send((txt_w, txt_h))
         idraw.text(
             ((width-txt_w)/2, height*y_pos - txt_h/2),
             msg,
