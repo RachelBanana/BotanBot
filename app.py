@@ -447,7 +447,7 @@ async def superchat(res, msg):
     name_font = ImageFont.truetype(name_font_ttf, size = 40)
 
     amount_font_ttf = os.path.join(fonts_dir, "Roboto-Black.ttf")
-    amount_font = ImageFont.truetype(name_font_ttf, size = 40)
+    amount_font = ImageFont.truetype(amount_font_ttf, size = 40)
 
     text_font_ttf = os.path.join(fonts_dir, "Roboto-Regular.ttf")
     text_font = ImageFont.truetype(text_font_ttf, size = 40)
@@ -1052,6 +1052,31 @@ async def on_member_join(member):
     bg_file_name = "welcome_background.png"
     back_im = Image.open(os.path.join(img_dir, bg_file_name)).copy()
     back_im.paste(av_img, (385, 50), mask_im)    
+
+    # add fonts
+    idraw = ImageDraw.Draw(back_im)
+
+    font_name = "uni-sans.heavy-caps.otf"
+    font_ttf = os.path.join(fonts_dir, font_name)
+
+    welcome_font = ImageFont.truetype(font_ttf, size = 60)
+    name_font = ImageFont.truetype(font_ttf, size = 30)
+    count_font = ImageFont.truetype(font_ttf, size = 20)
+
+    # write messages to image
+    width, height = back_im.size
+    fonts = (welcome_font, name_font, count_font)
+    y_positions = (354, 406, 450)
+    msgs = ("WELCOME", str(member).upper(), "{}TH MEMBER!".format(member_count))
+
+    for font, y_pos, msg in zip(fonts, y_positions, msgs):
+        txt_w, txt_h = idraw.textsize(msg, font)
+        idraw.text(
+            ((width-txt_w)/2, height*y_pos - txt_h/2),
+            msg,
+            font = font,
+            fill = (255, 255, 255, 255)
+        )
 
     # save image
     save_file = os.path.join(save_dir, str(random.randint(1,20)) + "wc_bg.png")
