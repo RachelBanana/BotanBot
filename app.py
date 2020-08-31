@@ -1057,7 +1057,7 @@ async def on_member_join(member):
     lg_ch = client.get_channel(log_channel)
     idraw = ImageDraw.Draw(back_im)
 
-    font_name = "OpenSans-Regular.ttf"
+    font_name = "uni-sans.heavy-caps.otf"
     # "uni-sans.heavy-caps.otf"
     font_ttf = os.path.join(fonts_dir, font_name)
 
@@ -1076,7 +1076,7 @@ async def on_member_join(member):
         txt_w, txt_h = idraw.textsize(msg, font)
         await lg_ch.send((txt_w, txt_h))
         idraw.text(
-            ((width-txt_w)/2, height*y_pos - txt_h/2),
+            ((width-txt_w)/2, y_pos - txt_h/2),
             msg,
             font = font,
             fill = (255, 255, 255, 255)
