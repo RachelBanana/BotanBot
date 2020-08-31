@@ -1061,22 +1061,31 @@ async def on_member_join(member):
     # "uni-sans.heavy-caps.otf"
     font_ttf = os.path.join(fonts_dir, font_name)
 
-    welcome_font = ImageFont.truetype(font_ttf, size = 60)
-    name_font = ImageFont.truetype(font_ttf, size = 30)
-    count_font = ImageFont.truetype(font_ttf, size = 20)
+    welcome_font = ImageFont.truetype(font_ttf, size = 76)
+    name_font = ImageFont.truetype(font_ttf, size = 37)
+    count_font = ImageFont.truetype(font_ttf, size = 25)
+
+    shadow_fill = (15, 51, 58, 50)
 
     # write messages to image
     width, height = back_im.size
-    await lg_ch.send((width, height))
     fonts = (welcome_font, name_font, count_font)
     y_positions = (354, 406, 450)
     msgs = ("WELCOME", str(member).upper(), "{}TH MEMBER!".format(member_count))
 
     for font, y_pos, msg in zip(fonts, y_positions, msgs):
         txt_w, txt_h = idraw.textsize(msg, font)
-        await lg_ch.send((txt_w, txt_h))
+        pos = ((width-txt_w)/2, y_pos - txt_h/2)
+
+        # add shadow
+        idraw.text((pos[0] - 1, pos[1]), msg, font = font, fill = shadow_fill)
+        idraw.text((pos[0] + 1, pos[1]), msg, font = font, fill = shadow_fill)
+        idraw.text((pos[0], pos[1] - 1), msg, font = font, fill = shadow_fill)
+        idraw.text((pos[0], pos[1] + 1), msg, font = font, fill = shadow_fill)
+
+        # draw text over
         idraw.text(
-            ((width-txt_w)/2, y_pos - txt_h/2),
+            pos,
             msg,
             font = font,
             fill = (255, 255, 255, 255)
