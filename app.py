@@ -1065,7 +1065,7 @@ async def on_member_join(member):
     count_font = ImageFont.truetype(font_ttf, size = 30)
 
     # shadow layer
-    shadow_fill = (0, 0, 0, 10)
+    shadow_fill = (0, 0, 0, 20)
     shadow_layer = Image.new('RGBA', back_im.size, (255,255,255,0))
     s_layer = ImageDraw.Draw(shadow_layer)
 
@@ -1080,10 +1080,10 @@ async def on_member_join(member):
         pos = ((width-txt_w)/2, y_pos - txt_h/2)
 
         # add shadow
-        s_layer.text((pos[0] - 3, pos[1]), msg, font = font, fill = shadow_fill)
+        s_layer.text((pos[0] - 2, pos[1]), msg, font = font, fill = shadow_fill)
         s_layer.text((pos[0] + 3, pos[1]), msg, font = font, fill = shadow_fill)
         s_layer.text((pos[0], pos[1] - 3), msg, font = font, fill = shadow_fill)
-        s_layer.text((pos[0], pos[1] + 3), msg, font = font, fill = shadow_fill)
+        s_layer.text((pos[0], pos[1] + 2), msg, font = font, fill = shadow_fill)
 
         # draw text over
         idraw.text(
