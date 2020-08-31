@@ -1065,7 +1065,7 @@ async def on_member_join(member):
     count_font = ImageFont.truetype(font_ttf, size = 30)
 
     # shadow layer
-    shadow_fill = (0, 0, 0, 20)
+    shadow_fill = (0, 0, 0, 30)
     shadow_layer = Image.new('RGBA', back_im.size, (255,255,255,0))
     s_layer = ImageDraw.Draw(shadow_layer)
 
