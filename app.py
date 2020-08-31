@@ -1056,7 +1056,8 @@ async def on_member_join(member):
     # add fonts
     idraw = ImageDraw.Draw(back_im)
 
-    font_name = "uni-sans.heavy-caps.otf"
+    font_name = "OpenSans-ExtraBold.ttf"
+    # "uni-sans.heavy-caps.otf"
     font_ttf = os.path.join(fonts_dir, font_name)
 
     welcome_font = ImageFont.truetype(font_ttf, size = 60)
