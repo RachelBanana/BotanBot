@@ -1065,7 +1065,7 @@ async def on_member_join(member):
     count_font = ImageFont.truetype(font_ttf, size = 30)
 
     # shadow layer
-    shadow_fill = (0, 0, 0, 30)
+    shadow_fill = (0, 0, 0, 60)
     shadow_layer = Image.new('RGBA', back_im.size, (255,255,255,0))
     s_layer = ImageDraw.Draw(shadow_layer)
 
@@ -1092,6 +1092,9 @@ async def on_member_join(member):
             font = font,
             fill = (255, 255, 255, 255)
         )
+    
+    for _ in range(10):
+        shadow_layer = shadow_layer.filter(Image.Filter.Blur)
     
     combined_im = Image.alpha_composite(back_im, shadow_layer)
 
