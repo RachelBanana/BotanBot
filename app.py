@@ -42,6 +42,7 @@ booster_role = 741427676409233430
 announcement_ch = 740887547651162211
 welcome_ch = 740888968089829447
 rules_ch = 740887522044805141
+upcoming_news_channel = 749905915339210824
 
 ## database settings
 db_url = "mongodb+srv://{}:{}@botan.lkk4p.mongodb.net/{}?retryWrites=true&w=majority"
@@ -732,7 +733,9 @@ async def del_booster_color_role(res, msg):
     await res.channel.send("Role deletion successful! You may add a custom role again anytime you want.")
 
 async def booster_news(res, msg):
-    await res.channel.send("We don't have any news right now!\nPlease check again later.")
+    up_news_ch = client.get_channel(upcoming_news_channel)
+    last_news = await up_news_ch.fetch_message(up_news_ch.last_message_id)
+    await res.channel.send(last_news.content)
 
 ## hidden developer commands
 async def cross_server_post(res, msg):
