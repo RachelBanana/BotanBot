@@ -393,11 +393,11 @@ async def superchat(res, msg):
     
     # convert amount to int/float and round off if float
     if "." in amount:
-        format_string = "JP¥{:,.2f}"
         amount = round(float(amount), 2)
+        format_string = "JP¥{:,.2f}".format(amount).rstrip("0").rstrip(".")
     else:
-        format_string = "JP¥{:,d}"
         amount = int(amount)
+        format_string = "JP¥{:,}".format(amount)
 
     # determine sc backgroudn base on color
     black = (0, 0, 0, 255)
@@ -437,7 +437,7 @@ async def superchat(res, msg):
         return
 
     # format amount and msg
-    amount = format_string.format(amount).rstrip("0").rstrip(".")
+    amount = format_string
     msg = to_raw_text("\n".join(msg_args))
 
     # get avatar and resize 
@@ -506,7 +506,7 @@ async def superchat(res, msg):
     back_im = back_im.crop((0, 0, 690, final_height))
 
     # save image
-    save_file = os.path.join(save_dir, str(random.randint(1,20)) + "sc.png")
+    save_file = os.path.join(save_dir, str(random.randint(1,20)) + sc_file_name)
     back_im.save(save_file)
 
     await res.channel.send(file = discord.File(save_file))
