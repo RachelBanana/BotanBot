@@ -384,7 +384,7 @@ async def superchat(res, msg):
         return
     
     # convert amount to number and round off if float
-    amount = round(float(amount), 2) if "." in amount else int(amount)
+    amount = int(amount)
 
     # determine sc backgroudn base on color
     black = (0, 0, 0, 255)
@@ -493,7 +493,7 @@ async def superchat(res, msg):
     back_im = back_im.crop((0, 0, 690, final_height))
 
     # save image
-    save_file = os.path.join(save_dir, str(random.randint(1,20)) + "red_sc.png")
+    save_file = os.path.join(save_dir, str(random.randint(1,20)) + "sc.png")
     back_im.save(save_file)
 
     await res.channel.send(file = discord.File(save_file))
