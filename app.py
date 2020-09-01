@@ -396,7 +396,7 @@ async def superchat(res, msg):
         format_string = "JP¥{:,.2f}"
         amount = round(float(amount), 2)
     else:
-        format_string = "JP¥{:,}"
+        format_string = "JP¥{:,d}"
         amount = int(amount)
 
     # determine sc backgroudn base on color
