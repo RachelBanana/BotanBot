@@ -383,8 +383,8 @@ async def superchat(res, msg):
         await res.channel.send(err_msg)
         return
     
-    # convert amount to number and round off
-    amount = round(float(amount), 2)
+    # convert amount to number and round off if float
+    amount = round(float(amount), 2) if "." in amount else int(amount)
 
     # determine sc backgroudn base on color
     black = (0, 0, 0, 255)
