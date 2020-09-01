@@ -164,8 +164,8 @@ def add_corners(im, rad):
 ## Boosters utility tools
 def booster_nickname(user):
     booster = db_boosters.find_one({"id": user.id})
-    if booster:
-        return booster["nickname"] or user.name
+    if booster and booster["nickname"]:
+        return booster["nickname"]
     return user.name
 
 # Main Events
