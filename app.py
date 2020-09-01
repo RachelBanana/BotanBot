@@ -163,10 +163,12 @@ def add_corners(im, rad):
 
 ## Boosters utility tools
 def booster_nickname(user):
+    # if user is a booster and has a booster nickname, return nickname. 
     booster = db_boosters.find_one({"id": user.id})
     if booster and booster["nickname"]:
         return booster["nickname"]
-    return user.name
+    # else return guild nickname or user's name depending on the class type
+    return user.nick if isinstance(user, discord.Member) else user.name
 
 # Main Events
 
@@ -658,8 +660,6 @@ async def booster_help(res, msg):
 
 async def new_booster_nickname(res, msg):
     if not msg:
-        lg_ch = client.get_channel(log_channel)
-        await lg_ch.send(isinstance(res.author, discord.User))
         await res.channel.send("Your current nickname is {}. If you wish to change it, please provide an argument for the ``nickname`` command!".format(booster_nickname(res.author)))
         return
     db_boosters.update_one({"id": res.author.id}, {"$set": {"nickname": msg}})
