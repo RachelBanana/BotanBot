@@ -172,7 +172,7 @@ def booster_nickname(user):
     if booster and booster["nickname"]:
         return booster["nickname"]
     # else return guild nickname or user's name depending on the class type
-    return user.nick if isinstance(user, discord.Member) else user.name
+    return user.nick if isinstance(user, discord.Member) and user.nick else user.name
 
 # Main Events
 
