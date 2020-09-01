@@ -1,8 +1,8 @@
 {
     "greet": {
-        "desc": "Basic greetings.",
+        "desc": "Basic greetings to yourself or others.",
         "alias": ["hi", "hello", "lalion"],
-        "usage": "$greet",
+        "usage": "$greet {optional:mention}",
         "extra_fields": []
     },
     "gao": {
