@@ -222,7 +222,7 @@ async def help_command(res, msg):
 
 ### command message commands
 async def greet(res, msg):
-    nickname = booster_nickname(nickname)
+    nickname = booster_nickname(res.author)
     m = "La Lion~! La Lioon~! Nene ni Gao Gao~ La Lion~!\nOhayou-gozaimasu, {}.".format(nickname)
     await res.channel.send(m)
 
