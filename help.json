@@ -1,7 +1,7 @@
 {
     "greet": {
         "desc": "Basic greetings.",
-        "alias": ["hi", "hello"],
+        "alias": ["hi", "hello", "lalion"],
         "usage": "$greet",
         "extra_fields": []
     },
