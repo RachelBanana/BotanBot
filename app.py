@@ -429,7 +429,7 @@ async def superchat(res, msg):
         return
 
     # format amount and msg
-    amount = "JP¥{:,.2f}".format(amount).rstrip("0").rstrip(".")
+    amount = format_string.format(amount).rstrip("0").rstrip(".")
     msg = to_raw_text("\n".join(msg_args))
 
     # get avatar and resize 
