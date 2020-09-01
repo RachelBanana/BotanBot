@@ -512,7 +512,7 @@ async def superchat(res, msg):
     await res.channel.send(file = discord.File(save_file))
 
 async def meme(res, msg):
-    err_msg = "Please provide a correct meme argument! (ex: $meme woke)"
+    err_msg = "Please provide a correct meme argument!! (ex: $meme woke)"
 
     if not msg:
         await res.channel.send(err_msg)
