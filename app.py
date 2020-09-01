@@ -162,6 +162,10 @@ def add_corners(im, rad):
     return im
 
 ## Boosters utility tools
+def is_booster(user):
+    # checks if user is a booster and returns the booster's data
+    return db_boosters.find_one({"id": user.id})
+
 def booster_nickname(user):
     # if user is a booster and has a booster nickname, return nickname. 
     booster = db_boosters.find_one({"id": user.id})
@@ -218,7 +222,9 @@ async def help_command(res, msg):
 
 ### command message commands
 async def greet(res, msg):
-    await res.channel.send("やほー!\nHello!")
+    nickname = booster_nickname(nickname)
+    m = "La Lion~! La Lioon~! Nene ni Gao Gao~ La Lion~!\nOhayou-gozaimasu, {}.".format(nickname)
+    await res.channel.send(m)
 
 async def voice(res, msg):
     if not msg:
@@ -829,6 +835,7 @@ async def mass_role_dm(res, msg):
 aliases = {
     "hi": "greet",
     "hello": "greet",
+    "lalion": "greet",
     "bday": "birthday",
     "trans": "translate",
     "jp": "japanese",
