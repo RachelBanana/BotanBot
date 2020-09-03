@@ -1206,7 +1206,6 @@ async def update_streams():
                 id = vid_id
             )
             vid_res = vid_req.execute()["items"][0]
-            await lg_ch.send("here")
 
             # if vid is ending, send message and update status to completed
             live_streaming_details = vid_res["liveStreamingDetails"]
@@ -1216,7 +1215,6 @@ async def update_streams():
                 db_streams.update_one({"id": vid_id}, {"$set": {"status": "completed", "actual_end_time": actual_end_time}})
                 await live_ch.send("Live stream ended at {}!".format(actual_end_time))
                 continue
-            await lg_ch.send("here")
 
             # else, update live message statistics
             concurrent_viewers = live_streaming_details["concurrentViewers"]
@@ -1227,8 +1225,6 @@ async def update_streams():
             vid_url = "https://www.youtube.com/watch?v=" + vid_id
             m = "{} Botan is now live!\n```\nLive Views: {}\nTotal Views: {}\nLikes: {}\n Dislikes: {}\n```\nLink: {}"
             m = m.format(stream_role_mention, concurrent_viewers, view_count, like_count, dislike_count, vid_url)
-
-            await lg_ch.send("here")
 
             live_msg = await live_ch.fetch_message(vid["live_msg"])
             live_msg.edit(content = m)
