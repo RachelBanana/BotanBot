@@ -1236,7 +1236,6 @@ async def update_streams():
                 {"status": "justlive"}
             ]
         }):
-            await lg_ch.send(vid)
             # if scheduled time's not reached, skip vid
             if now < vid["scheduled_start_time"]:
                 continue
@@ -1248,6 +1247,7 @@ async def update_streams():
                 id = vid_id
             )
             vid_res = vid_req.execute()["items"][0]
+            await lg_ch.send(vid_res)
 
             # double confirm if the vid is live, else reschedule
             live_streaming_details = vid_res["liveStreamingDetails"]
@@ -1257,6 +1257,7 @@ async def update_streams():
                 db_streams.update_one({"id": vid_id}, {"$set": {"scheduled_start_time": new_scheduled_time}})
                 await lg_ch.send("{} has been rescheduled to {}".format(vid_id, new_scheduled_time))
                 continue
+            await lg_ch.send(live_streaming_details)
 
             # send a message to stream channel announcing live
             concurrent_viewers = live_streaming_details["concurrentViewers"]
