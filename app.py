@@ -1236,6 +1236,7 @@ async def update_streams():
                 {"status": "justlive"}
             ]
         }):
+            await lg_ch.send(vid["scheduled_start_time"])
             # if scheduled time's not reached, skip vid
             if now < vid["scheduled_start_time"]:
                 continue
