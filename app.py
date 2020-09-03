@@ -1227,7 +1227,7 @@ async def update_streams():
             m = m.format(stream_role_mention, concurrent_viewers, view_count, like_count, dislike_count, vid_url)
 
             live_msg = await live_ch.fetch_message(vid["live_msg"])
-            live_msg.edit(content = m)
+            await live_msg.edit(content = m)
 
         # check upcoming streams, see if there's any live ones
         for vid in db_streams.find({
