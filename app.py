@@ -1427,6 +1427,7 @@ async def find_streams():
         else:
             # else wait for the remaining time left
             wait_time = 3600 - (now - last_checked).total_seconds()
+            await lg_ch.send("Waiting for {} seconds from now for next check".format(wait_time))
         await asyncio.sleep(wait_time)
 
 # List Coroutines to be executed
