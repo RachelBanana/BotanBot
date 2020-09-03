@@ -1237,24 +1237,22 @@ async def update_streams():
             ]
         }):
             # if scheduled time's not reached, skip vid
-            if now < vid["scheduled_start_time"].replace(tzinfo = timezone.utc):
+            scheduled_start_time = vid["scheduled_start_time"].replace(tzinfo = timezone.utc)
+            if now < scheduled_start_time:
                 continue
             # if live, get live vid data
             vid_id = vid["id"]
-            await lg_ch.send("here")
             vid_req = youtube.videos().list(
                 part = "liveStreamingDetails,statistics",
                 id = vid_id
             )
-            await lg_ch.send("here")
             vid_res = vid_req.execute()["items"][0]
-            await lg_ch.send(vid_res)
 
             # double confirm if the vid is live, else reschedule
             live_streaming_details = vid_res["liveStreamingDetails"]
             dt_string = live_streaming_details["scheduledStartTime"]
             new_scheduled_time = dtime.strptime(dt_string, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo = timezone.utc)
-            if new_scheduled_time > vid["scheduled_start_time"]:
+            if new_scheduled_time > scheduled_start_time:
                 db_streams.update_one({"id": vid_id}, {"$set": {"scheduled_start_time": new_scheduled_time}})
                 await lg_ch.send("{} has been rescheduled to {}".format(vid_id, new_scheduled_time))
                 continue
