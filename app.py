@@ -1282,6 +1282,9 @@ async def find_streams():
         now = dtime.now(tz = timezone.utc)
         await lg_ch.send("Checking if live stream check is needed, time: {}".format(now))
         # if there is no last checked, or last checked is more than 1 hour ago, do new check
+        if last_checked:
+            # add utc to last checked (mongodb always naive)
+            last_checked = last_checked.replace(tzinfo = timezone.utc)
         if not last_checked or (now - last_checked >= timedelta(hours = 1)):
             await lg_ch.send("Performing live stream check, last check was {}".format(last_checked))
             # check for live streams
