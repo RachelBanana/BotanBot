@@ -292,15 +292,18 @@ async def vid_tag(res, msg):
     # check if channel is live stream channel
     if res.channel.id != 735145401094504538:
         await res.channel.send("This command is only available in #botan-stream-chat!")
+        return
 
     # check if there is a livestream
     vid_data = db_streams.find_one({"status": "test"})
     if not vid_data:
         await res.channel.send("There are no ongoing live streams now!")
+        return
     
     # check if msg empty
     if not msg:
         await res.channel.send("You need to include a comment after the tag command.")
+        return
     
     # return if too many characters
     chr_limit = 400 if is_booster(res.author) else 200
