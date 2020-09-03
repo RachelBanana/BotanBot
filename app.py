@@ -290,11 +290,11 @@ async def birthday(res, msg):
 # if booster, includes icon <:Booster:751174312018575442>
 async def vid_tag(res, msg):
     # check if channel is live stream channel
-    if res.channel.id != live_stream_channel:
+    if res.channel.id != 735145401094504538:
         await res.channel.send("This command is only available in #botan-stream-chat!")
 
     # check if there is a livestream
-    vid_data = db_streams.find_one({"status": "live"})
+    vid_data = db_streams.find_one({"status": "test"})
     if not vid_data:
         await res.channel.send("There are no ongoing live streams now!")
     
