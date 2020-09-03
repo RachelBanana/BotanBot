@@ -271,7 +271,7 @@ async def birthday(res, msg):
 
 ### Youtube data commands
 async def vid_tag(res, msg):
-    m = (("[Link text](http://example.com/)"*5)+"\n")*17
+    m = (("[Link text](http://example.com/)"*5)+"\n")*11
     embed = discord.Embed(title = "Test", description = m, colour = embed_color)
     await res.channel.send("sending")
     await res.channel.send(content=None, embed=embed)
