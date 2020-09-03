@@ -39,10 +39,12 @@ tweets_ch = 740896881827381259
 translated_tweets_ch = 741945787042496614
 fanart_ch = 740888816268738630
 booster_role = 741427676409233430
+stream_role = 740906304226197524
 announcement_ch = 740887547651162211
 welcome_ch = 740888968089829447
 rules_ch = 740887522044805141
 upcoming_news_channel = 749905915339210824
+live_stream_channel = 740888892772712518
 
 ## database settings
 db_url = "mongodb+srv://{}:{}@botan.lkk4p.mongodb.net/{}?retryWrites=true&w=majority"
@@ -55,6 +57,7 @@ db = cluster[db_name]
 db_artworks = db["artworks"]
 db_settings = db["settings"]
 db_boosters = db["boosters"]
+db_streams = db["streams"]
 
 counter = db_settings.find_one({"name": "counter"})
 
@@ -1174,15 +1177,194 @@ async def jst_clock():
         await client.change_presence(activity=discord.Game(name=timestr))
         await asyncio.sleep(60)        
 
+"""stream's data template
+    "id": vid id,
+    "status": "justlive", "live", "upcoming", "completed"
+    "live_msg"
+    "scheduled_start_time"
+    "actual_end_time"
+"""
+async def update_streams():
+    lg_ch = client.get_channel(log_channel)
+    live_ch = client.get_channel(live_stream_channel)
+    botan_guild = client.get_guild(guild_id)
+    stream_role_mention = botan_guild.get_role(stream_role).mention
+
+    while not client.is_closed():
+        now = dtime.now(tz = timezone.utc)
+        # check live streams, see if any is finishing
+        for vid in db_streams.find({"status": "live"}):
+            # get live vid data
+            vid_id = vid["id"]
+            vid_req = youtube.videos().list(
+                part = "liveStreamingDetails,statistics",
+                id = vid_id
+            )
+            vid_res = vid_req.execute()["items"][0]
+
+            # if vid is ending, send message and update status to completed
+            live_streaming_details = vid_res["liveStreamingDetails"]
+            actual_end_time_str = live_streaming_details.get("actualEndTime", None)
+            if actual_end_time_str:
+                actual_end_time = dtime.strptime(actual_end_time_str, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo = timezone.utc)
+                db_streams.update_one({"id": vid_id}, {"$set": {"status": "completed", "actual_end_time": actual_end_time}})
+                await live_ch.send("Live stream ended at {}!".format(actual_end_time))
+                continue
+
+            # else, update live message statistics
+            concurrent_viewers = live_streaming_details["concurrentViewers"]
+            statistics = vid_res["statistics"]
+            like_count = statistics["likeCount"]
+            dislike_count = statistics ["dislikeCount"]
+            view_count = statistics ["viewCount"]
+            vid_url = "https://www.youtube.com/watch?v=" + vid_id
+            m = "{} Botan is now live!\n```\nLive Views: {}\nTotal Views: {}\nLikes: {}\n Dislikes: {}\n```\nLink: {}"
+            m = m.format(stream_role_mention, concurrent_viewers, view_count, like_count, dislike_count, vid_url)
+
+            live_msg = await live_ch.fetch_message(vid["live_msg"])
+            live_msg.edit(content = m)
+
+        # check upcoming streams, see if there's any live ones
+        for vid in db_streams.find({
+            "$or": [
+                {"status": "upcoming"},
+                {"status": "justlive"}
+            ]
+        }):
+            # if scheduled time's not reached, skip vid
+            if now < vid["scheduled_start_time"]:
+                continue
+
+            # if live, get live vid data
+            vid_id = vid["id"]
+            vid_req = youtube.videos().list(
+                part = "liveStreamingDetails,statistics",
+                id = vid_id
+            )
+            vid_res = vid_req.execute()["items"][0]
+
+            # double confirm if the vid is live, else reschedule
+            live_streaming_details = vid_res["liveStreamingDetails"]
+            dt_string = live_streaming_details["scheduledStartTime"]
+            new_scheduled_time = dtime.strptime(dt_string, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo = timezone.utc)
+            if new_scheduled_time > vid["scheduled_start_time"]:
+                db_streams.update_one({"id": vid_id}, {"$set": {"scheduled_start_time": new_scheduled_time}})
+                await lg_ch.send("{} has been rescheduled to {}".format(vid_id, new_scheduled_time))
+                continue
+
+            # send a message to stream channel announcing live
+            concurrent_viewers = live_streaming_details["concurrentViewers"]
+            statistics = vid_res["statistics"]
+            like_count = statistics["likeCount"]
+            dislike_count = statistics ["dislikeCount"]
+            view_count = statistics ["viewCount"]
+            vid_url = "https://www.youtube.com/watch?v=" + vid_id
+            m = "{} Botan is now live!\n```\nLive Views: {}\nTotal Views: {}\nLikes: {}\n Dislikes: {}\n```\nLink: {}"
+            m = m.format(stream_role_mention, concurrent_viewers, view_count, like_count, dislike_count, vid_url)
+            live_msg = await live_ch.send(m)
+
+            # update the status to live, record message id
+            db_streams.update_one({"id": vid_id}, {"$set": {"status": "live", "live_msg": live_msg.id}})
+            await lg_ch.send("{} is now live".format(vid_id))
+        await asyncio.sleep(30)
+
+async def find_streams():
+    lg_ch = client.get_channel(log_channel)
+    while not client.is_closed():
+        # get data of last checked timestamp
+        stream_check = db_settings.find_one({"name": "stream"})
+        last_checked = stream_check.get("last_checked", None)
+        now = dtime.now(tz = timezone.utc)
+        await lg_ch.send("Checking if live stream check is needed, time: {}".format(now))
+        # if there is no last checked, or last checked is more than 1 hour ago, do new check
+        if not last_checked or (now - last_checked >= timedelta(hours = 1)):
+            await lg_ch.send("Performing live stream check, last check was {}".format(last_checked))
+            # check for live streams
+            live_req = youtube.search().list(
+                part = "snippet",
+                channelId = botan_ch_id,
+                eventType = "live",
+                maxResults = 25,
+                type = "video"
+            )
+            live_res = live_req.execute()["items"]
+            for vid in live_res:
+                vid_id = vid["id"]["videoId"]
+                # check if vid already exists in database
+                if db_streams.find_one({"id": vid_id}):
+                    continue
+                # else store video's id, status and scheduled start time
+                vid_req = youtube.videos().list(
+                    part = "liveStreamingDetails",
+                    id = vid_id
+                )
+                vid_res = vid_req.execute()["items"]
+
+                dt_string = vid_res[0]["liveStreamingDetails"]["scheduledStartTime"]
+                scheduled_start_time = dtime.strptime(dt_string, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo = timezone.utc)
+
+                vid_data = {
+                    "id": vid_id,
+                    "status": "justlive",
+                    "scheduled_start_time": scheduled_start_time
+                }
+                db_streams.insert_one(vid_data)
+                await lg_ch.send("New live video logged!\n{}\n{}".format(vid_id, scheduled_start_time))
+
+            # check for upcoming streams
+            upcoming_req = youtube.search().list(
+                part = "snippet",
+                channelId = botan_ch_id,
+                eventType = "upcoming",
+                maxResults = 25,
+                type = "video"
+            )
+            upcoming_res = upcoming_req.execute()["items"]
+            for vid in upcoming_res:
+                vid_id = vid["id"]["videoId"]
+                # check if vid already exists in database
+                if db_streams.find_one({"id": vid_id}):
+                    continue
+                # else store video's id, status and scheduled start time
+                vid_req = youtube.videos().list(
+                    part = "liveStreamingDetails",
+                    id = vid_id
+                )
+                vid_res = vid_req.execute()["items"]
+
+                dt_string = vid_res[0]["liveStreamingDetails"]["scheduledStartTime"]
+                scheduled_start_time = dtime.strptime(dt_string, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo = timezone.utc)
+                
+                # if vid is already starting (completed), skip vid
+                if now > scheduled_start_time:
+                    continue
+
+                vid_data = {
+                    "id": vid_id,
+                    "status": "upcoming",
+                    "scheduled_start_time": scheduled_start_time
+                }
+                db_streams.insert_one(vid_data)
+                await lg_ch.send("New upcoming video logged!\n{}\n{}".format(vid_id, scheduled_start_time))            
+            # add wait time
+            db_settings.update_one({"name": "stream"}, {"$set": {"last_checked": now}})
+            wait_time = 3600
+        else:
+            # else wait for the remaining time left
+            wait_time = (now - last_checked).total_seconds()
+        await asyncio.sleep(wait_time)
+
 # List Coroutines to be executed
 coroutines = (
-    jst_clock()
+    jst_clock(),
+    update_streams(),
+    find_streams()
 )
 
 # Main Coroutine
 async def background_main():
     await client.wait_until_ready()
-    await asyncio.gather(coroutines)
+    await asyncio.gather(*coroutines)
 
 client.loop.create_task(background_main())
 client.run(token)
