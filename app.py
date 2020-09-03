@@ -328,8 +328,8 @@ async def vid_tag(res, msg):
     # update data
     db_streams.update_one({"id": vid_data["id"]}, {"$set": {"tags": vid_data["tags"], "tag_count": vid_data["tag_count"]}})
 
-    ## add reaction to acknowledge tag
-    await res.add_reaction("\N{100}")
+    # add reaction to acknowledge tag
+    await res.add_reaction(":100:")
 
 async def subscribers(res, msg):
     # Check which Vtuber channel to search for
