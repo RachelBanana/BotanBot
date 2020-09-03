@@ -1236,9 +1236,8 @@ async def update_streams():
                 {"status": "justlive"}
             ]
         }):
-            await lg_ch.send(type(vid["scheduled_start_time"]))
             # if scheduled time's not reached, skip vid
-            if now < vid["scheduled_start_time"]:
+            if now < vid["scheduled_start_time"].replace(tzinfo = timezone.utc):
                 continue
             # if live, get live vid data
             vid_id = vid["id"]
