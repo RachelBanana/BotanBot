@@ -1426,7 +1426,7 @@ async def find_streams():
             wait_time = 3600
         else:
             # else wait for the remaining time left
-            wait_time = (now - last_checked).total_seconds()
+            wait_time = 3600 - (now - last_checked).total_seconds()
         await asyncio.sleep(wait_time)
 
 # List Coroutines to be executed
