@@ -326,7 +326,7 @@ async def vid_tag(res, msg):
     vid_data["tag_count"] += 1
 
     # update data
-    db_streams.update_one({"id": vid_data["id"]}, {"tags": vid_data["tags"], "tag_count": vid_data["tag_count"]})
+    db_streams.update_one({"id": vid_data["id"]}, {"$set": {"tags": vid_data["tags"], "tag_count": vid_data["tag_count"]}})
 
     # add reaction to acknowledge tag
     await res.add_reaction(":100:")
