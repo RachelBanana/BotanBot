@@ -296,8 +296,8 @@ async def subscribers(res, msg):
     await res.channel.send(m.format(vtuber_name, int(yt_stats["subscriberCount"]), int(yt_stats["viewCount"])))
 
 async def live_streams(res, msg):
-    await res.channel.send("Current command down for maintenance!")
-    return
+    # await res.channel.send("Current command down for maintenance!")
+    # return
     # Check which VTuber channel to search for
     msg = msg.strip().lower()
     ch_id = botan_ch_id
@@ -318,7 +318,7 @@ async def live_streams(res, msg):
     live_res = live_req.execute()["items"]
     if live_res:
         vid_id = live_res[0]["id"]["videoId"]
-        vid_url = "https://www.youtube.com/watch?v=" + vid_id
+        vid_url = "https://youtu.be/" + vid_id
         if vtuber_name == "Botan-sama":
             if random.randint(0,1):
                 m = "Omg {} is live now!! What are you doing here??! Get over to the following link to send your red SC!\n{}"
@@ -357,7 +357,7 @@ async def live_streams(res, msg):
         if dtime.now(tz = timezone.utc) > d1:
             continue
         stream_flag = True
-        vid_url = "https://www.youtube.com/watch?v=" + vid_id
+        vid_url = "https://youtu.be/" + vid_id
         timeleft = time_to_string(*time_until(d1))
         await res.channel.send("{} left until {}'s next stream! Link here:\n{}".format(timeleft, vtuber_name, vid_url))
     if not stream_flag:
@@ -1225,7 +1225,7 @@ async def update_streams():
             like_count = statistics["likeCount"]
             dislike_count = statistics ["dislikeCount"]
             view_count = statistics ["viewCount"]
-            vid_url = "https://www.youtube.com/watch?v=" + vid_id
+            vid_url = "https://youtu.be/" + vid_id
             m = "{} Botan is now live!\n```\nLive Views: {}\nTotal Views: {}\nLikes: {}\n Dislikes: {}\n```\nLink: {}"
             m = m.format(stream_role_mention, concurrent_viewers, view_count, like_count, dislike_count, vid_url)
 
@@ -1266,7 +1266,7 @@ async def update_streams():
             like_count = statistics["likeCount"]
             dislike_count = statistics ["dislikeCount"]
             view_count = statistics ["viewCount"]
-            vid_url = "https://www.youtube.com/watch?v=" + vid_id
+            vid_url = "https://youtu.be/" + vid_id
             m = "{} Botan is now live!\n```\nLive Views: {}\nTotal Views: {}\nLikes: {}\n Dislikes: {}\n```\nLink: {}"
             m = m.format(stream_role_mention, concurrent_viewers, view_count, like_count, dislike_count, vid_url)
             live_msg = await live_ch.send(m)
