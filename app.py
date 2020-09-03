@@ -270,6 +270,9 @@ async def birthday(res, msg):
     await res.channel.send(m)
 
 ### Youtube data commands
+async def vid_tag(res, msg):
+    pass
+
 async def subscribers(res, msg):
     # Check which Vtuber channel to search for
     msg = msg.strip().lower()
@@ -849,7 +852,8 @@ aliases = {
     "subscriber": "subscribers",
     "live": "stream",
     "v": "voice",
-    "sc": "superchat"
+    "sc": "superchat",
+    "t": "tag"
 }
 
 
@@ -868,7 +872,8 @@ commands = {
     "subscribers": subscribers,
     "stream": live_streams,
     "voice": voice,
-    "superchat": superchat
+    "superchat": superchat,
+    "tag": vid_tag
 }
 
 booster_commands = {
@@ -1231,6 +1236,7 @@ async def update_streams():
                 {"status": "justlive"}
             ]
         }):
+            await lg_ch.send(vid)
             # if scheduled time's not reached, skip vid
             if now < vid["scheduled_start_time"]:
                 continue
