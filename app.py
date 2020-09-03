@@ -296,8 +296,8 @@ async def subscribers(res, msg):
     await res.channel.send(m.format(vtuber_name, int(yt_stats["subscriberCount"]), int(yt_stats["viewCount"])))
 
 async def live_streams(res, msg):
-    # await res.channel.send("Current command down for maintenance!")
-    # return
+    await res.channel.send("Current command down for maintenance!")
+    return
     # Check which VTuber channel to search for
     msg = msg.strip().lower()
     ch_id = botan_ch_id
