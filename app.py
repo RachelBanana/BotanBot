@@ -271,7 +271,10 @@ async def birthday(res, msg):
 
 ### Youtube data commands
 async def vid_tag(res, msg):
-    pass
+    m = (("[Link text](http://example.com/)"*5)+"\n")*17
+    embed = discord.Embed(title = "Test", description = m, colour = embed_color)
+    await res.channel.send("sending")
+    await res.channel.send(content=None, embed=embed)
 
 async def subscribers(res, msg):
     # Check which Vtuber channel to search for
