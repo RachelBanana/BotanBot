@@ -270,11 +270,63 @@ async def birthday(res, msg):
     await res.channel.send(m)
 
 ### Youtube data commands
+"""stream's data template
+    "id": vid id,
+    "status": "justlive", "live", "upcoming", "completed"
+    "live_msg"
+    "scheduled_start_time"
+    "actual_end_time"
+    "tag_count": 1
+    "tags": {
+        "0": {
+            "author_id": author's id,
+            "timestamp": datetime
+            "text": "loren itsum"
+        },
+        ...
+    }
+"""
+# https://youtu.be/
+# if booster, includes icon <:Booster:751174312018575442>
 async def vid_tag(res, msg):
-    m = (("[Link text](http://example.com/)"*5)+"\n")*11
-    embed = discord.Embed(title = "Test", description = m, colour = embed_color)
-    await res.channel.send("sending")
-    await res.channel.send(content=None, embed=embed)
+    # check if channel is live stream channel
+    if res.channel.id != live_stream_channel:
+        await res.channel.send("This command is only available in #botan-stream-chat!")
+
+    # check if there is a livestream
+    vid_data = db_streams.find_one({"status": "live"})
+    if not vid_data:
+        await res.channel.send("There are no ongoing live streams now!")
+    
+    # check if msg empty
+    if not msg:
+        await res.channel.send("You need to include a comment after the tag command.")
+    
+    # return if too many characters
+    chr_limit = 400 if is_booster(res.author) else 200
+    if len(msg) > chr_limit:
+        await res.channel.send("You have exceeded your character limit of {}! Please shorten your message.".format(chr_limit))
+        
+    # check if tags exist in vid data, if not, create it
+    if not vid_data.get("tags"):
+        vid_data["tags"] = {}
+        vid_data["tag_count"] = 0
+
+    # insert text, timestamp and author's id
+    vid_data["tags"][str(vid_data["tag_count"])] = {
+        "author_id": res.author.id,
+        "timestamp": dtime.now(tz = timezone.utc),
+        "text": msg
+    }
+
+    # increment tag count
+    vid_data["tag_count"] += 1
+
+    # update data
+    db_streams.update_one({"id": vid_data["id"]}, {"tags": vid_data["tags"], "tag_count": vid_data["tag_count"]})
+
+    # add reaction to acknowledge tag
+    await res.add_reaction(":100:")
 
 async def subscribers(res, msg):
     # Check which Vtuber channel to search for
@@ -1191,6 +1243,15 @@ async def jst_clock():
     "live_msg"
     "scheduled_start_time"
     "actual_end_time"
+    "tag_count": 1
+    "tags": {
+        "0": {
+            "author_id": author's id,
+            "timestamp": datetime
+            "text": "loren itsum"
+        },
+        ...
+    }
 """
 async def update_streams():
     lg_ch = client.get_channel(log_channel)
