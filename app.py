@@ -1386,11 +1386,14 @@ async def update_streams():
                 continue
 
             # else, update live message statistics
-            concurrent_viewers = live_streaming_details["concurrentViewers"]
-            statistics = vid_res["statistics"]
-            like_count = statistics["likeCount"]
-            dislike_count = statistics ["dislikeCount"]
-            view_count = statistics ["viewCount"]
+            concurrent_viewers = live_streaming_details.get("concurrentViewers", 0)
+            statistics = vid_res.get("statistics", None)
+            if statistics:
+                like_count = statistics.get("likeCount", 0)
+                dislike_count = statistics.get("dislikeCount", 0)
+                view_count = statistics.get("viewCount", 0)
+            else:
+                like_count, dislike_count, view_count = 0, 0, 0
             vid_url = "https://www.youtube.com/watch?v=" + vid_id
             m = "{} Botan is now live!\n```\nLive Views: {}\nTotal Views: {}\nLikes: {}\n Dislikes: {}\n```\nLink: {}"
             m = m.format(stream_role_mention, concurrent_viewers, view_count, like_count, dislike_count, vid_url)
