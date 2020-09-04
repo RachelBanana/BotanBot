@@ -10,6 +10,7 @@ from pymongo import MongoClient
 
 # python built-in libraries
 import os
+import gc
 import sys
 import re
 import json
@@ -1418,6 +1419,7 @@ async def update_streams():
 
             # double confirm if the vid is live, else reschedule
             live_streaming_details = vid_res["liveStreamingDetails"]
+            await lg_ch.send(live_streaming_details)
             dt_string = live_streaming_details["scheduledStartTime"]
             new_scheduled_time = dtime.strptime(dt_string, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo = timezone.utc)
             if new_scheduled_time > scheduled_start_time:
@@ -1436,7 +1438,7 @@ async def update_streams():
             m = m.format(stream_role_mention, concurrent_viewers, view_count, like_count, dislike_count, vid_url)
             live_msg = await live_ch.send(m)
 
-            # update the status to live, record message ids
+            # update the status to live, record message id
             db_streams.update_one({"id": vid_id}, {"$set": {"status": "live", "live_msg": live_msg.id}})
             await lg_ch.send("{} is now live".format(vid_id))
         await asyncio.sleep(30)
