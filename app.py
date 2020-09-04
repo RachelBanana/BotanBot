@@ -150,6 +150,35 @@ def to_jap(m):
 def to_eng(m):
     return gtl.translate(m)
 
+## Live Streaming tools
+"""stream's data template
+    "id": vid id,
+    "title": vid title
+    "status": "justlive", "live", "upcoming", "completed"
+    "live_msg"
+    "scheduled_start_time"
+    "actual_start_time"
+    "actual_end_time"
+    "tag_count": 1
+    "tags": {
+        "0": {
+            "author_id": author's id,
+            "timestamp": datetime,
+            "seconds": int
+            "text": "loren itsum"
+        },
+        ...
+    }
+"""
+async def process_tags(vid_id, offset = 5, overwrite = False):
+    vid_data = db_streams.find_one(vid_id)
+    # If seconds don't exist or overwrite is true, use timestamp to calculate all seconds
+    # write all tags into separate messages in a list
+    # while there are still items in the list, make a new embed
+    # while there are still characters left, add messages to embed
+    # 
+    pass
+
 ## Art Manipulation tools
 def add_corners(im, rad):
     circle = Image.new('L', (rad * 2, rad * 2), 0)
@@ -272,15 +301,18 @@ async def birthday(res, msg):
 ### Youtube data commands
 """stream's data template
     "id": vid id,
+    "title": vid title
     "status": "justlive", "live", "upcoming", "completed"
     "live_msg"
     "scheduled_start_time"
+    "actual_start_time"
     "actual_end_time"
     "tag_count": 1
     "tags": {
         "0": {
             "author_id": author's id,
-            "timestamp": datetime
+            "timestamp": datetime,
+            "seconds": int
             "text": "loren itsum"
         },
         ...
@@ -1242,15 +1274,18 @@ async def jst_clock():
 
 """stream's data template
     "id": vid id,
+    "title": vid title
     "status": "justlive", "live", "upcoming", "completed"
     "live_msg"
     "scheduled_start_time"
+    "actual_start_time"
     "actual_end_time"
     "tag_count": 1
     "tags": {
         "0": {
             "author_id": author's id,
-            "timestamp": datetime
+            "timestamp": datetime,
+            "seconds": int
             "text": "loren itsum"
         },
         ...
@@ -1278,8 +1313,14 @@ async def update_streams():
             live_streaming_details = vid_res["liveStreamingDetails"]
             actual_end_time_str = live_streaming_details.get("actualEndTime", None)
             if actual_end_time_str:
+                actual_start_time_str = live_streaming_details["actualStartTime"]
+                actual_start_time = dtime.strptime(actual_start_time_str.split(".")[0], "%Y-%m-%dT%H:%M:%S").replace(tzinfo = timezone.utc)
                 actual_end_time = dtime.strptime(actual_end_time_str, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo = timezone.utc)
-                db_streams.update_one({"id": vid_id}, {"$set": {"status": "completed", "actual_end_time": actual_end_time}})
+                db_streams.update_one({"id": vid_id}, {"$set": {
+                    "status": "completed", 
+                    "actual_start_time": actual_start_time,
+                    "actual_end_time": actual_end_time
+                }})
                 await live_ch.send("Live stream ended at {}!".format(actual_end_time))
                 continue
 
@@ -1370,16 +1411,19 @@ async def find_streams():
                     continue
                 # else store video's id, status and scheduled start time
                 vid_req = youtube.videos().list(
-                    part = "liveStreamingDetails",
+                    part = "snippet,liveStreamingDetails",
                     id = vid_id
                 )
-                vid_res = vid_req.execute()["items"]
+                vid_res = vid_req.execute()["items"][0]
 
-                dt_string = vid_res[0]["liveStreamingDetails"]["scheduledStartTime"]
+                title = vid_res["snippet"]["title"]
+
+                dt_string = vid_res["liveStreamingDetails"]["scheduledStartTime"]
                 scheduled_start_time = dtime.strptime(dt_string, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo = timezone.utc)
 
                 vid_data = {
                     "id": vid_id,
+                    "title": title,
                     "status": "justlive",
                     "scheduled_start_time": scheduled_start_time
                 }
@@ -1405,9 +1449,11 @@ async def find_streams():
                     part = "liveStreamingDetails",
                     id = vid_id
                 )
-                vid_res = vid_req.execute()["items"]
+                vid_res = vid_req.execute()["items"][0]
 
-                dt_string = vid_res[0]["liveStreamingDetails"]["scheduledStartTime"]
+                title = vid_res["snippet"]["title"]
+
+                dt_string = vid_res["liveStreamingDetails"]["scheduledStartTime"]
                 scheduled_start_time = dtime.strptime(dt_string, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo = timezone.utc)
                 
                 # if vid is already starting (completed), skip vid
@@ -1416,6 +1462,7 @@ async def find_streams():
 
                 vid_data = {
                     "id": vid_id,
+                    "title": title,
                     "status": "upcoming",
                     "scheduled_start_time": scheduled_start_time
                 }
