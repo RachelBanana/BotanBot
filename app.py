@@ -374,7 +374,7 @@ async def birthday(res, msg):
 async def vid_tag(res, msg):
     # check if channel is live stream channel
     if res.channel.id != live_stream_channel:
-        await res.channel.send("This command is only available in #botan-stream-chat!")
+        await res.channel.send("This command is only available in <#740888892772712518>!")
         return
 
     # check if there is a livestream
