@@ -175,7 +175,7 @@ async def process_tags(vid_id, offset = 5, overwrite = False):
     botan_guild = client.get_guild(guild_id)
     vid_data = db_streams.find_one({"id": vid_id})
     lg_ch = client.get_channel(log_channel)
-    await lg_ch.send("here")
+
     # if tag_count doesn't exist or is zero, return
     if not vid_data.get("tag_count"):
         await lg_ch.send("exiting")
@@ -183,16 +183,17 @@ async def process_tags(vid_id, offset = 5, overwrite = False):
     
     # convert tags to list (important: items in tags mutating will cause tags_dict to mutate too)
     tags_dict = vid_data["tags"]
-    await lg_ch.send("here")
     tags = [tags_dict[str(k)] for k in range(len(tags_dict))]
+
     if len(tags) == 0:
         return
-    await lg_ch.send("here")
+
     # If seconds don't exist or overwrite is true, use timestamp to calculate all seconds, store back into db_streams
     if (not tags[0].get("seconds")) or overwrite:
         actual_start_time = vid_data["actual_start_time"].replace(tzinfo = timezone.utc)
         for tag in tags:
             timestamp = tag["timestamp"].replace(tzinfo = timezone.utc)
+            await lg_ch.send("here")
             tag["seconds"] = max((timestamp - actual_start_time).total_seconds() - offset, 0)
         db_streams.update_one({"id": vid_id}, {"$set": {"tags": tags_dict}})
     await lg_ch.send("here")
