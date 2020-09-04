@@ -1401,7 +1401,7 @@ async def update_streams():
             live_msg = await live_ch.fetch_message(vid["live_msg"])
             await live_msg.edit(content = m)
 
-        # check upcoming streams, see if there's any live ones
+        # check upcoming streams, see if there's any live ones in 1 minute
         for vid in db_streams.find({
             "$or": [
                 {"status": "upcoming"},
@@ -1410,7 +1410,7 @@ async def update_streams():
         }):
             # if scheduled time's not reached, skip vid
             scheduled_start_time = vid["scheduled_start_time"].replace(tzinfo = timezone.utc)
-            if now < scheduled_start_time:
+            if now + timedelta(minutes = 1) < scheduled_start_time:
                 continue
             await lg_ch.send("vid live! Starting operation")
             # if live, get live vid data
@@ -1428,7 +1428,7 @@ async def update_streams():
             dt_string = live_streaming_details.get("scheduledStartTime", None)
             await lg_ch.send(dt_string)
             new_scheduled_time = dtime.strptime(dt_string, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo = timezone.utc)
-            if new_scheduled_time > scheduled_start_time:
+            if new_scheduled_time > scheduled_start_time + timedelta(minutes = 1):
                 db_streams.update_one({"id": vid_id}, {"$set": {"scheduled_start_time": new_scheduled_time}})
                 await lg_ch.send("{} has been rescheduled to {}".format(vid_id, new_scheduled_time))
                 continue
