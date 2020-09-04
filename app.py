@@ -175,12 +175,15 @@ async def process_tags(vid_id, offset = 5, overwrite = False):
     botan_guild = client.get_guild(guild_id)
     vid_data = db_streams.find_one({"id": vid_id})
     lg_ch = client.get_channel(log_channel)
+    await lg_ch.send("here")
     # if tag_count doesn't exist or is zero, return
     if not vid_data.get("tag_count"):
+        await lg_ch.send("exiting")
         return
     
     # convert tags to list (important: items in tags mutating will cause tags_dict to mutate too)
     tags_dict = vid_data["tags"]
+    await lg_ch.send("here")
     tags = [tags_dict[str(k)] for k in range(len(tags_dict))]
     if len(tags) == 0:
         return
