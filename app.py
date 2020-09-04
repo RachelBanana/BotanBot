@@ -45,6 +45,7 @@ welcome_ch = 740888968089829447
 rules_ch = 740887522044805141
 upcoming_news_channel = 749905915339210824
 live_stream_channel = 740888892772712518
+archive_stream_channel = 751210778278756375
 
 ## database settings
 db_url = "mongodb+srv://{}:{}@botan.lkk4p.mongodb.net/{}?retryWrites=true&w=majority"
@@ -171,13 +172,61 @@ def to_eng(m):
     }
 """
 async def process_tags(vid_id, offset = 5, overwrite = False):
-    vid_data = db_streams.find_one(vid_id)
-    # If seconds don't exist or overwrite is true, use timestamp to calculate all seconds
+    botan_guild = client.get_guild(guild_id)
+    vid_data = db_streams.find_one({"id": vid_id})
+    # if tag_count doesn't exist or is zero, return
+    if not vid_data.get("tag_count"):
+        return
+    
+    # convert tags to list (important: items in tags mutating will cause tags_dict to mutate too)
+    tags_dict = vid_data["tags"]
+    tags = [tags_dict[str(k)] for k in range(len(tags_dict))]
+    if len(tags) == 0:
+        return
+
+    # If seconds don't exist or overwrite is true, use timestamp to calculate all seconds, store back into db_streams
+    if (not tags[0].get("seconds")) or overwrite:
+        actual_start_time = vid_data["actual_start_time"].replace(tzinfo = timezone.utc)
+        for tag in tags:
+            timestamp = tag["timestamp"].replace(tzinfo = timezone.utc)
+            tag["seconds"] = max((timestamp - actual_start_time).total_seconds() - offset, 0)
+        db_streams.update_one({"id": vid_id}, {"$set": {"tags": tags_dict}})
+
     # write all tags into separate messages in a list
-    # while there are still items in the list, make a new embed
-    # while there are still characters left, add messages to embed
-    # 
-    pass
+    msg_list = []
+    for tag in tags:
+        author = botan_guild.get_member(tag["author_id"])
+        display_name = booster_nickname(author)
+        display_name = "<:Booster:751174312018575442> {}".format(display_name) if is_booster(author) else display_name
+
+        display_time = "{}:{}".format(tag["seconds"]//60, tag["seconds"]%60)
+        vid_url = "https://youtu.be/{}?t={}".format(vid_id, tag["seconds"])
+        msg = tag["text"]
+
+        msg_list.append("{}\n[{}]({}) {}".format(display_name, display_time, vid_url, msg))
+    
+    # while there are still items in the list, make a new embed with a title
+    title = vid_data["title"]
+    embed_list = []
+    i = 0
+    while i < len(msg_list):
+        start_index = i
+        chars = len(msg_list[i])
+        i+=1
+
+        # while there are still characters left, add messages to embed
+        while i < len(msg_list) and chars + 2 + len(msg_list[i]) <= 2000:
+            chars += 2 + len(msg_list[i])
+            i += 1
+        
+        m = "\n\n".join(msg_list[start_index:i])
+        embed = discord.Embed(title = title, description = m, colour = embed_color)
+        embed_list.append(embed)
+    
+    # if msg_ids exist, edit messages, else send messages !!! wip
+    ar_ch = client.get_channel(archive_stream_channel)
+    for embed in embed_list:
+        await ar_ch.send(content = None, embed = embed)
 
 ## Art Manipulation tools
 def add_corners(im, rad):
@@ -318,7 +367,6 @@ async def birthday(res, msg):
         ...
     }
 """
-# https://youtu.be/
 # if booster, includes icon <:Booster:751174312018575442>
 async def vid_tag(res, msg):
     # check if channel is live stream channel
@@ -1322,6 +1370,7 @@ async def update_streams():
                     "actual_end_time": actual_end_time
                 }})
                 await live_ch.send("Live stream ended at {}!".format(actual_end_time))
+                await process_tags(vid_id)
                 continue
 
             # else, update live message statistics
