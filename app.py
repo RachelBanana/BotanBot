@@ -171,7 +171,7 @@ def to_eng(m):
         ...
     }
 """
-async def process_tags(vid_id, offset = 5, overwrite = True):
+async def process_tags(vid_id, offset = 5, overwrite = False):
     botan_guild = client.get_guild(guild_id)
     vid_data = db_streams.find_one({"id": vid_id})
     lg_ch = client.get_channel(log_channel)
@@ -207,7 +207,7 @@ async def process_tags(vid_id, offset = 5, overwrite = True):
         msg = tag["text"]
 
         msg_list.append("{}\n[{}]({}) {}".format(display_name, display_time, vid_url, msg))
-    await lg_ch.send("here")
+
     # while there are still items in the list, make a new embed with a title
     title = vid_data["title"]
     embed_list = []
@@ -227,7 +227,7 @@ async def process_tags(vid_id, offset = 5, overwrite = True):
         embed_list.append(embed)
     await lg_ch.send("here")
     # if msg_ids exist, edit messages, else send messages !!! wip
-    ar_ch = client.get_channel(735145401094504538)
+    ar_ch = client.get_channel(archive_stream_channel)
     await ar_ch.send("https://www.youtube.com/watch?v=" + vid_id)
     for embed in embed_list:
         await ar_ch.send(content = None, embed = embed)
@@ -373,12 +373,12 @@ async def birthday(res, msg):
 """
 async def vid_tag(res, msg):
     # check if channel is live stream channel
-    if res.channel.id != 735145401094504538:
+    if res.channel.id != live_stream_channel:
         await res.channel.send("This command is only available in #botan-stream-chat!")
         return
 
     # check if there is a livestream
-    vid_data = db_streams.find_one({"status": "test"})
+    vid_data = db_streams.find_one({"status": "live"})
     if not vid_data:
         await res.channel.send("There are no ongoing live streams now!")
         return
