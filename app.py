@@ -1446,7 +1446,7 @@ async def find_streams():
                     continue
                 # else store video's id, status and scheduled start time
                 vid_req = youtube.videos().list(
-                    part = "liveStreamingDetails",
+                    part = "snippet,liveStreamingDetails",
                     id = vid_id
                 )
                 vid_res = vid_req.execute()["items"][0]
