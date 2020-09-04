@@ -203,7 +203,7 @@ async def process_tags(vid_id, offset = 5, overwrite = False):
         display_name = booster_nickname(author)
         display_name = "<:Booster:751174312018575442> {}".format(display_name) if is_booster(author) else display_name
 
-        display_time = "{}:{}".format(int(tag["seconds"]//60), int(tag["seconds"]%60))
+        display_time = "{}:{:02d}".format(int(tag["seconds"]//60), int(tag["seconds"]%60))
         vid_url = "https://youtu.be/{}?t={}".format(vid_id, tag["seconds"])
         msg = tag["text"]
 
