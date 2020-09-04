@@ -224,7 +224,8 @@ async def process_tags(vid_id, offset = 5, overwrite = False):
         embed_list.append(embed)
     
     # if msg_ids exist, edit messages, else send messages !!! wip
-    ar_ch = client.get_channel(archive_stream_channel)
+    ar_ch = client.get_channel(735145401094504538)
+    await ar_ch.send("https://www.youtube.com/watch?v=" + vid_id)
     for embed in embed_list:
         await ar_ch.send(content = None, embed = embed)
 
@@ -367,7 +368,6 @@ async def birthday(res, msg):
         ...
     }
 """
-# if booster, includes icon <:Booster:751174312018575442>
 async def vid_tag(res, msg):
     # check if channel is live stream channel
     if res.channel.id != 735145401094504538:
@@ -976,6 +976,12 @@ async def mass_role_dm(res, msg):
         for member in target_role.members:
             await member.send(message)
 
+async def manual_close_tags(res, msg):
+    if str(res.author) != owner:
+        return
+    await process_tags(msg)
+    await res.channel.send("processing complete!")
+
 ## command names
 aliases = {
     "hi": "greet",
@@ -1032,7 +1038,8 @@ admin_commands = {
     # dev commands
     "xpost": cross_server_post,
     "xdm": direct_dm,
-    "xroledm": mass_role_dm
+    "xroledm": mass_role_dm,
+    "xclosetag": manual_close_tags
 }
 
 ## on messaging
