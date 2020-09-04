@@ -1432,11 +1432,11 @@ async def update_streams():
             dislike_count = statistics ["dislikeCount"]
             view_count = statistics ["viewCount"]
             vid_url = "https://www.youtube.com/watch?v=" + vid_id
-            m = "{} Botan is now live!\n```\nLive Views: {}\nTotal Views: {}\nLikes: {}\n Dislikes: {}\n```\nLink: {}"
+            m = "{} Botan is now live!\n```\nLive Views: {}\nTotal Viewss: {}\nLikes: {}\n Dislikes: {}\n```\nLink: {}"
             m = m.format(stream_role_mention, concurrent_viewers, view_count, like_count, dislike_count, vid_url)
             live_msg = await live_ch.send(m)
 
-            # update the status to live, record message id
+            # update the status to live, record message ids
             db_streams.update_one({"id": vid_id}, {"$set": {"status": "live", "live_msg": live_msg.id}})
             await lg_ch.send("{} is now live".format(vid_id))
         await asyncio.sleep(30)
