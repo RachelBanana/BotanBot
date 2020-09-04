@@ -174,6 +174,7 @@ def to_eng(m):
 async def process_tags(vid_id, offset = 5, overwrite = False):
     botan_guild = client.get_guild(guild_id)
     vid_data = db_streams.find_one({"id": vid_id})
+    lg_ch = client.get_channel(log_channel)
     # if tag_count doesn't exist or is zero, return
     if not vid_data.get("tag_count"):
         return
@@ -183,7 +184,7 @@ async def process_tags(vid_id, offset = 5, overwrite = False):
     tags = [tags_dict[str(k)] for k in range(len(tags_dict))]
     if len(tags) == 0:
         return
-
+    await lg_ch.send("here")
     # If seconds don't exist or overwrite is true, use timestamp to calculate all seconds, store back into db_streams
     if (not tags[0].get("seconds")) or overwrite:
         actual_start_time = vid_data["actual_start_time"].replace(tzinfo = timezone.utc)
@@ -191,7 +192,7 @@ async def process_tags(vid_id, offset = 5, overwrite = False):
             timestamp = tag["timestamp"].replace(tzinfo = timezone.utc)
             tag["seconds"] = max((timestamp - actual_start_time).total_seconds() - offset, 0)
         db_streams.update_one({"id": vid_id}, {"$set": {"tags": tags_dict}})
-
+    await lg_ch.send("here")
     # write all tags into separate messages in a list
     msg_list = []
     for tag in tags:
@@ -204,7 +205,7 @@ async def process_tags(vid_id, offset = 5, overwrite = False):
         msg = tag["text"]
 
         msg_list.append("{}\n[{}]({}) {}".format(display_name, display_time, vid_url, msg))
-    
+    await lg_ch.send("here")
     # while there are still items in the list, make a new embed with a title
     title = vid_data["title"]
     embed_list = []
@@ -222,7 +223,7 @@ async def process_tags(vid_id, offset = 5, overwrite = False):
         m = "\n\n".join(msg_list[start_index:i])
         embed = discord.Embed(title = title, description = m, colour = embed_color)
         embed_list.append(embed)
-    
+    await lg_ch.send("here")
     # if msg_ids exist, edit messages, else send messages !!! wip
     ar_ch = client.get_channel(735145401094504538)
     await ar_ch.send("https://www.youtube.com/watch?v=" + vid_id)
@@ -979,6 +980,7 @@ async def mass_role_dm(res, msg):
 async def manual_close_tags(res, msg):
     if str(res.author) != owner:
         return
+    await res.channel.send("starting")
     await process_tags(msg)
     await res.channel.send("processing complete!")
 
