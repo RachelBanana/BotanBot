@@ -171,14 +171,13 @@ def to_eng(m):
         ...
     }
 """
-async def process_tags(vid_id, offset = 5, overwrite = False):
+async def process_tags(vid_id, offset = 5, overwrite = True):
     botan_guild = client.get_guild(guild_id)
     vid_data = db_streams.find_one({"id": vid_id})
     lg_ch = client.get_channel(log_channel)
 
     # if tag_count doesn't exist or is zero, return
     if not vid_data.get("tag_count"):
-        await lg_ch.send("exiting")
         return
     
     # convert tags to list (important: items in tags mutating will cause tags_dict to mutate too)
@@ -193,10 +192,9 @@ async def process_tags(vid_id, offset = 5, overwrite = False):
         actual_start_time = vid_data["actual_start_time"].replace(tzinfo = timezone.utc)
         for tag in tags:
             timestamp = tag["timestamp"].replace(tzinfo = timezone.utc)
-            await lg_ch.send("here")
-            tag["seconds"] = max((timestamp - actual_start_time).total_seconds() - offset, 0)
+            tag["seconds"] = max(int((timestamp - actual_start_time).total_seconds()) - offset, 0)
         db_streams.update_one({"id": vid_id}, {"$set": {"tags": tags_dict}})
-    await lg_ch.send("here")
+
     # write all tags into separate messages in a list
     msg_list = []
     for tag in tags:
@@ -204,7 +202,7 @@ async def process_tags(vid_id, offset = 5, overwrite = False):
         display_name = booster_nickname(author)
         display_name = "<:Booster:751174312018575442> {}".format(display_name) if is_booster(author) else display_name
 
-        display_time = "{}:{}".format(tag["seconds"]//60, tag["seconds"]%60)
+        display_time = "{}:{}".format(int(tag["seconds"]//60), int(tag["seconds"]%60))
         vid_url = "https://youtu.be/{}?t={}".format(vid_id, tag["seconds"])
         msg = tag["text"]
 
