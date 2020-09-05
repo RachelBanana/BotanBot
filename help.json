@@ -92,5 +92,11 @@
         "alias": ["sc"],
         "usage": "$superchat {money amount}\n{text}",
         "extra_fields": []
+    },
+    "tag": {
+        "desc": "Tag your comment during live streams, only works in stream channels.",
+        "alias": ["t"],
+        "usage": "$tag {comment}",
+        "extra_fields": []
     }
 }
