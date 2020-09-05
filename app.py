@@ -788,6 +788,35 @@ async def del_art(res, msg):
     await res.channel.send("Artwork successfully deleted.")
     pass
 
+### youtube
+async def add_upcoming_stream(res, msg):
+    vid_id = msg
+    if not vid_id:
+        return
+    # check if vid already exists in database
+    if db_streams.find_one({"id": vid_id}):
+        await res.channel.send("{} already exists in database!".format(vid_id))
+    # else store video's id, status and scheduled start time
+    vid_req = youtube.videos().list(
+        part = "snippet,liveStreamingDetails",
+        id = vid_id
+    )
+    vid_res = vid_req.execute()["items"][0]
+
+    title = vid_res["snippet"]["title"]
+
+    dt_string = vid_res["liveStreamingDetails"]["scheduledStartTime"]
+    scheduled_start_time = dtime.strptime(dt_string, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo = timezone.utc)
+
+    vid_data = {
+        "id": vid_id,
+        "title": title,
+        "status": "upcoming",
+        "scheduled_start_time": scheduled_start_time
+    }
+    db_streams.insert_one(vid_data)
+    await res.channel.send("New upcoming video logged!\n{}\n{}".format(vid_id, scheduled_start_time))
+
 ## booster commands
 """booster's data template
     "id": res.author.id,
@@ -997,6 +1026,7 @@ aliases = {
     "jp": "japanese",
     "addart": "add_art",
     "delart": "del_art",
+    "addvid": "add_vid",
     "subs": "subscribers",
     "subscriber": "subscribers",
     "live": "stream",
@@ -1040,6 +1070,7 @@ admin_commands = {
     "xread": system_read,
     "add_art": add_art,
     "del_art": del_art,
+    "add_vid": add_upcoming_stream,
     # dev commands
     "xpost": cross_server_post,
     "xdm": direct_dm,
