@@ -1412,7 +1412,12 @@ async def update_streams():
                     "actual_start_time": actual_start_time,
                     "actual_end_time": actual_end_time
                 }})
-                await live_ch.send("Live stream ended! You may refer to <#751210778278756375> for any tagged comments.")
+
+                # send an embed message
+                embed = discord.Embed(description = "Live stream ended! You may refer to <#751210778278756375> for any tagged comments.", colour = embed_color)
+                await live_ch.send(content = None, embed = embed)
+
+                # process tags
                 await process_tags(vid_id)
                 continue
 
@@ -1477,6 +1482,10 @@ async def update_streams():
             m = "{} Botan is now live!\n```\nLive Views: {}\nTotal Viewss: {}\nLikes: {}\n Dislikes: {}\n```\nLink: {}"
             m = m.format(stream_role_mention, concurrent_viewers, view_count, like_count, dislike_count, vid_url)
             live_msg = await live_ch.send(m)
+
+            # add an embed notifying about tagging system
+            embed = discord.Embed(description = "Tracking stream for tags! Use ``$t`` to tag a comment.", colour = embed_color)
+            await live_ch.send(content = None, embed = embed)
 
             # update the status to live, record message id
             db_streams.update_one({"id": vid_id}, {"$set": {"status": "live", "live_msg": live_msg.id}})
