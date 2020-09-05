@@ -1412,7 +1412,7 @@ async def update_streams():
                     "actual_start_time": actual_start_time,
                     "actual_end_time": actual_end_time
                 }})
-                await live_ch.send("Live stream ended at {}!".format(actual_end_time))
+                await live_ch.send("Live stream ended! You may refer to <#751210778278756375> for any tagged comments.")
                 await process_tags(vid_id)
                 continue
 
