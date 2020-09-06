@@ -470,75 +470,6 @@ async def live_streams(res, msg):
         timeleft = time_to_string(*time_until(scheduled_start_time))
         await res.channel.send("{} left until Botan sama's next stream! Link here:\n{}".format(timeleft, vid_url))
 
-    """ # Archived Code using youtube api
-    await res.channel.send("Current command down for maintenance!")
-    return
-    # Check which VTuber channel to search for
-    msg = msg.strip().lower()
-    ch_id = botan_ch_id
-    vtuber_name = "Botan-sama"
-
-    if msg in vtubers:
-        ch_id = vtubers[msg]["ch_id"]
-        vtuber_name = msg.capitalize()
-    
-    # Look for live streams
-    live_req = youtube.search().list(
-        part = "snippet",
-        channelId = ch_id,
-        eventType = "live",
-        maxResults = 25,
-        type = "video"
-    )
-    live_res = live_req.execute()["items"]
-    if live_res:
-        vid_id = live_res[0]["id"]["videoId"]
-        vid_url = "https://www.youtube.com/watch?v=" + vid_id
-        if vtuber_name == "Botan-sama":
-            if random.randint(0,1):
-                m = "Omg {} is live now!! What are you doing here??! Get over to the following link to send your red SC!\n{}"
-            else:
-                m = "Sorry, I am too busy watching {}'s live stream now. Find another free bot.\n{}"
-        else:
-            m = "{} is live now. Link here:\n{}"
-        await res.channel.send(m.format(vtuber_name, vid_url))
-        return
-
-    # Look for upcoming streams
-    req_list = youtube.search().list(
-        part = "snippet",
-        channelId = ch_id,
-        eventType = "upcoming",
-        maxResults = 25,
-        type = "video"
-    )
-    res_list = req_list.execute()["items"]
-
-    no_stream_msg  = "Sorry, {} doesn't have any scheduled live streams now!".format(vtuber_name)
-    if not res_list:
-        await res.channel.send(no_stream_msg)
-        return
-
-    stream_flag = False
-    for vid in res_list:
-        vid_id = vid["id"]["videoId"]
-        req_vid = youtube.videos().list(
-            part="liveStreamingDetails",
-            id=vid_id
-        )
-        res_vid = req_vid.execute()
-        dt_string = res_vid["items"][0]["liveStreamingDetails"]["scheduledStartTime"]
-        d1 = dtime.strptime(dt_string,"%Y-%m-%dT%H:%M:%SZ").replace(tzinfo = timezone.utc)
-        if dtime.now(tz = timezone.utc) > d1:
-            continue
-        stream_flag = True
-        vid_url = "https://www.youtube.com/watch?v=" + vid_id
-        timeleft = time_to_string(*time_until(d1))
-        await res.channel.send("{} left until {}'s next stream! Link here:\n{}".format(timeleft, vtuber_name, vid_url))
-    if not stream_flag:
-        await res.channel.send(no_stream_msg)
-    """
-
 ### translation commands
 async def translate(res, msg):
     if not msg:
@@ -1454,6 +1385,10 @@ async def update_streams():
                 embed = discord.Embed(description = "Live stream ended! You may refer to <#751210778278756375> for any tagged comments.", colour = embed_color)
                 await live_ch.send(content = None, embed = embed)
 
+                # unpin stream on ending
+                live_msg = await live_ch.fetch_message(vid["live_msg"])
+                await live_msg.unpin(reason = "Unpin stream after ended.")
+
                 # process tags
                 await process_tags(vid_id)
                 continue
@@ -1519,6 +1454,7 @@ async def update_streams():
             m = "{} Botan is now live!\n```\nLive Views: {}\nTotal Viewss: {}\nLikes: {}\n Dislikes: {}\n```\nLink: {}"
             m = m.format(stream_role_mention, concurrent_viewers, view_count, like_count, dislike_count, vid_url)
             live_msg = await live_ch.send(m)
+            await live_msg.pin(reason = "pin stream.")
 
             # add an embed notifying about tagging system
             embed = discord.Embed(description = "Tracking stream for tags! Use ``$t`` to tag a comment.", colour = embed_color)
