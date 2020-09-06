@@ -435,6 +435,42 @@ async def subscribers(res, msg):
     await res.channel.send(m.format(vtuber_name, int(yt_stats["subscriberCount"]), int(yt_stats["viewCount"])))
 
 async def live_streams(res, msg):
+    # Look for live streams (only return one)
+    live_vid = db_streams.find_one({
+        "$or": [
+            {"status": "justlive"},
+            {"status": "live"}
+        ]
+    })
+    if live_vid:
+        vid_id = live_vid["id"]
+        vid_url = "https://www.youtube.com/watch?v=" + vid_id
+        if random.randint(0, 1):
+            m = "Omg Botan-sama is live now!! What are you doing here??! Get over to the following link to send your red SC!\n{}"
+        else:
+            m = "Sorry, I am too busy watching Botan-sama's live stream now. Find another free bot.\n{}"
+        await res.channel.send(m.format(vid_url))
+        return
+    
+    # Look for upcoming streams if there's no live streams
+    upcoming_vids = db_streams.find({"status": "upcoming"})
+
+    # Return if there is no upcoming stream
+    if not upcoming_vids:
+        await res.channel.send("Sorry, Botan-sama doesn't have any scheduled streams now!")
+        return
+    
+    for vid in upcoming_vids:
+        vid_id = vid["id"]
+        vid_url = "https://www.youtube.com/watch?v=" + vid_id
+
+        scheduled_start_time = vid["scheduled_start_time"].replace(tzinfo = timezone.utc)
+        if dtime.now(tz=timezone.utc) > scheduled_start_time:
+            continue
+        timeleft = time_to_string(*time_until(scheduled_start_time))
+        await res.channel.send("{} left until Botan sama's next stream! Link here:\n{}".format(timeleft, vid_url))
+
+    """ # Archived Code using youtube api
     await res.channel.send("Current command down for maintenance!")
     return
     # Check which VTuber channel to search for
@@ -501,6 +537,7 @@ async def live_streams(res, msg):
         await res.channel.send("{} left until {}'s next stream! Link here:\n{}".format(timeleft, vtuber_name, vid_url))
     if not stream_flag:
         await res.channel.send(no_stream_msg)
+    """
 
 ### translation commands
 async def translate(res, msg):
