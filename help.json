@@ -71,9 +71,9 @@
         "extra_fields": []
     },
     "stream": {
-        "desc": "Check Botan's or other vtubers' streaming status on YouTube.",
+        "desc": "Check Botan's streaming status on YouTube.",
         "alias": ["live"],
-        "usage": "$stream {optional:name}",
+        "usage": "$stream",
         "extra_fields": []
     },
     "voice": {
