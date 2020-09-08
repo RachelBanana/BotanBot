@@ -347,9 +347,7 @@ async def debut(res, msg):
     await res.channel.send(m)
 
 async def birthday(res, msg):
-    await res.channel.send("Happy Birthday Botan-sama~!!!")
-    return
-    bday = dtime(2020, 9, 8, tzinfo = timezone.utc)
+    bday = dtime(2021, 9, 8, tzinfo = timezone.utc)
     days, hours, minutes = time_until(bday)
     m = "Botan-sama's birthday is on 8th of September, just {} more day{} to go!".format(days, "s" * (days>1))
     await res.channel.send(m)
