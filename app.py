@@ -172,7 +172,7 @@ def to_eng(m):
         ...
     }
 """
-async def process_tags(vid_id, offset = 5, overwrite = False):
+async def process_tags(vid_id, offset = 13, overwrite = False):
     botan_guild = client.get_guild(guild_id)
     vid_data = db_streams.find_one({"id": vid_id})
     lg_ch = client.get_channel(log_channel)
