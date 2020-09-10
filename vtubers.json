@@ -38,11 +38,17 @@
     "fubuki": {
         "ch_id": "UCdn5BQ06XqgXoAxIhbqw5Rg"
     },
+    "gura": {
+        "ch_id": "UCoSrY_IQQVpmIRZ9Xf-y93g"
+    },
     "haachama": {
         "ch_id": "UC1CfXB_kRs3C-zaeTG3oGyg"
     },
     "haato": {
         "ch_id": "UC1CfXB_kRs3C-zaeTG3oGyg"
+    },
+    "ina'nis": {
+        "ch_id": "UCMwGHR0BTZuLsmjY_NT5Pwg"
     },
     "iofi": {
         "ch_id": "UCAoy6rzhSf4ydcYjJw3WoVg"
@@ -55,6 +61,9 @@
     },
     "kanata": {
         "ch_id": "UCZlDXzGoo7d44bwdNObFacg"
+    },
+    "kiara": {
+        "ch_id": "UCHsx4Hqa-1ORjQTh9TYDhww"
     },
     "kira": {
         "ch_id": "UCEzsociuFqVwgZuMaZqaCsg"
@@ -88,6 +97,9 @@
     },
     "moona": {
         "ch_id": "UCP0BspO_AMEe3aQqqpo89Dg"
+    },
+    "mori": {
+        "ch_id": "UCL_qhgtOy0dy1Agp8vkySQg"
     },
     "nene": {
         "ch_id": "UCAWSyEs_Io8MtpY3m-zqILA"
@@ -148,5 +160,8 @@
     },
     "watame": {
         "ch_id": "UCqm3BQLlJfvkTsX_hvm0UmA"
+    },
+    "watson": {
+        "ch_id": "UCyl1z3jo3XHR1riLFKG5UAg"
     }
 }
