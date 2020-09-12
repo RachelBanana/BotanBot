@@ -454,12 +454,9 @@ async def live_streams(res, msg):
     
     # Look for upcoming streams if there's no live streams
     upcoming_vids = db_streams.find({"status": "upcoming"})
-
-    # Return if there is no upcoming stream
-    if not upcoming_vids:
-        await res.channel.send("Sorry, Botan-sama doesn't have any scheduled streams now!")
-        return
     
+    flag = False
+
     for vid in upcoming_vids:
         vid_id = vid["id"]
         vid_url = "https://www.youtube.com/watch?v=" + vid_id
@@ -469,6 +466,11 @@ async def live_streams(res, msg):
             continue
         timeleft = time_to_string(*time_until(scheduled_start_time))
         await res.channel.send("{} left until Botan sama's next stream! Link here:\n{}".format(timeleft, vid_url))
+        flag = True
+
+    # Return if there is no upcoming stream
+    if not flag:
+        await res.channel.send("Sorry, Botan-sama doesn't have any scheduled streams now!")
 
 ### translation commands
 async def translate(res, msg):
