@@ -73,12 +73,9 @@ youtube = googleapiclient.discovery.build(
 
 # Setting up server and data
 client = discord.Client()
-with open("help.json") as f:
-    # set up help documentation
-    help_doc = json.load(f)
-with open("meme.json") as f:
-    # set up meme data
-    meme_dict = json.load(f)
+help_doc = d["help"]
+meme_dict = d["meme"]
+
 with open("blacklist.json") as f:
     # set up blacklist
     blacklist = json.load(f)
