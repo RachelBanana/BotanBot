@@ -57,14 +57,10 @@ db_name = "botanDB"
 db_user = os.getenv("DB_USER")
 db_pass = os.getenv("DB_PASS")
 cluster = MongoClient(db_url.format(db_user, db_pass, db_name))
-
 db = cluster[db_name]
-db_artworks = db["artworks"]
-db_settings = db["settings"]
-db_boosters = db["boosters"]
-db_streams = db["streams"]
 
-counter = db_settings.find_one({"name": "counter"})
+### preload counter for efficiency
+counter = db["settings"].find_one({"name": "counter"})
 
 ## youtube api settings
 yt_key = os.getenv("YT_KEY")
@@ -97,7 +93,7 @@ with open("help_booster.json") as f:
     booster_help_doc = json.load(f)
 
 # Temporary storage for artworks (only urls)
-temp_artwork_cursor = db_artworks.aggregate([{"$sample": {"size": 30}}])
+temp_artwork_cursor = db["artworks"].aggregate([{"$sample": {"size": 30}}])
 temp_art_deque = deque()
 temp_art_set = set()
 for art in temp_artwork_cursor:
@@ -171,7 +167,7 @@ def to_eng(m):
 """
 async def process_tags(vid_id, offset = 13, overwrite = False):
     botan_guild = client.get_guild(d["discord_ids"]["guild"])
-    vid_data = db_streams.find_one({"id": vid_id})
+    vid_data = db["streams"].find_one({"id": vid_id})
     lg_ch = client.get_channel(d["discord_ids"]["log"])
 
     # if tag_count doesn't exist or is zero, return
@@ -185,13 +181,13 @@ async def process_tags(vid_id, offset = 13, overwrite = False):
     if len(tags) == 0:
         return
 
-    # If seconds don't exist or overwrite is true, use timestamp to calculate all seconds, store back into db_streams
+    # If seconds don't exist or overwrite is true, use timestamp to calculate all seconds, store back into db["streams"]
     if (not tags[0].get("seconds")) or overwrite:
         actual_start_time = vid_data["actual_start_time"].replace(tzinfo = timezone.utc)
         for tag in tags:
             timestamp = tag["timestamp"].replace(tzinfo = timezone.utc)
             tag["seconds"] = max(int((timestamp - actual_start_time).total_seconds()) - offset, 0)
-        db_streams.update_one({"id": vid_id}, {"$set": {"tags": tags_dict}})
+        db["streams"].update_one({"id": vid_id}, {"$set": {"tags": tags_dict}})
 
     # write all tags into separate messages in a list
     msg_list = []
@@ -247,11 +243,11 @@ def add_corners(im, rad):
 ## Boosters utility tools
 def is_booster(user):
     # checks if user is a booster and returns the booster's data
-    return db_boosters.find_one({"id": user.id})
+    return db["boosters"].find_one({"id": user.id})
 
 def booster_nickname(user):
     # if user is a booster and has a booster nickname, return nickname. 
-    booster = db_boosters.find_one({"id": user.id})
+    booster = db["boosters"].find_one({"id": user.id})
     if booster and booster["nickname"]:
         return booster["nickname"]
     # else return guild nickname or user's name depending on the class type
@@ -331,7 +327,7 @@ async def sleepy(res, msg):
     sleep_count = counter["sleepy"]
     await res.channel.send("<:BotanSleepy:742049916117057656>")
     await res.channel.send("{} Sleepy Bodans sleeping on the floor.".format(sleep_count))
-    db_settings.update_one({"name": "counter"}, {"$set": {"sleepy": counter["sleepy"]}})
+    db["settings"].update_one({"name": "counter"}, {"$set": {"sleepy": counter["sleepy"]}})
 
 async def gao(res, msg):
     ri = random.randint
@@ -376,7 +372,7 @@ async def vid_tag(res, msg):
         return
 
     # check if there is a livestream
-    vid_data = db_streams.find_one({"status": "live"})
+    vid_data = db["streams"].find_one({"status": "live"})
     if not vid_data:
         await res.channel.send("There are no ongoing live streams now!")
         return
@@ -407,7 +403,7 @@ async def vid_tag(res, msg):
     vid_data["tag_count"] += 1
 
     # update data
-    db_streams.update_one({"id": vid_data["id"]}, {"$set": {"tags": vid_data["tags"], "tag_count": vid_data["tag_count"]}})
+    db["streams"].update_one({"id": vid_data["id"]}, {"$set": {"tags": vid_data["tags"], "tag_count": vid_data["tag_count"]}})
 
     # add reaction to acknowledge tag
     await res.add_reaction("\U0001F4AF")
@@ -433,7 +429,7 @@ async def subscribers(res, msg):
 
 async def live_streams(res, msg):
     # Look for live streams (only return one)
-    live_vid = db_streams.find_one({
+    live_vid = db["streams"].find_one({
         "$or": [
             {"status": "justlive"},
             {"status": "live"}
@@ -450,7 +446,7 @@ async def live_streams(res, msg):
         return
     
     # Look for upcoming streams if there's no live streams
-    upcoming_vids = db_streams.find({"status": "upcoming"})
+    upcoming_vids = db["streams"].find({"status": "upcoming"})
     
     flag = False
 
@@ -697,9 +693,9 @@ async def botan_art(res, msg):
     await res.channel.send(art_url)
 
     # get a new art url from database to add to temp
-    new_art_url = list(db_artworks.aggregate([{"$sample": {"size": 1}}]))[0]["url"]
+    new_art_url = list(db["artworks"].aggregate([{"$sample": {"size": 1}}]))[0]["url"]
     while new_art_url in temp_art_set:
-        new_art_url = list(db_artworks.aggregate([{"$sample": {"size": 1}}]))[0]["url"]
+        new_art_url = list(db["artworks"].aggregate([{"$sample": {"size": 1}}]))[0]["url"]
     temp_art_set.add(new_art_url)
     temp_art_deque.append(new_art_url)
 
@@ -739,19 +735,19 @@ async def read(res, msg):
 
 ### database manipulation
 async def add_art(res, msg):
-    if db_artworks.find_one({"url": msg}):
+    if db["artworks"].find_one({"url": msg}):
         await res.channel.send("There's already an existing art with the same url!")
         return
-    db_artworks.insert_one({"url": msg})
+    db["artworks"].insert_one({"url": msg})
     await res.channel.send("Added one new artwork to database!")
 
 async def del_art(res, msg):
-    target_art = db_artworks.find_one({"url": msg})
+    target_art = db["artworks"].find_one({"url": msg})
     if not target_art:
         await res.channel.send("Can't find anything similar in the database!")
         return
     await res.channel.send("Found artwork, deleting now!")
-    db_artworks.delete_one(target_art)
+    db["artworks"].delete_one(target_art)
     await res.channel.send("Artwork successfully deleted.")
     pass
 
@@ -761,7 +757,7 @@ async def add_upcoming_stream(res, msg):
     if not vid_id:
         return
     # check if vid already exists in database
-    if db_streams.find_one({"id": vid_id}):
+    if db["streams"].find_one({"id": vid_id}):
         await res.channel.send("{} already exists in database!".format(vid_id))
     # else store video's id, status and scheduled start time
     vid_req = youtube.videos().list(
@@ -781,7 +777,7 @@ async def add_upcoming_stream(res, msg):
         "status": "upcoming",
         "scheduled_start_time": scheduled_start_time
     }
-    db_streams.insert_one(vid_data)
+    db["streams"].insert_one(vid_data)
     await res.channel.send("New upcoming video logged!\n{}\n{}".format(vid_id, scheduled_start_time))
 
 ## booster commands
@@ -813,7 +809,7 @@ async def new_booster_nickname(res, msg):
     if not msg:
         await res.channel.send("Your current nickname is {}. If you wish to change it, please provide an argument for the ``nickname`` command!".format(booster_nickname(res.author)))
         return
-    db_boosters.update_one({"id": res.author.id}, {"$set": {"nickname": msg}})
+    db["boosters"].update_one({"id": res.author.id}, {"$set": {"nickname": msg}})
     await res.channel.send("Noted, I will refer to you as {} from now on.".format(booster_nickname(res.author)))
 
 async def new_booster_color_role(res, msg):
@@ -834,7 +830,7 @@ async def new_booster_color_role(res, msg):
         color = discord.Colour(int(color, 16))
 
     # retrieve booster data
-    custom_role_id = db_boosters.find_one({"id": res.author.id})["custom_role"]
+    custom_role_id = db["boosters"].find_one({"id": res.author.id})["custom_role"]
     botan_guild = client.get_guild(d["discord_ids"]["guild"])
     author = botan_guild.get_member(res.author.id)
 
@@ -854,7 +850,7 @@ async def new_booster_color_role(res, msg):
         # update new custom role id
         await author.add_roles(new_custom_role)
         custom_role_id = new_custom_role.id
-        db_boosters.update_one({"id": res.author.id}, {"$set": {"custom_role": custom_role_id}})
+        db["boosters"].update_one({"id": res.author.id}, {"$set": {"custom_role": custom_role_id}})
         await res.channel.send("New custom role created!")
 
     # if there is an existing color role
@@ -878,7 +874,7 @@ async def new_booster_color_role(res, msg):
 
 async def del_booster_color_role(res, msg):
     # retrieve booster data
-    custom_role_id = db_boosters.find_one({"id": res.author.id})["custom_role"]
+    custom_role_id = db["boosters"].find_one({"id": res.author.id})["custom_role"]
     botan_guild = client.get_guild(d["discord_ids"]["guild"])
 
     if custom_role_id == -1:
@@ -887,7 +883,7 @@ async def del_booster_color_role(res, msg):
     
     custom_role = botan_guild.get_role(custom_role_id)
     await custom_role.delete(reason = "{} requested a custom role deletion".format(str(res.author)))
-    db_boosters.update_one({"id": res.author.id}, {"$set": {"custom_role": -1}})
+    db["boosters"].update_one({"id": res.author.id}, {"$set": {"custom_role": -1}})
     await res.channel.send("Role deletion successful! You may add a custom role again anytime you want.")
 
 async def booster_news(res, msg):
@@ -1083,10 +1079,10 @@ async def on_message(res):
             await ann_ch.send(content = None, embed = embed)
 
             # check if user exists in boosters collections, if not create a new one, else update boosts count
-            booster_data = db_boosters.find_one({"id": res.author.id})
+            booster_data = db["boosters"].find_one({"id": res.author.id})
             if booster_data:
                 booster_data["boosts_count"] += 1
-                db_boosters.update_one({"id": res.author.id}, {"$set": {"boosts_count": booster_data["boosts_count"]}})
+                db["boosters"].update_one({"id": res.author.id}, {"$set": {"boosts_count": booster_data["boosts_count"]}})
             else:
                 booster_data = {
                     "id": res.author.id,
@@ -1094,7 +1090,7 @@ async def on_message(res):
                     "boosts_count": 1,
                     "custom_role": -1
                 }
-                db_boosters.insert_one(booster_data)
+                db["boosters"].insert_one(booster_data)
             return
 
     # check if dm
@@ -1110,7 +1106,7 @@ async def on_message(res):
         # return if not nitro booster or owner
         if not (d["discord_ids"]["booster_role"] in (role.id for role in author.roles) or str(res.author) == owner):
             # if previous booster, use different message
-            if db_boosters.find_one({"id": res.author.id}):
+            if db["boosters"].find_one({"id": res.author.id}):
                 m = "Hi {}! Thanks again for supporting me in the past!\n".format(booster_nickname(author))
                 m += "I'm sorry but you need the Lion Tamer role again to use any of my commands here...*cries*"
             else:
@@ -1303,14 +1299,14 @@ async def on_member_update(before, after):
         # If member loses Lion Tamer role
         elif d["discord_ids"]["booster_role"] in (old_roles - new_roles) or 748842249030336542 in (old_roles - new_roles):
             # Get booster data
-            custom_role_id = db_boosters.find_one({"id": after.id})["custom_role"]
+            custom_role_id = db["boosters"].find_one({"id": after.id})["custom_role"]
             botan_guild = client.get_guild(d["discord_ids"]["guild"])
 
             # If custom role id is not -1, remove existing custom role
             if custom_role_id != -1:
                 custom_role = botan_guild.get_role(custom_role_id)
                 await custom_role.delete(reason = "{}'s lion tamer's subscription expired".format(str(after)))
-                db_boosters.update_one({"id": after.id}, {"$set": {"custom_role": -1}})          
+                db["boosters"].update_one({"id": after.id}, {"$set": {"custom_role": -1}})          
 
             # Send dm informing the expiration
             title = "Lion Tamer's subscription expired"
@@ -1358,7 +1354,7 @@ async def update_streams():
     while not client.is_closed():
         now = dtime.now(tz = timezone.utc)
         # check live streams, see if any is finishing
-        for vid in db_streams.find({"status": "live"}):
+        for vid in db["streams"].find({"status": "live"}):
             # get live vid data
             vid_id = vid["id"]
             vid_req = youtube.videos().list(
@@ -1374,7 +1370,7 @@ async def update_streams():
                 actual_start_time_str = live_streaming_details["actualStartTime"]
                 actual_start_time = dtime.strptime(actual_start_time_str.split(".")[0], "%Y-%m-%dT%H:%M:%S").replace(tzinfo = timezone.utc)
                 actual_end_time = dtime.strptime(actual_end_time_str, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo = timezone.utc)
-                db_streams.update_one({"id": vid_id}, {"$set": {
+                db["streams"].update_one({"id": vid_id}, {"$set": {
                     "status": "completed", 
                     "actual_start_time": actual_start_time,
                     "actual_end_time": actual_end_time
@@ -1409,7 +1405,7 @@ async def update_streams():
             await live_msg.edit(content = m)
 
         # check upcoming streams, see if there's any live ones in 1 minute
-        for vid in db_streams.find({
+        for vid in db["streams"].find({
             "$or": [
                 {"status": "upcoming"},
                 {"status": "justlive"}
@@ -1436,7 +1432,7 @@ async def update_streams():
             await lg_ch.send(dt_string)
             new_scheduled_time = dtime.strptime(dt_string, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo = timezone.utc)
             if new_scheduled_time > scheduled_start_time + timedelta(minutes = 1):
-                db_streams.update_one({"id": vid_id}, {"$set": {"scheduled_start_time": new_scheduled_time}})
+                db["streams"].update_one({"id": vid_id}, {"$set": {"scheduled_start_time": new_scheduled_time}})
                 await lg_ch.send("{} has been rescheduled to {}".format(vid_id, new_scheduled_time))
                 continue
 
@@ -1460,7 +1456,7 @@ async def update_streams():
             await live_ch.send(content = None, embed = embed)
 
             # update the status to live, record message id
-            db_streams.update_one({"id": vid_id}, {"$set": {"status": "live", "live_msg": live_msg.id}})
+            db["streams"].update_one({"id": vid_id}, {"$set": {"status": "live", "live_msg": live_msg.id}})
             await lg_ch.send("{} is now live".format(vid_id))
         await asyncio.sleep(30)
 
@@ -1468,7 +1464,7 @@ async def find_streams():
     lg_ch = client.get_channel(d["discord_ids"]["log"])
     while not client.is_closed():
         # get data of last checked timestamp
-        stream_check = db_settings.find_one({"name": "stream"})
+        stream_check = db["settings"].find_one({"name": "stream"})
         last_checked = stream_check.get("last_checked", None)
         now = dtime.now(tz = timezone.utc)
         await lg_ch.send("Checking if live stream check is needed, time: {}".format(now))
@@ -1490,7 +1486,7 @@ async def find_streams():
             for vid in live_res:
                 vid_id = vid["id"]["videoId"]
                 # check if vid already exists in database
-                if db_streams.find_one({"id": vid_id}):
+                if db["streams"].find_one({"id": vid_id}):
                     continue
                 # else store video's id, status and scheduled start time
                 vid_req = youtube.videos().list(
@@ -1510,7 +1506,7 @@ async def find_streams():
                     "status": "justlive",
                     "scheduled_start_time": scheduled_start_time
                 }
-                db_streams.insert_one(vid_data)
+                db["streams"].insert_one(vid_data)
                 await lg_ch.send("New live video logged!\n{}\n{}".format(vid_id, scheduled_start_time))
 
             # check for upcoming streams
@@ -1525,7 +1521,7 @@ async def find_streams():
             for vid in upcoming_res:
                 vid_id = vid["id"]["videoId"]
                 # check if vid already exists in database
-                if db_streams.find_one({"id": vid_id}):
+                if db["streams"].find_one({"id": vid_id}):
                     continue
                 # else store video's id, status and scheduled start time
                 vid_req = youtube.videos().list(
@@ -1549,10 +1545,10 @@ async def find_streams():
                     "status": "upcoming",
                     "scheduled_start_time": scheduled_start_time
                 }
-                db_streams.insert_one(vid_data)
+                db["streams"].insert_one(vid_data)
                 await lg_ch.send("New upcoming video logged!\n{}\n{}".format(vid_id, scheduled_start_time))            
             # add wait time
-            db_settings.update_one({"name": "stream"}, {"$set": {"last_checked": now}})
+            db["settings"].update_one({"name": "stream"}, {"$set": {"last_checked": now}})
             wait_time = 3600
         else:
             # else wait for the remaining time left
