@@ -20,13 +20,16 @@ from datetime import datetime as dtime
 from datetime import timezone, timedelta
 from collections import deque
 
-# Customizable Settings
-
 """For local testing purpose"""
 # config_file = "config.json"
 # with open(config_file) as f:
 #     config_data = json.load(f)
 
+
+# Setting up server and data
+client = discord.Client()
+
+# Customizable Settings
 ## discord settings
 token = os.getenv("TOKEN")
 owner = os.getenv("OWNER")
@@ -70,15 +73,6 @@ api_version = "v3"
 
 youtube = googleapiclient.discovery.build(
     api_service_name, api_version, developerKey = yt_key)
-
-# Setting up server and data
-client = discord.Client()
-help_doc = d["help"]
-meme_dict = d["meme"]
-blacklist = d["blacklist"]
-vtubers = d["vtubers"]
-voices_dict = d["voices"]
-booster_help_doc = d["help_booster"]
 
 # Temporary storage for artworks (only urls)
 temp_artwork_cursor = db["artworks"].aggregate([{"$sample": {"size": 30}}])
@@ -272,8 +266,8 @@ async def on_error(err):
 async def help_command(res, msg):
     msg = msg.strip().lower()
     msg = aliases.get(msg, msg)
-    if msg in help_doc:
-        cmd_doc = help_doc[msg]
+    if msg in d["help"]:
+        cmd_doc = d["help"][msg]
         embed = discord.Embed(title = "Help Menu: '{}' Command".format(msg), description = cmd_doc["desc"])
         for field in cmd_doc["extra_fields"]:
             field_msg = "\n".join(field["value"]) if isinstance(field["value"], list) else field["value"]
@@ -282,7 +276,7 @@ async def help_command(res, msg):
         if cmd_doc["alias"]:
             embed.add_field(name = "Aliases", value = ", ".join(cmd_doc["alias"]))
     else:
-        embed = discord.Embed(title = "Help Menu: Available Commands", description = "\n".join(help_doc))
+        embed = discord.Embed(title = "Help Menu: Available Commands", description = "\n".join(d["help"]))
         embed.add_field(name = "More Help", value = "$help {command name}")
     embed.colour = embed_color
     await res.channel.send(content = None, embed = embed)
@@ -295,10 +289,10 @@ async def greet(res, msg):
 
 async def voice(res, msg):
     if not msg:
-        msg = random.choice(list(voices_dict))
-    v_file_name = random.choice(voices_dict[msg]["clips"])
+        msg = random.choice(list(d["voices"]))
+    v_file_name = random.choice(d["voices"][msg]["clips"])
     voice_file = os.path.join(voices_dir, v_file_name)
-    await res.channel.send(voices_dict[msg]["quote"], file = discord.File(voice_file))
+    await res.channel.send(d["voices"][msg]["quote"], file = discord.File(voice_file))
 
 async def score_me(res, msg):
     edit_msg = await res.channel.send(":100:")
@@ -402,8 +396,8 @@ async def subscribers(res, msg):
     ch_id = botan_ch_id
     vtuber_name = "Shishiro Botan"
 
-    if msg in vtubers:
-        ch_id = vtubers[msg]["ch_id"]
+    if msg in d["vtubers"]:
+        ch_id = d["vtubers"][msg]["ch_id"]
         vtuber_name = msg.capitalize()
 
     # Look for channel
@@ -620,12 +614,12 @@ async def meme(res, msg):
 
     meme_cmd, *meme_args = [m.strip() for m in msg.split("\n") if m]
 
-    if meme_cmd not in meme_dict:
+    if meme_cmd not in d["meme"]:
         await res.channel.send(err_msg)
         return
     
     # get meme info from local meme.json file
-    meme_info = meme_dict[meme_cmd]
+    meme_info = d["meme"][meme_cmd]
     file_name = meme_info["file"]
     positions = meme_info["positions"]
     wrapsize = meme_info["wrapsize"]
@@ -778,8 +772,8 @@ async def add_upcoming_stream(res, msg):
 async def booster_help(res, msg):
     msg = msg.strip().lower()
     msg = aliases.get(msg, msg)
-    if msg in booster_help_doc:
-        cmd_doc = booster_help_doc[msg]
+    if msg in d["help_booster"]:
+        cmd_doc = d["help_booster"][msg]
         embed = discord.Embed(title = "Lion Tamer's Help Menu: '{}' Command".format(msg), description = cmd_doc["desc"])
         for field in cmd_doc["extra_fields"]:
             field_msg = "\n".join(field["value"]) if isinstance(field["value"], list) else field["value"]
@@ -788,7 +782,7 @@ async def booster_help(res, msg):
         if cmd_doc["alias"]:
             embed.add_field(name = "Aliases", value = ", ".join(cmd_doc["alias"]))
     else:
-        embed = discord.Embed(title = "Lion Tamer's Help Menu: Available Commands", description = "\n".join(booster_help_doc))
+        embed = discord.Embed(title = "Lion Tamer's Help Menu: Available Commands", description = "\n".join(d["help_booster"]))
         embed.add_field(name = "More Help", value = "help {command name}")
     embed.colour = embed_color
     await res.channel.send(content = None, embed = embed)
@@ -1122,7 +1116,7 @@ async def on_message(res):
         return
 
     # check for banned links
-    if any(True for ban_link in blacklist["ban_links"] if ban_link in res.content):
+    if any(True for ban_link in d["blacklist"]["ban_links"] if ban_link in res.content):
         admin_logs = discord.utils.get(res.guild.text_channels, name = "admin-logs")
         await res.delete()
         m = "\n".join([
