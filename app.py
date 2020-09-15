@@ -890,11 +890,23 @@ async def add_contr(res, msg, contr = 1):
 
     # if contributions reach new digit level, add a ticket
     if len(str(new_contr)) > len(str(old_contr)):
-        pass
+        await add_tick(res, msg)
 
     db["members"].update_one({"id": res.author.id}, {"$set": {"nsfw.contributions": new_contr}})
-    m = "You have received one new contribution point!\n```\nTotal Contributions: {}\n```"
+    m = "You have received one new horny point!\n```\nTotal Horny Points: {}\n```"
     await res.channel.send(m.format(new_contr))
+
+async def add_tick(res, msg, tick = 1):
+    member = db["members"].find_one({"id": res.author.id})
+    if not member:
+        await res.channel.send("Can't find member!")
+        return
+    new_tick = member["nsfw"]["horny_tickets"] + tick
+    db["members"].update_one({"id": res.author.id}, {"$set": {"nsfw.horny_tickets": new_tick}})
+    m = "Congratulations! You have proven yourself enough to the Horny Cult! You earned a horny ticket."
+    m += "\nYou may use a horny ticket to invite new horny cultists. Use the command ``invite_horny {user id}`` to grant your friend access to the cult!"
+    m += "\n```\nHorny Ticket Count: {}\n```".format(new_tick)
+    await res.channel.send(m)
 
 async def add_nsfw_art(res, msg):
     if not is_horny(res.author):
