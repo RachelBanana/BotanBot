@@ -882,7 +882,8 @@ async def booster_news(res, msg):
 ## nsfw dm commands
 async def nsfw_art(res, msg):
     if not is_horny(res.author):
-        await res.channel.send("I'm sorry {}, you have stumbled upon a hidden command!\nTry coming back again once you get the appropriate access.")
+        m = "I'm sorry {}, you have stumbled upon a hidden command!\nTry coming back again once you get the appropriate access."
+        await res.channel.send(m.format(booster_nickname(res.author)))
         return
     nsfw_url = list(db["nsfws"].aggregate([{"$sample": {"size": 1}}]))[0]["url"]
     await res.channel.send(nsfw_url)
