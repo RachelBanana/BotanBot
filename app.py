@@ -921,7 +921,7 @@ async def invite_horny(res, msg):
     
     if not msg or not msg.isdigit():
         await res.channel.send("Please provide a valid user id!")
-        
+
     new_member = client.get_user(int(msg))
 
     if not new_member:
@@ -950,6 +950,20 @@ async def invite_horny(res, msg):
     m += "\n```\nHorny Ticket Count: {}\n```"
     await res.channel.send(m.format(new_member.name, tick_count - 1))
 
+    # send message to new member
+    new_m = [
+        "You were walking down a dark alleyway when a hooded figure approached you.",
+        " \"The Order wants you to have this,\" the person said under their breath as they passed you a ticket.",
+        "\n\n```\nCongratulations, you have gained access to the Horny Cult!\nAvailable commands:\n\n",
+        "nsfw: see forbidden artworks unearthed by your fellow cultists.\n",
+        "add_nsfw {twitter url}: contribute to the order with artworks you find and gain horny points!\n",
+        "invite_horny {member id}: corrupt a friend and make the cult stronger! [Requires Horny Tickets]\n",
+        "no_horny: you might want to opt out of being horny before it is too late.\n```",
+        "\n\n\"Welcome to the cult, and we know how to find you shall the need arises,\" and the hooded figure was gone."
+    ]
+    embed = discord.Embed(title = "An Invitation: The Horny Cult", description = "".join(new_m), colour = embed_color)
+    await new_member.send(content = None , embed = embed)
+
 async def no_horny(res, msg):
     if not is_horny(res.author):
         m = "I'm sorry {}, you have stumbled upon a hidden command!\nTry coming back again once you get the appropriate access."
@@ -961,7 +975,7 @@ async def no_horny(res, msg):
         await res.channel.send(m)
         return
     db["members"].update_one({"id": res.author.id}, {"$set": {"nsfw.is_horny": False}})
-    await res.channel.send("*You left the cult's secret entrance with a heavy heart.\nYou don't want to be horny anymore, you muttered.*")
+    await res.channel.send("*You left the cult's secret entrance with a heavy heart.\nYou don't want to be horny anymore, you promised yourself.*")
 
 async def add_nsfw_art(res, msg):
     if not is_horny(res.author):
