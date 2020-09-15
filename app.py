@@ -50,18 +50,6 @@ for f_name in os.listdir(data_dir):
     with open(f_path) as f:
         # example: d["blacklist"] = {blacklist data}
         d[f_name.split(".")[0]] = json.load(f)
-        
-tweets_ch = 740896881827381259
-translated_tweets_ch = 741945787042496614
-fanart_ch = 740888816268738630
-booster_role = 741427676409233430
-stream_role = 740906304226197524
-announcement_ch = 740887547651162211
-welcome_ch = 740888968089829447
-rules_ch = 740887522044805141
-upcoming_news_channel = 749905915339210824
-live_stream_channel = 740888892772712518
-archive_stream_channel = 751210778278756375
 
 ## database settings
 db_url = "mongodb+srv://{}:{}@botan.lkk4p.mongodb.net/{}?retryWrites=true&w=majority"
@@ -237,7 +225,7 @@ async def process_tags(vid_id, offset = 13, overwrite = False):
         embed_list.append(embed)
     await lg_ch.send("here")
     # if msg_ids exist, edit messages, else send messages !!! wip
-    ar_ch = client.get_channel(archive_stream_channel)
+    ar_ch = client.get_channel(d["discord_ids"]["archive_stream"])
     await ar_ch.send("https://www.youtube.com/watch?v=" + vid_id)
     for embed in embed_list:
         await ar_ch.send(content = None, embed = embed)
@@ -383,7 +371,7 @@ async def birthday(res, msg):
 """
 async def vid_tag(res, msg):
     # check if channel is live stream channel
-    if res.channel.id != live_stream_channel:
+    if res.channel.id != d["discord_ids"]["live_stream"]:
         await res.channel.send("This command is only available in <#740888892772712518>!")
         return
 
@@ -732,7 +720,7 @@ async def post(res, msg):
 async def system_read(res, msg):
     if not msg.isdigit():
         return
-    ann_ch = client.get_channel(announcement_ch)
+    ann_ch = client.get_channel(d["discord_ids"]["announcements"])
     m = await ann_ch.fetch_message(int(msg))
     await res.channel.send(m.author.name)
 
@@ -903,7 +891,7 @@ async def del_booster_color_role(res, msg):
     await res.channel.send("Role deletion successful! You may add a custom role again anytime you want.")
 
 async def booster_news(res, msg):
-    up_news_ch = client.get_channel(upcoming_news_channel)
+    up_news_ch = client.get_channel(d["discord_ids"]["upcoming_news"])
     last_news = await up_news_ch.fetch_message(up_news_ch.last_message_id)
     embed =  last_news.embeds[0] if last_news.embeds else None
     await res.channel.send(content = last_news.content, embed = embed)
@@ -1076,7 +1064,7 @@ async def on_message(res):
         # check if system message is a nitro boost
         if res.type in boosted_types:
             # make a server announcement of boost
-            ann_ch = res.guild.get_channel(announcement_ch)
+            ann_ch = res.guild.get_channel(d["discord_ids"]["announcements"])
 
             ## randomly chooses one msg as boosting announcement
             m_choices = (
@@ -1120,7 +1108,7 @@ async def on_message(res):
         author = botan_guild.get_member(res.author.id)
 
         # return if not nitro booster or owner
-        if not (booster_role in (role.id for role in author.roles) or str(res.author) == owner):
+        if not (d["discord_ids"]["booster_role"] in (role.id for role in author.roles) or str(res.author) == owner):
             # if previous booster, use different message
             if db_boosters.find_one({"id": res.author.id}):
                 m = "Hi {}! Thanks again for supporting me in the past!\n".format(booster_nickname(author))
@@ -1169,15 +1157,15 @@ async def on_message(res):
 
 
     # read twitter tweets from botan (is pingcord and is in tweets channel)
-    if str(res.author) == pingcord and res.channel.id == tweets_ch:
-        channel = client.get_channel(translated_tweets_ch)
+    if str(res.author) == pingcord and res.channel.id == d["discord_ids"]["tweets"]:
+        channel = client.get_channel(d["discord_ids"]["translated_tweets"])
         for embed in res.embeds:
             embed.title = to_eng(embed.title).text
             embed.description = to_eng(embed.description).text
             await channel.send(content = None, embed = embed)
         
     # if channel is fanart channel, automatically detects new tweets artwork.
-    if res.channel.id == fanart_ch and not res.content.startswith(prefix):
+    if res.channel.id == d["discord_ids"]["fanart"] and not res.content.startswith(prefix):
         match = re.search(r"https://twitter.com/[a-zA-Z0-9_]+/status/[0-9]+", res.content)
         if match:
             await add_art(res, match.group())
@@ -1215,8 +1203,8 @@ async def on_member_join(member):
         return
     
     # get data for welcome message
-    wc_ch = client.get_channel(welcome_ch)
-    r_ch = client.get_channel(rules_ch)
+    wc_ch = client.get_channel(d["discord_ids"]["welcome"])
+    r_ch = client.get_channel(d["discord_ids"]["rules"])
     member_count  = member.guild.member_count
     m = "Paao~ Welcome to Shishiro Botan's Den, {}!\nPlease be sure to read the rules in {} and support our lion goddess Botan. ☀️"
     m = m.format(member.mention, r_ch.mention)
@@ -1292,7 +1280,7 @@ async def on_member_update(before, after):
         old_roles = set(role.id for role in before.roles)
         new_roles = set(role.id for role in after.roles)
         # If member gets server booster (Lion Tamer) role
-        if booster_role in (new_roles - old_roles) or 748842249030336542 in (new_roles - old_roles):
+        if d["discord_ids"]["booster_role"] in (new_roles - old_roles) or 748842249030336542 in (new_roles - old_roles):
             # Send dm introducing the perks
             title = "New Lion Tamer"
             m = [
@@ -1313,7 +1301,7 @@ async def on_member_update(before, after):
             await after.send(content = None, embed = embed)
             return
         # If member loses Lion Tamer role
-        elif booster_role in (old_roles - new_roles) or 748842249030336542 in (old_roles - new_roles):
+        elif d["discord_ids"]["booster_role"] in (old_roles - new_roles) or 748842249030336542 in (old_roles - new_roles):
             # Get booster data
             custom_role_id = db_boosters.find_one({"id": after.id})["custom_role"]
             botan_guild = client.get_guild(d["discord_ids"]["guild"])
@@ -1363,9 +1351,9 @@ async def jst_clock():
 """
 async def update_streams():
     lg_ch = client.get_channel(d["discord_ids"]["log"])
-    live_ch = client.get_channel(live_stream_channel)
+    live_ch = client.get_channel(d["discord_ids"]["live_stream"])
     botan_guild = client.get_guild(d["discord_ids"]["guild"])
-    stream_role_mention = botan_guild.get_role(stream_role).mention
+    stream_role_mention = botan_guild.get_role(d["discord_ids"]["stream_role"]).mention
 
     while not client.is_closed():
         now = dtime.now(tz = timezone.utc)
