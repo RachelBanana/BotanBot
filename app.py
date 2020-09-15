@@ -887,7 +887,7 @@ async def add_nsfw_art(res, msg):
         return
     match = re.search(r"https://twitter.com/[a-zA-Z0-9_]+/status/[0-9]+", msg)
     if match:
-        if db["nsfws"].find_one({"url": msg}):
+        if db["nsfws"].find_one({"url": match.group()}):
             await res.channel.send("There's already an existing nsfw art with the same url!")
             return
         db["nsfws"].insert_one({
