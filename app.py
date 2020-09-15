@@ -909,6 +909,10 @@ async def add_tick(res, msg, tick = 1):
     await res.channel.send(m)
 
 async def no_horny(res, msg):
+    if not is_horny(res.author):
+        m = "I'm sorry {}, you have stumbled upon a hidden command!\nTry coming back again once you get the appropriate access."
+        await res.channel.send(m.format(booster_nickname(res.author)))
+        return
     if msg != "SEISO":
         m = "Warning: This is an irreversible action, continuing the action will opt you out from all nsfw commands unless someone from the nsfw cult sends you another horny ticket."
         m += " To continue, type ``no_horny SEISO`` to stop seeing any future nsfw content."
