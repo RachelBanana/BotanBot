@@ -618,7 +618,7 @@ async def meme(res, msg):
         await res.channel.send(err_msg)
         return
     
-    # get meme info from local meme.json file
+    # get meme info from data meme.json file
     meme_info = d["meme"][meme_cmd]
     file_name = meme_info["file"]
     positions = meme_info["positions"]
