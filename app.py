@@ -888,13 +888,13 @@ async def add_contr(res, msg, contr = 1):
     old_contr = member["nsfw"]["contributions"]
     new_contr = old_contr + contr
 
-    # if contributions reach new digit level, add a ticket
-    if len(str(new_contr)) > len(str(old_contr)):
-        await add_tick(res, msg)
-
     db["members"].update_one({"id": res.author.id}, {"$set": {"nsfw.contributions": new_contr}})
     m = "You have received one new horny point!\n```\nTotal Horny Points: {}\n```"
     await res.channel.send(m.format(new_contr))
+    
+    # if contributions reach new digit level, add a ticket
+    if len(str(new_contr)) > len(str(old_contr)):
+        await add_tick(res, msg)
 
 async def add_tick(res, msg, tick = 1):
     member = db["members"].find_one({"id": res.author.id})
