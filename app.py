@@ -27,6 +27,13 @@ from collections import deque
 # with open(config_file) as f:
 #     config_data = json.load(f)
 
+## discord settings
+token = os.getenv("TOKEN")
+owner = os.getenv("OWNER")
+prefix = os.getenv("PREFIX")
+embed_color = int(os.getenv("EMBED_COLOR"), 16)
+pingcord = "Pingcord#3283"
+
 ## local directories
 data_dir = "data"
 save_dir = "dumps"
@@ -43,20 +50,7 @@ for f_name in os.listdir(data_dir):
     with open(f_path) as f:
         # example: d["blacklist"] = {blacklist data}
         d[f_name.split(".")[0]] = json.load(f)
-
-## discord settings
-token = os.getenv("TOKEN")
-owner = os.getenv("OWNER")
-prefix = os.getenv("PREFIX")
-embed_color = int(os.getenv("EMBED_COLOR"), 16)
-pingcord = "Pingcord#3283"
-
-with open("guilds.json") as f:
-    guilds = json.load(f)
-
-guild_id = guilds["botan"]["id"]
-log_channel = d["discord_ids"]["log"]
-dm_log_channel = 749264565958737930
+        
 tweets_ch = 740896881827381259
 translated_tweets_ch = 741945787042496614
 fanart_ch = 740888816268738630
@@ -188,9 +182,9 @@ def to_eng(m):
     }
 """
 async def process_tags(vid_id, offset = 13, overwrite = False):
-    botan_guild = client.get_guild(guild_id)
+    botan_guild = client.get_guild(d["discord_ids"]["guild"])
     vid_data = db_streams.find_one({"id": vid_id})
-    lg_ch = client.get_channel(log_channel)
+    lg_ch = client.get_channel(d["discord_ids"]["log"])
 
     # if tag_count doesn't exist or is zero, return
     if not vid_data.get("tag_count"):
@@ -280,25 +274,25 @@ def booster_nickname(user):
 ## on setting up, disconnecting, and errors
 @client.event
 async def on_ready():
-    lg_ch = client.get_channel(log_channel)
+    lg_ch = client.get_channel(d["discord_ids"]["log"])
     await lg_ch.send("Botan is ready!")
     print("Botan is ready!")
 
 @client.event
 async def on_connect():
-    lg_ch = client.get_channel(log_channel)
+    lg_ch = client.get_channel(d["discord_ids"]["log"])
     await lg_ch.send("Botan is connected to discord as {0.user}.".format(client))
     print("Botan is connected to discord as {0.user}.".format(client))
 
 @client.event
 async def on_disconnect():
-    lg_ch = client.get_channel(log_channel)
+    lg_ch = client.get_channel(d["discord_ids"]["log"])
     await lg_ch.send("Botan is snoozing off from discord!")
     print("Botan is snoozing off from discord!")
 
 @client.event
 async def on_error(err):
-    lg_ch = client.get_channel(log_channel)
+    lg_ch = client.get_channel(d["discord_ids"]["log"])
     await lg_ch.send(err)
     print(err)
 
@@ -853,7 +847,7 @@ async def new_booster_color_role(res, msg):
 
     # retrieve booster data
     custom_role_id = db_boosters.find_one({"id": res.author.id})["custom_role"]
-    botan_guild = client.get_guild(guild_id)
+    botan_guild = client.get_guild(d["discord_ids"]["guild"])
     author = botan_guild.get_member(res.author.id)
 
     # if there is no existing color role
@@ -897,7 +891,7 @@ async def new_booster_color_role(res, msg):
 async def del_booster_color_role(res, msg):
     # retrieve booster data
     custom_role_id = db_boosters.find_one({"id": res.author.id})["custom_role"]
-    botan_guild = client.get_guild(guild_id)
+    botan_guild = client.get_guild(d["discord_ids"]["guild"])
 
     if custom_role_id == -1:
         await res.channel.send("You don't seem to own a custom role yet! Please contact an admin if otherwise!")
@@ -959,7 +953,7 @@ async def direct_dm(res, msg):
 
 async def mass_role_dm(res, msg):
     # currently only works with botan guild's roles
-    botan_guild = client.get_guild(guild_id)
+    botan_guild = client.get_guild(d["discord_ids"]["guild"])
 
     if str(res.author) != owner:
         return
@@ -1118,11 +1112,11 @@ async def on_message(res):
     # check if dm
     if isinstance(res.channel, discord.DMChannel):
         # log content to dm log channel for record
-        dm_lg_ch = client.get_channel(dm_log_channel)
+        dm_lg_ch = client.get_channel(d["discord_ids"]["dm_log"])
         await dm_lg_ch.send("{}\n{}".format(str(res.author),res.content))
         
         # get guild and author member info in botan guild
-        botan_guild = client.get_guild(guild_id)
+        botan_guild = client.get_guild(d["discord_ids"]["guild"])
         author = botan_guild.get_member(res.author.id)
 
         # return if not nitro booster or owner
@@ -1217,7 +1211,7 @@ async def on_message(res):
 @client.event
 async def on_member_join(member):
     # welcome message (only for botan server)
-    if member.guild.id != guild_id:
+    if member.guild.id != d["discord_ids"]["guild"]:
         return
     
     # get data for welcome message
@@ -1243,7 +1237,7 @@ async def on_member_join(member):
     back_im.paste(av_img, (385, 50), mask_im)    
 
     # add fonts
-    lg_ch = client.get_channel(log_channel)
+    lg_ch = client.get_channel(d["discord_ids"]["log"])
     idraw = ImageDraw.Draw(back_im)
 
     font_name = "uni-sans.heavy-caps.otf"
@@ -1322,7 +1316,7 @@ async def on_member_update(before, after):
         elif booster_role in (old_roles - new_roles) or 748842249030336542 in (old_roles - new_roles):
             # Get booster data
             custom_role_id = db_boosters.find_one({"id": after.id})["custom_role"]
-            botan_guild = client.get_guild(guild_id)
+            botan_guild = client.get_guild(d["discord_ids"]["guild"])
 
             # If custom role id is not -1, remove existing custom role
             if custom_role_id != -1:
@@ -1368,9 +1362,9 @@ async def jst_clock():
     }
 """
 async def update_streams():
-    lg_ch = client.get_channel(log_channel)
+    lg_ch = client.get_channel(d["discord_ids"]["log"])
     live_ch = client.get_channel(live_stream_channel)
-    botan_guild = client.get_guild(guild_id)
+    botan_guild = client.get_guild(d["discord_ids"]["guild"])
     stream_role_mention = botan_guild.get_role(stream_role).mention
 
     while not client.is_closed():
@@ -1483,7 +1477,7 @@ async def update_streams():
         await asyncio.sleep(30)
 
 async def find_streams():
-    lg_ch = client.get_channel(log_channel)
+    lg_ch = client.get_channel(d["discord_ids"]["log"])
     while not client.is_closed():
         # get data of last checked timestamp
         stream_check = db_settings.find_one({"name": "stream"})
