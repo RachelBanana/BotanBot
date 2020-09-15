@@ -908,6 +908,44 @@ async def add_tick(res, msg, tick = 1):
     m += "\n```\nHorny Ticket Count: {}\n```".format(new_tick)
     await res.channel.send(m)
 
+async def invite_horny(res, msg):
+    if not is_horny(res.author):
+        m = "I'm sorry {}, you have stumbled upon a hidden command!\nTry coming back again once you get the appropriate access."
+        await res.channel.send(m.format(booster_nickname(res.author)))
+        return
+    member = db["members"].find_one({"id": res.author.id})
+    tick_count = member["nsfw"]["horny_tickets"]
+    if not tick_count:
+        await res.channel.send("I'm sorry {}, you don't have enough horny tickets to invite someone! Earn more horny points to get them!")
+        return
+    
+    new_member = client.get_user(int(msg))
+    if not msg or not new_member:
+        await res.channel.send("Please provide a valid user id!")
+    
+    new_member_data = db["members"].find_one({"id": new_member.id})
+    if not new_member_data:
+        db["members"].insert_one({
+            "id": new_member.id,
+            "nsfw": {
+                "is_horny": True,
+                "contributions": 0,
+                "horny_tickets": 0
+            }
+        })
+    elif new_member_data["nsfw"]["is_horny"] == False:
+        db["members"].update_one({"id": new_member.id}, {"$set": {"nsfw.is_horny": True}})
+    else:
+        m = "Oh mys, this is embarrassing. {} seems to be either too horny or seiso to be able to receive your invitation. Try someone else!"
+        await res.channel.send(m.format(new_member.name))
+        return
+    
+    db["members"].update_one({"id": res.author.id}, {"$set": {"nsfw.horny_tickets": tick_count - 1}})
+    m = "A shady figure in hoodie took your horny ticket and blended back into the darkness."
+    m += " The cult always delivers, you know for sure {} will receive the invitation, but whether or not they will join the dark side is another story."
+    m += "\n```\nHorny Ticket Count: {}\n```"
+    await res.channel.send(m.format(new_member.name, tick_count - 1))
+
 async def no_horny(res, msg):
     if not is_horny(res.author):
         m = "I'm sorry {}, you have stumbled upon a hidden command!\nTry coming back again once you get the appropriate access."
@@ -1056,7 +1094,10 @@ aliases = {
     "sc": "superchat",
     "t": "tag",
     "addnsfw": "add_nsfw",
-    "nohorny": "no_horny"
+    "nohorny": "no_horny",
+    "invhorny": "invite_horny",
+    "invitehorny": "invite_horny",
+    "inv_horny": "invite_horny"
 }
 
 commands = {
@@ -1081,7 +1122,8 @@ commands = {
 dm_commands = {
     "nsfw": nsfw_art,
     "add_nsfw": add_nsfw_art,
-    "no_horny": no_horny
+    "no_horny": no_horny,
+    "invite_horny": invite_horny
 }
 
 booster_commands = {
