@@ -880,6 +880,22 @@ async def booster_news(res, msg):
     await res.channel.send(content = last_news.content, embed = embed)
 
 ## nsfw dm commands
+async def add_contr(res, msg, contr = 1):
+    member = db["members"].find_one({"id": res.author.id})
+    if not member:
+        await res.channel.send("Can't find member!")
+        return
+    old_contr = member["nsfw"]["contributions"]
+    new_contr = old_contr + contr
+
+    # if contributions reach new digit level, add a ticket
+    if len(str(new_contr)) > len(str(old_contr)):
+        pass
+
+    db["members"].update_one({"id": res.author.id}, {"$set": {"nsfw.contributions": new_contr}})
+    m = "You have received one new contribution point!\n```\nTotal Contributions: {}\n```"
+    await res.channel.send(m.format(new_contr))
+
 async def add_nsfw_art(res, msg):
     if not is_horny(res.author):
         m = "I'm sorry {}, you have stumbled upon a hidden command!\nTry coming back again once you get the appropriate access."
@@ -895,6 +911,9 @@ async def add_nsfw_art(res, msg):
             "tag": "other"
         })
         await res.channel.send("Added one new nsfw artwork to database!")
+
+        # add contribution point for getting new nsfw art
+        await add_contr(res, msg)
     else:
         await res.channel.send("I'm sorry, nsfw art command currently only accepts twitter urls.")
 
