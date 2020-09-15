@@ -880,6 +880,25 @@ async def booster_news(res, msg):
     await res.channel.send(content = last_news.content, embed = embed)
 
 ## nsfw dm commands
+async def add_nsfw_art(res, msg):
+    if not is_horny(res.author):
+        m = "I'm sorry {}, you have stumbled upon a hidden command!\nTry coming back again once you get the appropriate access."
+        await res.channel.send(m.format(booster_nickname(res.author)))
+        return
+    match = re.search(r"https://twitter.com/[a-zA-Z0-9_]+/status/[0-9]+", msg)
+    if match:
+        if db["nsfws"].find_one({"url": msg}):
+            await res.channel.send("There's already an existing nsfw art with the same url!")
+            return
+        db["nsfws"].insert_one({
+            "url": msg,
+            "tag": "other"
+        })
+        await res.channel.send("Added one new nsfw artwork to database!")
+    else:
+        await res.channel.send("I'm sorry, nsfw art command currently only accepts twitter urls.")
+
+
 async def nsfw_art(res, msg):
     if not is_horny(res.author):
         m = "I'm sorry {}, you have stumbled upon a hidden command!\nTry coming back again once you get the appropriate access."
@@ -991,7 +1010,8 @@ aliases = {
     "live": "stream",
     "v": "voice",
     "sc": "superchat",
-    "t": "tag"
+    "t": "tag",
+    "addnsfw": "add_nsfw"
 }
 
 commands = {
@@ -1014,7 +1034,8 @@ commands = {
 }
 
 dm_commands = {
-    "nsfw": nsfw_art
+    "nsfw": nsfw_art,
+    "add_nsfw": add_nsfw_art
 }
 
 booster_commands = {
