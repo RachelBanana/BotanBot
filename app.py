@@ -920,6 +920,7 @@ async def invite_horny(res, msg):
         return
     
     new_member = client.get_user(int(msg))
+    await res.channel.send("here")
     if not msg or not new_member:
         await res.channel.send("Please provide a valid user id!")
     
