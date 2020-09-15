@@ -919,9 +919,12 @@ async def invite_horny(res, msg):
         await res.channel.send("I'm sorry {}, you don't have enough horny tickets to invite someone! Earn more horny points to get them!")
         return
     
+    if not msg or not msg.isdigit():
+        await res.channel.send("Please provide a valid user id!")
+        
     new_member = client.get_user(int(msg))
-    await res.channel.send("here")
-    if not msg or not new_member:
+
+    if not new_member:
         await res.channel.send("Please provide a valid user id!")
     
     new_member_data = db["members"].find_one({"id": new_member.id})
