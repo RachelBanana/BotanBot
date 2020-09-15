@@ -222,6 +222,11 @@ def add_corners(im, rad):
     im.putalpha(alpha)
     return im
 
+## Nsfw utility tools
+def is_horny(user):
+    member = db["members"].find_one({"id": user.id})
+    return member and member.get("nsfw", None) and member["nsfw"].get("is_horny", None)
+
 ## Boosters utility tools
 def is_booster(user):
     # checks if user is a booster and returns the booster's data
@@ -876,6 +881,9 @@ async def booster_news(res, msg):
 
 ## nsfw dm commands
 async def nsfw_art(res, msg):
+    if not is_horny(res.author):
+        await res.channel.send("I'm sorry {}, you have stumbled upon a hidden command!\nTry coming back again once you get the appropriate access.")
+        return
     nsfw_url = list(db["nsfws"].aggregate([{"$sample": {"size": 1}}]))[0]["url"]
     await res.channel.send(nsfw_url)
 
