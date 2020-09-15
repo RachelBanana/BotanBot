@@ -34,8 +34,11 @@ prefix = os.getenv("PREFIX")
 embed_color = int(os.getenv("EMBED_COLOR"), 16)
 pingcord = "Pingcord#3283"
 
-guild_id = 740886590716510280
-log_channel = 741908598870769735
+with open("guilds.json") as f:
+    guilds = json.load(f)
+
+guild_id = guilds["botan"]["id"]
+log_channel = guilds["admin"]["channels"]["log"]
 dm_log_channel = 749264565958737930
 tweets_ch = 740896881827381259
 translated_tweets_ch = 741945787042496614
