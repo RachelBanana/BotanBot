@@ -874,6 +874,11 @@ async def booster_news(res, msg):
     embed =  last_news.embeds[0] if last_news.embeds else None
     await res.channel.send(content = last_news.content, embed = embed)
 
+## nsfw dm commands
+async def nsfw_art(res, msg):
+    nsfw_url = list(db["nsfws"].aggregate([{"$sample": {"size": 1}}]))[0]["url"]
+    await res.channel.send(nsfw_url)
+
 ## hidden developer commands
 async def cross_server_post(res, msg):
     if str(res.author) != owner:
@@ -980,7 +985,6 @@ aliases = {
     "t": "tag"
 }
 
-
 commands = {
     "help": help_command,
     "greet": greet,
@@ -998,6 +1002,10 @@ commands = {
     "voice": voice,
     "superchat": superchat,
     "tag": vid_tag
+}
+
+dm_commands = {
+    "nsfw": nsfw_art
 }
 
 booster_commands = {
@@ -1082,10 +1090,24 @@ async def on_message(res):
         await dm_lg_ch.send("{}\n{}".format(str(res.author),res.content))
         for attachment in res.attachments:
             await dm_lg_ch.send(attachment.url)
+
+        # get command and message text (don't need prefix)
+        cmd, *msg = res.content.split(" ", 1)
+        cmd = cmd.strip().lower()
+        msg = msg[0] if msg else ""
+
+        # change any command alias to original command name
+        cmd = aliases.get(cmd, cmd)
         
         # get guild and author member info in botan guild
         botan_guild = client.get_guild(d["discord_ids"]["guild"])
         author = botan_guild.get_member(res.author.id)
+
+        # if cmd is in dm_commands
+        action = dm_commands.get(cmd, None)
+        if action:
+            await action(res, msg)
+            return
 
         # return if not nitro booster or owner
         if not (d["discord_ids"]["booster_role"] in (role.id for role in author.roles) or str(res.author) == owner):
@@ -1097,14 +1119,6 @@ async def on_message(res):
                 m = "*A horny person appears! Botan flees.*"
             await res.channel.send(m)
             return
-
-        # get command and message text (don't need prefix)
-        cmd, *msg = res.content.split(" ", 1)
-        cmd = cmd.strip().lower()
-        msg = msg[0] if msg else ""
-
-        # change any command alias to original command name
-        cmd = aliases.get(cmd, cmd)
 
         # if public command exists, perform action
         action = booster_commands.get(cmd, None)
