@@ -891,7 +891,7 @@ async def add_contr(res, msg, contr = 1):
     db["members"].update_one({"id": res.author.id}, {"$set": {"nsfw.contributions": new_contr}})
     m = "You have received one new horny point!\n```\nTotal Horny Points: {}\n```"
     await res.channel.send(m.format(new_contr))
-    
+
     # if contributions reach new digit level, add a ticket
     if len(str(new_contr)) > len(str(old_contr)):
         await add_tick(res, msg)
@@ -907,6 +907,15 @@ async def add_tick(res, msg, tick = 1):
     m += "\nYou may use a horny ticket to invite new horny cultists. Use the command ``invite_horny {user id}`` to grant your friend access to the cult!"
     m += "\n```\nHorny Ticket Count: {}\n```".format(new_tick)
     await res.channel.send(m)
+
+async def no_horny(res, msg):
+    if msg != "SEISO":
+        m = "Warning: This is an irreversible action, continuing the action will opt you out from all nsfw commands unless someone from the nsfw cult sends you another horny ticket."
+        m += " To continue, type ``no_horny SEISO`` to stop seeing any future nsfw content."
+        await res.channel.send(m)
+        return
+    db["members"].update_one({"id": res.author.id}, {"$set": {"nsfw.is_horny": False}})
+    await res.channel.send("*You left the cult's secret entrance with a heavy heart.\nYou don't want to be horny anymore, you muttered.*")
 
 async def add_nsfw_art(res, msg):
     if not is_horny(res.author):
@@ -1042,7 +1051,8 @@ aliases = {
     "v": "voice",
     "sc": "superchat",
     "t": "tag",
-    "addnsfw": "add_nsfw"
+    "addnsfw": "add_nsfw",
+    "nohorny": "no_horny"
 }
 
 commands = {
@@ -1066,7 +1076,8 @@ commands = {
 
 dm_commands = {
     "nsfw": nsfw_art,
-    "add_nsfw": add_nsfw_art
+    "add_nsfw": add_nsfw_art,
+    "no_horny": no_horny
 }
 
 booster_commands = {
