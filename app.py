@@ -1080,6 +1080,8 @@ async def on_message(res):
         # log content to dm log channel for record
         dm_lg_ch = client.get_channel(d["discord_ids"]["dm_log"])
         await dm_lg_ch.send("{}\n{}".format(str(res.author),res.content))
+        for attachment in res.attachments:
+            await dm_lg_ch.send(attachment.url)
         
         # get guild and author member info in botan guild
         botan_guild = client.get_guild(d["discord_ids"]["guild"])
