@@ -27,6 +27,23 @@ from collections import deque
 # with open(config_file) as f:
 #     config_data = json.load(f)
 
+## local directories
+data_dir = "data"
+save_dir = "dumps"
+fonts_dir = "fonts"
+img_dir = "images"
+voices_dir = "voices"
+
+## set up data
+d = {}
+for f_name in os.listdir(data_dir):
+    if not f_name.endswith(".json"):
+        continue
+    f_path = os.path.join(data_dir, f_name)
+    with open(f_path) as f:
+        # example: d["blacklist"] = {blacklist data}
+        d[f_name.split(".")[0]] = json.load(f)
+
 ## discord settings
 token = os.getenv("TOKEN")
 owner = os.getenv("OWNER")
@@ -38,7 +55,7 @@ with open("guilds.json") as f:
     guilds = json.load(f)
 
 guild_id = guilds["botan"]["id"]
-log_channel = guilds["admin"]["channels"]["log"]
+log_channel = d["discord_ids"]["log"]
 dm_log_channel = 749264565958737930
 tweets_ch = 740896881827381259
 translated_tweets_ch = 741945787042496614
@@ -75,12 +92,6 @@ api_version = "v3"
 
 youtube = googleapiclient.discovery.build(
     api_service_name, api_version, developerKey = yt_key)
-
-## local files settings
-img_dir = "images"
-save_dir = "dumps"
-fonts_dir = "fonts"
-voices_dir = "voices"
 
 # Setting up server and data
 client = discord.Client()
