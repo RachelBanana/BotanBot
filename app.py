@@ -891,7 +891,7 @@ async def add_nsfw_art(res, msg):
             await res.channel.send("There's already an existing nsfw art with the same url!")
             return
         db["nsfws"].insert_one({
-            "url": msg,
+            "url": match.group(),
             "tag": "other"
         })
         await res.channel.send("Added one new nsfw artwork to database!")
