@@ -75,19 +75,10 @@ youtube = googleapiclient.discovery.build(
 client = discord.Client()
 help_doc = d["help"]
 meme_dict = d["meme"]
-
-with open("blacklist.json") as f:
-    # set up blacklist
-    blacklist = json.load(f)
-with open("vtubers.json") as f:
-    # set up vtubers information other than botan
-    vtubers = json.load(f)
-with open("voices.json") as f:
-    # set up voice clips data
-    voices_dict = json.load(f)
-with open("help_booster.json") as f:
-    # set up booster help doc
-    booster_help_doc = json.load(f)
+blacklist = d["blacklist"]
+vtubers = d["vtubers"]
+voices_dict = d["voices"]
+booster_help_doc = d["help_booster"]
 
 # Temporary storage for artworks (only urls)
 temp_artwork_cursor = db["artworks"].aggregate([{"$sample": {"size": 30}}])
