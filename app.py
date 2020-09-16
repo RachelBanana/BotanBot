@@ -892,8 +892,8 @@ async def add_contr(res, msg, contr = 1):
     m = "You have received one new horny point!\n```\nTotal Horny Points: {}\n```"
     await res.channel.send(m.format(new_contr))
 
-    # if contributions reach new digit level, add a ticket
-    if len(str(new_contr)) > len(str(old_contr)):
+    # if contributions are at least 10 and first digit changes, add a ticket
+    if new_contr >= 10 and str(new_contr)[0] != str(old_contr)[0]:
         await add_tick(res, msg)
 
 async def add_tick(res, msg, tick = 1):
