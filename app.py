@@ -758,7 +758,7 @@ async def del_trivia(res, msg):
     if not target_trivia:
         await res.channel.send("Can't find anything similar in the database!")
         return
-    await res.channel.send("Found trivia, deleting now!")
+    await res.channel.send("Found trivia, deleting...")
     db["trivia"].delete_one(target_trivia)
     await res.channel.send("Trivia successfully deleted.")
 
