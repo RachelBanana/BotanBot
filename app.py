@@ -748,7 +748,7 @@ async def add_trivia(res, msg):
     counter["trivia"] += 1
     db["trivia"].insert_one({"id": counter["trivia"], "desc": msg})
     db["settings"].update_one({"name": "counter"}, {"$set": {"trivia": counter["trivia"]}})
-    await res.channel.send("Added one new trivia to database!")
+    await res.channel.send("Added one new trivia to database with an id of {}.".format(counter["trivia"]))
 
 async def del_trivia(res, msg):
     if not msg or not msg.isdigit():
