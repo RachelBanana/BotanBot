@@ -345,7 +345,7 @@ async def botan_trivia(res, msg):
     trivia = temp_trivia_deque.popleft()
     temp_trivia_set.remove(trivia["id"])
     embed = discord.Embed(title = "Do You Know?", description = trivia["desc"], colour = embed_color)
-    embed.set_footer(text = "id: {}".format(trivia["id"]))
+    embed.set_footer(text = "#{}".format(trivia["id"]))
     await res.channel.send(content = None, embed = embed)
 
     # get a new trivia from database to add to temp
