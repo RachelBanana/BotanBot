@@ -389,7 +389,7 @@ async def vid_tag(res, msg):
     
     # check if msg empty
     if not msg:
-        await res.channel.send("You need to include a comment after the tag command.")
+        await res.channel.send("You need to include a comment after the tag command!")
         return
     
     # return if too many characters
