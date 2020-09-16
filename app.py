@@ -82,6 +82,14 @@ for art in temp_artwork_cursor:
     temp_art_deque.append(art["url"])
     temp_art_set.add(art["url"])
 
+# Temporary storage for trivia
+temp_trivia_cursor = db["trivia"].aggregate([{"$sample": {"size": 10}}])
+temp_trivia_deque = deque()
+temp_trivia_set = set()
+for trivia in temp_trivia_cursor:
+    temp_trivia_deque.append(trivia["desc"])
+    temp_trivia_set.add(trivia["desc"])
+
 # Utility Functions
 def n_to_unit(n, unit):
     return (str(n) + " " + unit + "s"*(n>1) + " ")*(n>0)
@@ -331,6 +339,20 @@ async def birthday(res, msg):
     days, hours, minutes = time_until(bday)
     m = "Botan-sama's birthday is on 8th of September, just {} more day{} to go!".format(days, "s" * (days>1))
     await res.channel.send(m)
+
+async def botan_trivia(res, msg):
+    # pop a trivia from temp
+    trivia_desc = temp_trivia_deque.popleft()
+    temp_trivia_set.remove(trivia_desc)
+    embed = discord.Embed(title = "Do You Know?", description = trivia_desc, colour = embed_color)
+    await res.channel.send(content = None, embed = embed)
+
+    # get a new trivia from database to add to temp
+    new_trivia_desc = list(db["trivia"].aggregate([{"$sample": {"size": 1}}]))[0]["desc"]
+    while new_trivia_desc in temp_trivia_set:
+        new_trivia_desc = list(db["trivia"].aggregate([{"$sample": {"size": 1}}]))[0]["desc"]
+    temp_trivia_set.add(new_trivia_desc)
+    temp_trivia_deque.append(new_trivia_desc)
 
 ### Youtube data commands
 """stream's data template
@@ -1134,7 +1156,8 @@ commands = {
     "stream": live_streams,
     "voice": voice,
     "superchat": superchat,
-    "tag": vid_tag
+    "tag": vid_tag,
+    "trivia": botan_trivia
 }
 
 dm_commands = {

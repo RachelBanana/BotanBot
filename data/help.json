@@ -98,5 +98,11 @@
         "alias": ["t"],
         "usage": "$tag {comment}",
         "extra_fields": []
+    },
+    "trivia": {
+        "desc": "Learn more about Botan through random fun facts.",
+        "alias": [],
+        "usage": "$trivia",
+        "extra_fields": []
     }
 }
