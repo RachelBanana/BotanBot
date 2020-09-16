@@ -87,8 +87,8 @@ temp_trivia_cursor = db["trivia"].aggregate([{"$sample": {"size": 10}}])
 temp_trivia_deque = deque()
 temp_trivia_set = set()
 for trivia in temp_trivia_cursor:
-    temp_trivia_deque.append(trivia["desc"])
-    temp_trivia_set.add(trivia["desc"])
+    temp_trivia_deque.append(trivia)
+    temp_trivia_set.add(trivia["id"])
 
 # Utility Functions
 def n_to_unit(n, unit):
@@ -342,17 +342,18 @@ async def birthday(res, msg):
 
 async def botan_trivia(res, msg):
     # pop a trivia from temp
-    trivia_desc = temp_trivia_deque.popleft()
-    temp_trivia_set.remove(trivia_desc)
-    embed = discord.Embed(title = "Do You Know?", description = trivia_desc, colour = embed_color)
+    trivia = temp_trivia_deque.popleft()
+    temp_trivia_set.remove(trivia["id"])
+    embed = discord.Embed(title = "Do You Know?", description = trivia["desc"], colour = embed_color)
+    embed.set_footer(text = "id: {}".format(trivia["id"]))
     await res.channel.send(content = None, embed = embed)
 
     # get a new trivia from database to add to temp
-    new_trivia_desc = list(db["trivia"].aggregate([{"$sample": {"size": 1}}]))[0]["desc"]
-    while new_trivia_desc in temp_trivia_set:
-        new_trivia_desc = list(db["trivia"].aggregate([{"$sample": {"size": 1}}]))[0]["desc"]
-    temp_trivia_set.add(new_trivia_desc)
-    temp_trivia_deque.append(new_trivia_desc)
+    new_trivia = list(db["trivia"].aggregate([{"$sample": {"size": 1}}]))[0]
+    while new_trivia["id"] in temp_trivia_set:
+        new_trivia = list(db["trivia"].aggregate([{"$sample": {"size": 1}}]))[0]
+    temp_trivia_set.add(new_trivia["id"])
+    temp_trivia_deque.append(new_trivia)
 
 ### Youtube data commands
 """stream's data template
@@ -743,6 +744,24 @@ async def read(res, msg):
             await channel.send(content = None, embed = embed)
 
 ### database manipulation
+async def add_trivia(res, msg):
+    counter["trivia"] += 1
+    db["trivia"].insert_one({"id": counter["trivia"], "desc": msg})
+    db["settings"].update_one({"name": "counter"}, {"$set": {"trivia": counter["trivia"]}})
+    await res.channel.send("Added one new trivia to database!")
+
+async def del_trivia(res, msg):
+    if not msg or not msg.isdigit():
+        await res.channel.send("Please provide the trivia id that you wish to delete!")
+        return
+    target_trivia = db["trivia"].find_one({"id": int(msg)})
+    if not target_trivia:
+        await res.channel.send("Can't find anything similar in the database!")
+        return
+    await res.channel.send("Found trivia, deleting now!")
+    db["trivia"].delete_one(target_trivia)
+    await res.channel.send("Trivia successfully deleted.")
+
 async def add_art(res, msg):
     if db["artworks"].find_one({"url": msg}):
         await res.channel.send("There's already an existing art with the same url!")
@@ -758,7 +777,6 @@ async def del_art(res, msg):
     await res.channel.send("Found artwork, deleting now!")
     db["artworks"].delete_one(target_art)
     await res.channel.send("Artwork successfully deleted.")
-    pass
 
 ### youtube
 async def add_upcoming_stream(res, msg):
@@ -1126,6 +1144,8 @@ aliases = {
     "jp": "japanese",
     "addart": "add_art",
     "delart": "del_art",
+    "addtrivia": "add_trivia",
+    "deltrivia": "del_trivia",
     "addvid": "add_vid",
     "subs": "subscribers",
     "subscriber": "subscribers",
@@ -1182,6 +1202,8 @@ admin_commands = {
     "xread": system_read,
     "add_art": add_art,
     "del_art": del_art,
+    "add_trivia": add_trivia,
+    "del_trivia": del_trivia,
     "add_vid": add_upcoming_stream,
     # dev commands
     "xpost": cross_server_post,
