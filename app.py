@@ -1672,7 +1672,10 @@ async def find_streams():
                     part = "snippet,liveStreamingDetails",
                     id = vid_id
                 )
-                vid_res = vid_req.execute()["items"][0]
+                try:
+                    vid_res = vid_req.execute()["items"][0]
+                except:
+                    continue
 
                 title = vid_res["snippet"]["title"]
 
@@ -1707,7 +1710,10 @@ async def find_streams():
                     part = "snippet,liveStreamingDetails",
                     id = vid_id
                 )
-                vid_res = vid_req.execute()["items"][0]
+                try:
+                    vid_res = vid_req.execute()["items"][0]
+                except:
+                    continue
 
                 title = vid_res["snippet"]["title"]
 
