@@ -1631,7 +1631,7 @@ async def update_streams():
             await live_msg.pin(reason = "pin stream.")
 
             # add an embed notifying about tagging system
-            embed = discord.Embed(description = "Tracking stream for tags! Use ``$t`` to tag a comment.", colour = embed_color)
+            embed = discord.Embed(description = "Tracking stream for tags! Please use ``$t`` to tag a comment.", colour = embed_color)
             await live_ch.send(content = None, embed = embed)
 
             # update the status to live, record message id
