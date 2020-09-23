@@ -1615,7 +1615,7 @@ async def update_streams():
                 await lg_ch.send("{} has been rescheduled to {}".format(vid_id, new_scheduled_time))
                 continue
 
-            # send a message to stream channel announcing live [stream_role_mention]
+            # send a message to stream channel announcing live 
             concurrent_viewers = live_streaming_details.get("concurrentViewers", 0)
             statistics = vid_res.get("statistics", None)
             if statistics:
@@ -1626,7 +1626,7 @@ async def update_streams():
                 like_count, dislike_count, view_count = 0, 0, 0
             vid_url = "https://www.youtube.com/watch?v=" + vid_id
             m = "{} Botan is now live!\n```\nLive Views: {}\nTotal Viewss: {}\nLikes: {}\n Dislikes: {}\n```\nLink: {}"
-            m = m.format("", concurrent_viewers, view_count, like_count, dislike_count, vid_url)
+            m = m.format(stream_role_mention, concurrent_viewers, view_count, like_count, dislike_count, vid_url)
             live_msg = await live_ch.send(m)
             await live_msg.pin(reason = "pin stream.")
 
