@@ -1363,8 +1363,8 @@ async def on_message(res):
     if action:
         await action(res, msg)
     
-    # check for permission and if admin command exists, perform action
-    if not res.author.guild_permissions.administrator:
+    # check for admin/mod permission and if admin command exists, perform action
+    if not (res.author.guild_permissions.administrator or any(role.id == d["discord_ids"]["mod_role"] for role in res.author.roles)):
         return
     action = admin_commands.get(cmd, None)
     if action:
