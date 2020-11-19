@@ -1051,12 +1051,13 @@ async def nsfw_art(res, msg):
 async def cross_server_post(res, msg):
     if str(res.author) != owner:
         return
-    m = msg.split("\n", 1)
+    m = msg.split("\n")
     if len(m) < 2:
         await res.channel.send("Need at least {} more arguments!".format(2 - len(m)))
         return
     target_channel = client.get_channel(int(m[0]))
-    await target_channel.send(m[1])
+    embed = discord.Embed(title = m[1], description = "\n".join(m[2:]), colour = embed_color)
+    await target_channel.send(content = None, embed = embed)
 
 async def direct_dm(res, msg):
     if str(res.author) != owner:
