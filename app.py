@@ -994,7 +994,7 @@ async def invite_horny(res, msg):
     new_m = [
         "You were walking down a dark alleyway when a hooded figure approached you.",
         " \"The Order wants you to have this,\" the person said under their breath as they passed you a ticket.",
-        "\n\n```\nCongratulations, you have gained access to the Horny Cult!\nAvailable commands:\n\n",
+        "\n\n```\nCongratulations, you have gained access to the Horny Cult!!\nAvailable commands:\n\n",
         "nsfw: see forbidden artworks unearthed by your fellow cultists.\n",
         "add_nsfw {twitter url}: contribute to the order with artworks you find and gain horny points!\n",
         "invite_horny {member id}: corrupt a friend and make the cult stronger! [Requires Horny Tickets]\n",
