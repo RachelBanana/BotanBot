@@ -1236,7 +1236,7 @@ async def on_message(res):
 
             ## randomly chooses one msg as boosting announcement
             m_choices = (
-                "{} just fed the lioness! But Botan is still hungry... Run!!",
+                "{} just fed the lioness! But Botan is still hungry... Run!!!",
                 "{} tried to tame our lion goddess!\n...\n[Task Failed]\n...\nWell...At least they will make a good meal...\n\"Itadakimasu~!\"",
                 "Thank you for boosting the server, {}!\nWe give you a perfect score!\n\n" + ":100: :100: :100: :100: :100:\n" * 5,
                 "{} has just pledged their eternal loyalty to Botan's Gamer's Clan [SSRB], and swear in the name of our lion goddess that they will never be a C in games (cheater).\n\n\"Comrade!\" *Salutes*",
