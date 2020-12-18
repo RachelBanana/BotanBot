@@ -1557,7 +1557,7 @@ async def update_streams():
                 }})
 
                 # send an embed message
-                embed = discord.Embed(description = "Live stream ended!! You may refer to <#751210778278756375> for any tagged comments.", colour = embed_color)
+                embed = discord.Embed(description = "Live stream ended! You may refer to <#751210778278756375> for any tagged comments.", colour = embed_color)
                 await live_ch.send(content = None, embed = embed)
 
                 # unpin stream on ending
