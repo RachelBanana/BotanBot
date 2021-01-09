@@ -1546,10 +1546,13 @@ async def update_streams():
             # if vid is ending, send message and update status to completed
             live_streaming_details = vid_res["liveStreamingDetails"]
             actual_end_time_str = live_streaming_details.get("actualEndTime", None)
-            if actual_end_time_str:
+            if actual_end_time_str or vid.get("end", None):
                 actual_start_time_str = live_streaming_details["actualStartTime"]
                 actual_start_time = dtime.strptime(actual_start_time_str.split(".")[0], "%Y-%m-%dT%H:%M:%S").replace(tzinfo = timezone.utc)
-                actual_end_time = dtime.strptime(actual_end_time_str, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo = timezone.utc)
+                if vid.get("end", None):
+                    actual_end_time = dtime.strptime(actual_end_time_str, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo = timezone.utc)
+                else:
+                    actual_end_time = None
                 db["streams"].update_one({"id": vid_id}, {"$set": {
                     "status": "completed", 
                     "actual_start_time": actual_start_time,
