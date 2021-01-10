@@ -327,7 +327,12 @@ async def sleepy(res, msg):
     db["settings"].update_one({"name": "counter"}, {"$set": {"sleepy": counter["sleepy"]}})
 
 async def poi(res, msg):
-    botan_nade = "<:BotanNade:766659876532256788>"
+    botan_nades = [
+        "<:BotanNade:766659876532256788>",
+        "<:BotanNade2:797743911421870090>",
+        "<:BotanNade3:797743927733387304>",
+        "<:BotanNade4:797743939615719435>"
+    ]
     botan_poi = "<:BotanPoi:766659519950225448>"
     blank = "<:Blank:797737605285281792>"
     edit_msg = await res.channel.send(botan_poi)
@@ -335,10 +340,10 @@ async def poi(res, msg):
     total = 0
     for i in range(4):
         total += i
-        await asyncio.sleep(0.3)
-        await edit_msg.edit(content = blank * total + botan_nade)
+        await asyncio.sleep(0.2)
+        await edit_msg.edit(content = blank * total + botan_nades[i])
     await asyncio.sleep(0.6)
-    await edit_msg.edit(content = blank * 6 + ":boom:")
+    await edit_msg.edit(content = ":boom:" * 7)
 
 async def gao(res, msg):
     ri = random.randint
