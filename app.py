@@ -128,12 +128,14 @@ def time_to_string(d, h, m):
     return msg.format(*arr)
 
 ## Translating tools
+# fix: https://stackoverflow.com/questions/52455774/googletrans-stopped-working-with-error-nonetype-object-has-no-attribute-group
+
 gtl = Translator()
 def to_jap(m):
-    return gtl.translate(m, dest = "ja").text
+    return gtl.translate(m, dest = "ja")
 
 def to_eng(m):
-    return gtl.translate(m, dest = "en").text
+    return gtl.translate(m, dest = "en")
 
 ## Live Streaming tools
 """stream's data template
