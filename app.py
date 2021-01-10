@@ -809,6 +809,18 @@ async def add_upcoming_stream(res, msg):
     db["streams"].insert_one(vid_data)
     await res.channel.send("New upcoming video logged!\n{}\n{}".format(vid_id, scheduled_start_time))
 
+async def end_live_stream(res, msg):
+    vid_id = msg
+    # Check if stream exists
+    if not db["streams"].find_one({"id": vid_id}):
+        await res.channel.send("Stream {} does not exist in the database!".format(vid_id))
+    
+    # Tag stream with ending tag to end it early
+    db["streams"].update_one({"id": vid_id}, {"$set": {
+                    "end": "Stream ended manually at " + str(today = dtime.now(tz = timezone.utc))
+                }})
+    await res.channel.send("Ending stream {} manually!".format(vid_id))
+
 ## booster commands
 """booster's data template
     "id": res.author.id,
@@ -1150,6 +1162,7 @@ aliases = {
     "addtrivia": "add_trivia",
     "deltrivia": "del_trivia",
     "addvid": "add_vid",
+    "endvid": "end_vid",
     "subs": "subscribers",
     "subscriber": "subscribers",
     "live": "stream",
@@ -1208,6 +1221,7 @@ admin_commands = {
     "add_trivia": add_trivia,
     "del_trivia": del_trivia,
     "add_vid": add_upcoming_stream,
+    "end_vid": end_live_stream,
     # dev commands
     "xpost": cross_server_post,
     "xdm": direct_dm,
