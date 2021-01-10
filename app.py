@@ -331,12 +331,14 @@ async def poi(res, msg):
     botan_poi = "<:BotanPoi:766659519950225448>"
     blank = "<:Blank:797737605285281792>"
     edit_msg = await res.channel.send(botan_poi)
-    total = 0
-    for i in range(1, 5):
-        total += i
-        await edit_msg.edit(content = blank * i + botan_nade)
     await asyncio.sleep(0.6)
-    await edit_msg.edit(content = blank * 10 + ":boom:")
+    total = 0
+    for i in range(4):
+        total += i
+        await asyncio.sleep(0.3)
+        await edit_msg.edit(content = blank * total + botan_nade)
+    await asyncio.sleep(0.6)
+    await edit_msg.edit(content = blank * 6 + ":boom:")
 
 async def gao(res, msg):
     ri = random.randint
