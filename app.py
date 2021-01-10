@@ -788,6 +788,7 @@ async def add_upcoming_stream(res, msg):
     # check if vid already exists in database
     if db["streams"].find_one({"id": vid_id}):
         await res.channel.send("{} already exists in database!".format(vid_id))
+        return
     # else store video's id, status and scheduled start time
     vid_req = youtube.videos().list(
         part = "snippet,liveStreamingDetails",
@@ -810,15 +811,15 @@ async def add_upcoming_stream(res, msg):
     await res.channel.send("New upcoming video logged!\n{}\n{}".format(vid_id, scheduled_start_time))
 
 async def end_live_stream(res, msg):
-    await res.channel.send("here")
     vid_id = msg
     # Check if stream exists
     if not db["streams"].find_one({"id": vid_id}):
         await res.channel.send("Stream {} does not exist in the database!".format(vid_id))
+        return
     
     # Tag stream with ending tag to end it early
     db["streams"].update_one({"id": vid_id}, {"$set": {
-                    "end": "Stream ended manually at " + str(today = dtime.now(tz = timezone.utc))
+                    "end": "Stream ended manually at " + str(dtime.now(tz = timezone.utc))
                 }})
     await res.channel.send("Ending stream {} manually!".format(vid_id))
 
