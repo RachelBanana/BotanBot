@@ -326,6 +326,18 @@ async def sleepy(res, msg):
     await res.channel.send("{} Sleepy Bodans sleeping on the floor.".format(sleep_count))
     db["settings"].update_one({"name": "counter"}, {"$set": {"sleepy": counter["sleepy"]}})
 
+async def poi(res, msg):
+    botan_nade = "<:BotanNade:766659876532256788>"
+    botan_poi = "<:BotanPoi:766659519950225448>"
+    blank = "<:Blank:797737605285281792>"
+    edit_msg = await res.channel.send(botan_poi)
+    total = 0
+    for i in range(4):
+        total += i
+        await edit_msg.edit(content = blank * i + botan_nade)
+    await asyncio.sleep(0.6)
+    await edit_msg.edit(blank * 6 + botan_poi)
+
 async def gao(res, msg):
     ri = random.randint
     m = "G" + "a" * ri(1, 7) + "o" * ri(1, 3) + "~" + "!" * ri(2, 4) + " Rawr!" * ri(0, 1)
@@ -1202,6 +1214,7 @@ commands = {
     "meme": meme,
     "botan": botan_art,
     "100": score_me,
+    "poi": poi,
     "sleepy": sleepy,
     "subscribers": subscribers,
     "stream": live_streams,
