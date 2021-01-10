@@ -810,6 +810,7 @@ async def add_upcoming_stream(res, msg):
     await res.channel.send("New upcoming video logged!\n{}\n{}".format(vid_id, scheduled_start_time))
 
 async def end_live_stream(res, msg):
+    await res.channel.send("here")
     vid_id = msg
     # Check if stream exists
     if not db["streams"].find_one({"id": vid_id}):
