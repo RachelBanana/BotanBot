@@ -58,6 +58,12 @@
         "usage": "$100",
         "extra_fields": []
     },
+    "poi": {
+        "desc": "Throw a grenade at your enemy, Botan style!",
+        "alias": [],
+        "usage": "$poi",
+        "extra_fields": []
+    },
     "sleepy": {
         "desc": "Find out how many times are Bodans sleepy so far.",
         "alias": [],
