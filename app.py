@@ -130,10 +130,10 @@ def time_to_string(d, h, m):
 ## Translating tools
 gtl = Translator()
 def to_jap(m):
-    return gtl.translate(m, dest = "ja")
+    return gtl.translate(m, dest = "ja").text
 
 def to_eng(m):
-    return gtl.translate(m)
+    return gtl.translate(m, dest = "en").text
 
 ## Live Streaming tools
 """stream's data template
