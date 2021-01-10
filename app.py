@@ -823,6 +823,18 @@ async def end_live_stream(res, msg):
                 }})
     await res.channel.send("Ending stream {} manually!".format(vid_id))
 
+async def delete_stream(res, msg):
+    vid_id = msg
+    target_vid = db["streams"].find_one({"id": vid_id})
+    # Check if stream exists
+    if not target_vid:
+        await res.channel.send("Stream {} does not exist in the database!".format(vid_id))
+        return
+    
+    await res.channel.send("Found stream, deleting now!")
+    db["artworks"].delete_one(target_vid)
+    await res.channel.send("Targeted stream successfully deleted.")
+
 ## booster commands
 """booster's data template
     "id": res.author.id,
@@ -1165,6 +1177,7 @@ aliases = {
     "deltrivia": "del_trivia",
     "addvid": "add_vid",
     "endvid": "end_vid",
+    "delvid": "del_vid",
     "subs": "subscribers",
     "subscriber": "subscribers",
     "live": "stream",
@@ -1224,6 +1237,7 @@ admin_commands = {
     "del_trivia": del_trivia,
     "add_vid": add_upcoming_stream,
     "end_vid": end_live_stream,
+    "del_vid": delete_stream,
     # dev commands
     "xpost": cross_server_post,
     "xdm": direct_dm,
