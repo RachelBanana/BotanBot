@@ -832,7 +832,7 @@ async def delete_stream(res, msg):
         return
     
     await res.channel.send("Found stream, deleting now!")
-    db["artworks"].delete_one(target_vid)
+    db["streams"].delete_one(target_vid)
     await res.channel.send("Targeted stream successfully deleted.")
 
 ## booster commands
