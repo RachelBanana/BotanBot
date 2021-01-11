@@ -839,7 +839,7 @@ async def set_membership(res, msg):
     
 
 async def del_membership(res, msg):
-    member_id = msg.split("\n")[0]
+    member_id = msg.split("\n")[0].split(" ")[0]
 
     # Check if msg is numeric
     if not member_id.isnumeric():
