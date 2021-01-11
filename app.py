@@ -1112,7 +1112,7 @@ async def verify_membership(res, msg):
     # Send attachment and message to membership verification channel
     member_veri_ch = client.get_channel(d["discord_ids"]["membership_verification"])
     title = "Membership Verification: {}".format(str(res.author))
-    desc = "{}\n{}".format(res.author.id, dtime.now(tz = timezone.utc))
+    desc = "{}\n{}".format(res.author.id, now.strftime("%H:%M JST, %d/%m/%Y"))
     embed = discord.Embed(title = title, description = desc, colour = embed_color)
     embed.set_image(url = res.attachments[0].url)
     await member_veri_ch.send(content = None, embed = embed)
