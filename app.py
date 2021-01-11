@@ -16,7 +16,7 @@ import re
 import json
 import random
 import asyncio
-from datetime import datetime as dtime
+from datetime import datetime as dtime, tzinfo
 from datetime import timezone, timedelta
 from collections import deque
 
@@ -91,6 +91,14 @@ for trivia in temp_trivia_cursor:
     temp_trivia_set.add(trivia["id"])
 
 # Utility Functions
+def is_integer(s):
+    # check if a string is an integer (includes negative integers)
+    try: 
+        int(s)
+        return True
+    except ValueError:
+        return False
+
 def n_to_unit(n, unit):
     return (str(n) + " " + unit + "s"*(n>1) + " ")*(n>0)
 
@@ -801,7 +809,41 @@ async def del_art(res, msg):
     db["artworks"].delete_one(target_art)
     await res.channel.send("Artwork successfully deleted.")
 
+### Membership (Zoopass)
+
+async def set_membership(res, msg):
+    msg = msg.split(" ")
+    if len(msg) < 2:
+        await res.channel.send("Please include at least two arguments!\n``$``")
+        return
+    
+    member_id, adjustment = msg
+    # Check if variables are valid integers
+    if not (is_integer(member_id) and is_integer(adjustment)):
+        await res.channel.send("Please provide a valid id or adjustment (days +/-).")
+        return
+    member_id = int(member_id)
+    adjustment = int(adjustment)
+    
+    # Check if id exists
+    target_membership = db["bodans"].find_one({"id": member_id})
+    if not target_membership:
+        await res.channel.send("Can't find membership id in the database!")
+        return
+    
+    # Adjust membership date
+    new_date = target_membership["last_membership"].replace(tzinfo = timezone.utc) + timedelta(days = adjustment)
+    db["bodans"].update_one({"id": member_id}, {"$set": {"last_membership": new_date}})
+
+    await res.channel.send("New membership date for {} set at {}!".format(member_id, new_date))
+    
+
 async def del_membership(res, msg):
+    # Check if msg is numeric
+    if not msg.isnumeric():
+        await res.channel.send("Please provide a valid id!")
+        return
+    
     member_id = int(msg)
 
     # Check if zoopass in database and delete
@@ -993,7 +1035,8 @@ async def booster_news(res, msg):
 ## dm commands
 """
 {
-    
+    "id": int
+    "last_membership": datetime
 }
 """
 async def verify_membership(res, msg):
@@ -1273,6 +1316,8 @@ aliases = {
     "addvid": "add_vid",
     "endvid": "end_vid",
     "delvid": "del_vid",
+    "setpass": "set_zoopass",
+    "setzoopass": "set_zoopass",
     "delpass": "del_zoopass",
     "delzoopass": "del_zoopass",
     "subs": "subscribers",
@@ -1329,8 +1374,8 @@ booster_commands = {
 
 admin_commands = {
     "post": post,
-    "read": read,
-    "xread": system_read,
+    "read": read, # redundant
+    "xread": system_read, # redundant
     "add_art": add_art,
     "del_art": del_art,
     "add_trivia": add_trivia,
@@ -1338,6 +1383,7 @@ admin_commands = {
     "add_vid": add_upcoming_stream,
     "end_vid": end_live_stream,
     "del_vid": delete_stream,
+    "set_zoopass": set_membership,
     "del_zoopass": del_membership,
     # dev commands
     "xpost": cross_server_post,
