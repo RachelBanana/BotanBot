@@ -876,7 +876,7 @@ async def set_membership(res, msg):
         new_date = dtime(year = int(dates[2]), month = int(dates[1]), day = int(dates[0]), tzinfo = timezone.utc)
     db["bodans"].update_one({"id": member_id}, {"$set": {"last_membership": new_date}})
 
-    await res.channel.send("New membership date for {} set at {}!".format(member_id, new_date.strftime("%H:%M JST, %d/%m/%Y")))
+    await res.channel.send("New membership date for {} set at {}!".format(member_id, new_date.strftime("%d/%m/%Y, %H:%M:%S")))
     
 
 async def del_membership(res, msg):
@@ -1112,7 +1112,7 @@ async def verify_membership(res, msg):
     # Send attachment and message to membership verification channel
     member_veri_ch = client.get_channel(d["discord_ids"]["membership_verification"])
     title = "Membership Verification: {}".format(str(res.author))
-    desc = "{}\n{}".format(res.author.id, now.strftime("%H:%M JST, %d/%m/%Y"))
+    desc = "{}\n{}".format(res.author.id, now.strftime("%d/%m/%Y, %H:%M:%S"))
     embed = discord.Embed(title = title, description = desc, colour = embed_color)
     embed.set_image(url = res.attachments[0].url)
     await member_veri_ch.send(content = None, embed = embed)
