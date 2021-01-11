@@ -836,7 +836,7 @@ async def view_membership(res, msg):
 
     m = "Name: {}\nID: {}\nMembership Date: {}\nMembership End Date: {}"
     m = m.format(str(target_member), member_id, membership_date, expiration_date)
-    embed = discord.Embed(title = "Zoopass Membership", description = target_membership["id"])
+    embed = discord.Embed(title = "Zoopass Membership", description = m)
 
     await res.channel.send(content=None, embed = embed)
     
