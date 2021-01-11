@@ -852,12 +852,12 @@ async def set_membership(res, msg):
         return
     
     member_id, adjustment = msg
-    # Check if variables are valid integers
-    if not (is_integer(member_id) and is_integer(adjustment)):
-        await res.channel.send("Please provide a valid id or adjustment (days +/-).")
+    # Check if member_id is valid
+    if not is_integer(member_id):
+        await res.channel.send("Please provide a valid id.")
         return
+    
     member_id = int(member_id)
-    adjustment = int(adjustment)
     
     # Check if id exists
     target_membership = db["bodans"].find_one({"id": member_id})
@@ -866,7 +866,14 @@ async def set_membership(res, msg):
         return
     
     # Adjust membership date
-    new_date = target_membership["last_membership"].replace(tzinfo = timezone.utc) + timedelta(days = adjustment)
+    if is_integer(adjustment):
+        new_date = target_membership["last_membership"].replace(tzinfo = timezone.utc) + timedelta(days = adjustment)
+    else:
+        dates = adjustment.split("/")
+        if len(dates)!=3 or any(not is_integer(date) for date in dates):
+            await res.channel.send("Please provide a valid date (dd/mm/yy) or integer days (+/- integer).")
+            return
+        new_date = dtime(year = dates[2], month = dates[1], day = dates[0], tzinfo = timezone.utc)
     db["bodans"].update_one({"id": member_id}, {"$set": {"last_membership": new_date}})
 
     await res.channel.send("New membership date for {} set at {}!".format(member_id, new_date))
