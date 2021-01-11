@@ -966,6 +966,13 @@ async def booster_news(res, msg):
     embed =  last_news.embeds[0] if last_news.embeds else None
     await res.channel.send(content = last_news.content, embed = embed)
 
+## dm commands
+async def verify_membership(res, msg):
+    member_veri_ch = client.get_channel(d["discord_ids"]["membership_verification"])
+    await member_veri_ch.send("{}\n{}".format(str(res.author), msg))
+    for attachment in res.attachments:
+        await member_veri_ch.send(attachment.url)
+
 ## nsfw dm commands
 async def add_contr(res, msg, contr = 1):
     member = db["members"].find_one({"id": res.author.id})
@@ -1232,6 +1239,8 @@ commands = {
 }
 
 dm_commands = {
+    "verify": verify_membership,
+    # horny exclusive commands
     "nsfw": nsfw_art,
     "add_nsfw": add_nsfw_art,
     "no_horny": no_horny,
