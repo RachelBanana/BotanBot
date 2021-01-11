@@ -968,10 +968,13 @@ async def booster_news(res, msg):
 
 ## dm commands
 async def verify_membership(res, msg):
+    if not res.attachments:
+        await res.channel.send("I'm sorry {}, you need to provide a valid photo along with the ``verify`` command to complete the verification process.".format(booster_nickname(res.author)))
+        return
     member_veri_ch = client.get_channel(d["discord_ids"]["membership_verification"])
-    await member_veri_ch.send("{}\n{}".format(str(res.author), msg))
-    for attachment in res.attachments:
-        await member_veri_ch.send(attachment.url)
+    embed = discord.Embed(title = "Membership Verification: {}".format(str(res.author)), description = res.author.id, colour = embed_color)
+    embed.set_image(url = res.attachments[0].url)
+    await member_veri_ch.send("{}\n{}".format(content = None, embed = embed))
 
 ## nsfw dm commands
 async def add_contr(res, msg, contr = 1):
