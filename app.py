@@ -876,7 +876,7 @@ async def set_membership(res, msg):
         new_date = dtime(year = int(dates[2]), month = int(dates[1]), day = int(dates[0]), tzinfo = timezone.utc)
     db["bodans"].update_one({"id": member_id}, {"$set": {"last_membership": new_date}})
 
-    await res.channel.send("New membership date for {} set at {}!".format(member_id, new_date))
+    await res.channel.send("New membership date for {} set at {}!".format(member_id, new_date.strftime("%H:%M JST, %d/%m/%Y")))
     
 
 async def del_membership(res, msg):
