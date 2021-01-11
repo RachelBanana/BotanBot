@@ -834,6 +834,10 @@ async def view_membership(res, msg):
     membership_date = target_membership["last_membership"].replace(tzinfo = timezone.utc)
     expiration_date = membership_date + timedelta(days = 30)
 
+    ## change dates to strings
+    membership_date = membership_date.strftime("%d/%m/%Y, %H:%M:%S")
+    expiration_date = expiration_date.strftime("%d/%m/%Y, %H:%M:%S")
+
     m = "Name: {}\nID: {}\nMembership Date: {}\nMembership End Date: {}"
     m = m.format(str(target_member), member_id, membership_date, expiration_date)
     embed = discord.Embed(title = "Zoopass Membership", description = m)
