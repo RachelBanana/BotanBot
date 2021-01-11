@@ -250,6 +250,8 @@ def booster_nickname(user):
     # else return guild nickname or user's name depending on the class type
     return user.nick if isinstance(user, discord.Member) and user.nick else user.name
 
+## Youtube Members utility tools
+
 # Main Events
 
 ## on setting up, disconnecting, and errors
@@ -967,16 +969,56 @@ async def booster_news(res, msg):
     await res.channel.send(content = last_news.content, embed = embed)
 
 ## dm commands
+"""
+{
+    
+}
+"""
 async def verify_membership(res, msg):
+    # Check if there is a valid attachment
     if not res.attachments:
         await res.channel.send("I'm sorry {}, you need to provide a valid photo along with the ``verify`` command to complete the verification process.".format(booster_nickname(res.author)))
         return
+    
+    # Get membership time
+    now = dtime.now(tz = timezone.utc)
+
+    # if member exists, update date
+    bodan = db["bodans"].find_one({"id": res.author.id})
+
+    if bodan:
+        last_membership = bodan["last_membership"].replace(tzinfo = timezone.utc)
+        db["bodans"].update_one({"id": res.author.id}, {"$set": {"last_membership": max(now, last_membership)}})
+
+    # if not, create data
+    else:
+        db["bodans"].insert_one({
+            "id": res.author.id,
+            "last_membership": now
+        })
+
+    # Send attachment and message to membership verification channel
     member_veri_ch = client.get_channel(d["discord_ids"]["membership_verification"])
     title = "Membership Verification: {}".format(str(res.author))
     desc = "{}\n{}".format(res.author.id, dtime.now(tz = timezone.utc))
     embed = discord.Embed(title = title, description = desc, colour = embed_color)
     embed.set_image(url = res.attachments[0].url)
     await member_veri_ch.send(content = None, embed = embed)
+
+    # add role
+    botan_guild = client.get_guild(d["discord_ids"]["guild"])
+    author = botan_guild.get_member(res.author.id)
+
+    zoopass_role_id = d["discord_ids"]["zoopass_role"]
+    zoopass_role = botan_guild.get_role(zoopass_role_id)
+
+    await author.add_roles(zoopass_role)
+
+    # DM user that the verification process is complete
+    m = "Membership verified! You now have access to members-excusive content in the server."
+    m += "\nIf you have encountered any issue with accessing the channels or have a separate enquiry, please contact a mod."
+    await res.channel.send(m)
+    
 
 ## nsfw dm commands
 async def add_contr(res, msg, contr = 1):
