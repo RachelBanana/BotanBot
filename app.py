@@ -801,6 +801,28 @@ async def del_art(res, msg):
     db["artworks"].delete_one(target_art)
     await res.channel.send("Artwork successfully deleted.")
 
+async def del_membership(res, msg):
+    member_id = int(msg)
+
+    # Check if zoopass in database and delete
+    target_membership = db["bodans"].find_one({"id": member_id})
+    if not target_membership:
+        await res.channel.send("Can't find membership id in the database!")
+        return
+    await res.channel.send("Found membership in database, deleting now!")
+    db["bodans"].delete_one(target_membership)
+
+    # Remove zoopass role from user
+    botan_guild = client.get_guild(d["discord_ids"]["guild"])
+    target_member = botan_guild.get_member(member_id)
+
+    zoopass_role_id = d["discord_ids"]["zoopass_role"]
+    zoopass_role = botan_guild.get_role(zoopass_role_id)
+
+    await target_member.remove_roles(zoopass_role)
+    
+    await res.channel.send("Membership successfully deleted.")
+
 ### youtube
 async def add_upcoming_stream(res, msg):
     vid_id = msg
@@ -1251,6 +1273,8 @@ aliases = {
     "addvid": "add_vid",
     "endvid": "end_vid",
     "delvid": "del_vid",
+    "delpass": "del_zoopass",
+    "delzoopass": "del_zoopass",
     "subs": "subscribers",
     "subscriber": "subscribers",
     "live": "stream",
@@ -1314,6 +1338,7 @@ admin_commands = {
     "add_vid": add_upcoming_stream,
     "end_vid": end_live_stream,
     "del_vid": delete_stream,
+    "del_zoopass": del_membership,
     # dev commands
     "xpost": cross_server_post,
     "xdm": direct_dm,
