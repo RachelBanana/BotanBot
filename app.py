@@ -839,12 +839,14 @@ async def set_membership(res, msg):
     
 
 async def del_membership(res, msg):
+    member_id = msg.split("\n")[0]
+
     # Check if msg is numeric
-    if not msg.isnumeric():
+    if not member_id.isnumeric():
         await res.channel.send("Please provide a valid id!")
         return
     
-    member_id = int(msg)
+    member_id = int(member_id)
 
     # Check if zoopass in database and delete
     target_membership = db["bodans"].find_one({"id": member_id})
@@ -864,6 +866,10 @@ async def del_membership(res, msg):
     await target_member.remove_roles(zoopass_role)
     
     await res.channel.send("Membership successfully deleted.")
+
+    # If msg has extra lines, send dm to target user to notify the zoopass deletion
+    if len(msg.split("\n")) > 1:
+        await direct_dm(res, msg, override=True)
 
 ### youtube
 async def add_upcoming_stream(res, msg):
@@ -1225,8 +1231,8 @@ async def cross_server_post(res, msg):
     embed = discord.Embed(title = m[1], description = "\n".join(m[2:]), colour = embed_color)
     await target_channel.send(content = None, embed = embed)
 
-async def direct_dm(res, msg):
-    if str(res.author) != owner:
+async def direct_dm(res, msg, override = False):
+    if str(res.author) != owner and not override:
         return
     m = msg.split("\n", 1)
     if len(m) < 2:
