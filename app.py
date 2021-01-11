@@ -873,7 +873,7 @@ async def set_membership(res, msg):
         if len(dates)!=3 or any(not is_integer(date) for date in dates):
             await res.channel.send("Please provide a valid date (dd/mm/yy) or integer days (+/- integer).")
             return
-        new_date = dtime(year = dates[2], month = dates[1], day = dates[0], tzinfo = timezone.utc)
+        new_date = dtime(year = int(dates[2]), month = int(dates[1]), day = int(dates[0]), tzinfo = timezone.utc)
     db["bodans"].update_one({"id": member_id}, {"$set": {"last_membership": new_date}})
 
     await res.channel.send("New membership date for {} set at {}!".format(member_id, new_date))
