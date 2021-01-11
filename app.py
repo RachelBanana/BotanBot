@@ -976,7 +976,7 @@ async def verify_membership(res, msg):
     desc = "{}\n{}".format(res.author.id, dtime.now(tz = timezone.utc))
     embed = discord.Embed(title = title, description = desc, colour = embed_color)
     embed.set_image(url = res.attachments[0].url)
-    await member_veri_ch.send("{}\n{}".format(content = None, embed = embed))
+    await member_veri_ch.send(content = None, embed = embed)
 
 ## nsfw dm commands
 async def add_contr(res, msg, contr = 1):
