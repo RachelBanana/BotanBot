@@ -811,6 +811,36 @@ async def del_art(res, msg):
 
 ### Membership (Zoopass)
 
+async def view_membership(res, msg):
+    member_id = msg
+
+    # Check if msg is numeric
+    if not member_id.isnumeric():
+        await res.channel.send("Please provide a valid id!")
+        return
+    
+    member_id = int(member_id)
+
+    # Check if zoopass in database and delete
+    target_membership = db["bodans"].find_one({"id": member_id})
+    if not target_membership:
+        await res.channel.send("Can't find membership id in the database!")
+        return
+    
+    # Send information about membership
+    botan_guild = client.get_guild(d["discord_ids"]["guild"])
+    target_member = botan_guild.get_member(member_id)
+
+    membership_date = target_membership["last_membership"].replace(tzinfo = timezone.utc)
+    expiration_date = membership_date + timedelta(days = 30)
+
+    m = "Name: {}\nID: {}\nMembership Date: {}\nMembership End Date: {}"
+    m = m.format(str(target_member), member_id, membership_date, expiration_date)
+    embed = discord.Embed(title = "Zoopass Membership", description = target_membership["id"])
+
+    await res.channel.send(content=None, embed = embed)
+    
+
 async def set_membership(res, msg):
     msg = msg.split(" ")
     if len(msg) < 2:
@@ -1322,6 +1352,8 @@ aliases = {
     "addvid": "add_vid",
     "endvid": "end_vid",
     "delvid": "del_vid",
+    "viewpass": "view_zoopass",
+    "view_pass": "view_zoopass",
     "setpass": "set_zoopass",
     "setzoopass": "set_zoopass",
     "delpass": "del_zoopass",
@@ -1389,6 +1421,7 @@ admin_commands = {
     "add_vid": add_upcoming_stream,
     "end_vid": end_live_stream,
     "del_vid": delete_stream,
+    "view_zoopass": view_membership,
     "set_zoopass": set_membership,
     "del_zoopass": del_membership,
     # dev commands
