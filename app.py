@@ -185,7 +185,7 @@ async def _check_membership_dates():
 
     for bodan in db["bodans"].find():
         # For each bodan, if membership date ended (30 days)
-        if (not bodan["last_membership"]) or bodan["last_membership"] < expired_start_date:
+        if (not bodan["last_membership"]) or bodan["last_membership"].replace(tzinfo = timezone.utc) < expired_start_date:
             # Add to delete list
             expired_memberships.append(bodan)
 
