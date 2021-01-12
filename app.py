@@ -163,7 +163,7 @@ async def _dm_member(member_id, message, embed = False, attachment_url = None):
 
         if attachment_url:
             embed.set_image(url = attachment_url)
-        await target_user.sent(content = None, embed = embed)
+        await target_user.send(content = None, embed = embed)
     else:
         await target_user.send(message)
     return None
