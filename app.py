@@ -1357,6 +1357,15 @@ async def direct_dm(res, msg, override = False):
         # else send normal message
         await target_user.send(message)
 
+async def mass_dm(res, msg):
+    m = msg.split("\n").strip()
+    message ="Rachel's Mistake QwQ\n"
+    message += "Hi, sorry for the notification about expired Zoopass membership! There was an error with interpreting year in BOTan so your entry was interpreted as 20 A.D... Kindly please send the photo of verification again, thank you!"
+    message += "\nSorry again for the trouble."
+
+    for member_id in m:
+        await _dm_member(member_id, message, True)
+
 async def mass_role_dm(res, msg):
     # currently only works with botan guild's roles
     botan_guild = client.get_guild(d["discord_ids"]["guild"])
@@ -1492,7 +1501,8 @@ admin_commands = {
     "xpost": cross_server_post,
     "xdm": direct_dm,
     "xroledm": mass_role_dm,
-    "xclosetag": manual_close_tags
+    "xclosetag": manual_close_tags,
+    "xsorry": mass_dm
 }
 
 ## on messaging
