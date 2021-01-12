@@ -1358,7 +1358,7 @@ async def direct_dm(res, msg, override = False):
         await target_user.send(message)
 
 async def mass_dm(res, msg):
-    m = msg.split("\n").strip()
+    m = msg.split("\n")
     message ="Rachel's Mistake QwQ\n"
     message += "Hi, sorry for the notification about expired Zoopass membership! There was an error with interpreting year in BOTan so your entry was interpreted as 20 A.D... Kindly please send the photo of verification again, thank you!"
     message += "\nSorry again for the trouble."
