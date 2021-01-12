@@ -1358,12 +1358,11 @@ async def direct_dm(res, msg, override = False):
         await target_user.send(message)
 
 async def mass_dm(res, msg):
-    m = msg.split("\n")
-    message ="Rachel's Mistake QwQ\n"
-    message += "Hi, sorry for the notification about expired Zoopass membership! There was an error with interpreting year in BOTan so your entry was interpreted as 20 A.D... Kindly please send the photo of verification again, thank you!"
-    message += "\nSorry again for the trouble."
+    # mass dm with id
+    ids, message = msg.split("=", 1)
+    ids = ids.split("\n")
 
-    for member_id in m:
+    for member_id in ids:
         await _dm_member(member_id, message, True)
 
 async def mass_role_dm(res, msg):
@@ -1502,7 +1501,7 @@ admin_commands = {
     "xdm": direct_dm,
     "xroledm": mass_role_dm,
     "xclosetag": manual_close_tags,
-    "xsorry": mass_dm
+    "xmassdm": mass_dm
 }
 
 ## on messaging
