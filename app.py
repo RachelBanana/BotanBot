@@ -145,6 +145,59 @@ def to_jap(m):
 def to_eng(m):
     return gtl.translate(m, dest = "en")
 
+## internal discord tools
+async def _dm_member(member_id, message, embed = False, attachment_url = None):
+    # dm a member, and returns a message if error occurs
+
+    # if member_id is not integer or a string that represents integer, return error message
+    if not is_integer(member_id):
+        return "Please provide a valid user id!"
+    target_user = client.get_user(int(member_id))
+
+    if embed:
+        # split message into title and description
+        message = message.split("\n")
+        if len(message) < 2:
+            return "need at least 2 arguments for embed messages!"
+        embed = discord.Embed(title = message[0], description = "\n".join(message[1:]), colour = embed_color)
+
+        if attachment_url:
+            embed.set_image(url = attachment_url)
+        await target_user.sent(content = None, embed = embed)
+    else:
+        await target_user.send(message)
+    return None
+
+## Membership tools
+async def _check_membership_dates():
+    # Performs a mass check on membership dates and delete expired membership with a default message
+    # Returns an expired_membership list {id, last_membership}
+
+    # Get all data from bodans
+    expired_memberships = []
+    expired_start_date = dtime.now(tz = timezone.utc) - timedelta(days = 30)
+
+    message_title = "Zoopass Membership Expired"
+    message_desc = "Your access to our Botan's members-only channel has just expired!"
+    message_desc += "\nYou may renew your membership by sending another updated verification photo using the ``verify`` command."
+    message_desc += " Thank you so much for your cotinued support of our precious lioness!"
+    message_image = "https://media.discordapp.net/attachments/735145401094504538/798419209112518687/botan_cat.jpg"
+
+    for bodan in db["bodans"].find():
+        # For each bodan, if membership date ended (30 days)
+        if (not bodan["last_membership"]) or bodan["last_membership"] < expired_start_date:
+            # Add to delete list
+            expired_memberships.append(bodan)
+
+            # Delete from database
+            db["bodans"].delete_one(bodan)
+
+            # dm expired membership
+            await _dm_member(bodan["id"], "{}\n{}".format(message_title, message_desc), embed = True, attachment_url = message_image)
+
+    # Returns expired_memberships list
+    return expired_memberships
+
 ## Live Streaming tools
 """stream's data template
     "id": vid id,
@@ -867,7 +920,7 @@ async def set_membership(res, msg):
     
     # Adjust membership date
     if is_integer(adjustment):
-        new_date = target_membership["last_membership"].replace(tzinfo = timezone.utc) + timedelta(days = adjustment)
+        new_date = target_membership["last_membership"].replace(tzinfo = timezone.utc) + timedelta(days = int(adjustment))
     else:
         dates = adjustment.split("/")
         if len(dates)!=3 or any(not is_integer(date) for date in dates):
@@ -1974,11 +2027,42 @@ async def find_streams():
             await lg_ch.send("Waiting for {} seconds from now for next check".format(wait_time))
         await asyncio.sleep(wait_time)
 
+async def delete_expired_memberships():
+    lg_ch = client.get_channel(d["discord_ids"]["log"])
+    while not client.is_closed():
+        # get data of last checked timestamp
+        now = dtime.now(tz = timezone.utc)
+        zoopass_check = db["settings"].find_one({"name": "zoopass"})
+        last_checked = zoopass_check.get("last_checked", None)
+        await lg_ch.send("Checking if **membership** check is needed, time: {}".format(now))
+        # if there is no last checked, or last checked is more than 12 hours ago, do new check
+        if last_checked:
+            # add utc to last checked (mongodb always naive)
+            last_checked = last_checked.replace(tzinfo = timezone.utc)
+        if not last_checked or (now - last_checked >= timedelta(hours = 12)):
+            await lg_ch.send("Performing membership check, last check was {}".format(last_checked))
+            
+            # perform check
+            expired_memberships = await _check_membership_dates()
+            m = ["{}: {}".format(d["id"], d["last_membership"]) for d in expired_memberships]
+            m = "\n".join(m)
+            await lg_ch.send(m)
+
+            # add wait time
+            db["settings"].update_one({"name": "zoopass"}, {"$set": {"last_checked": now}})
+            wait_time = 12 * 3600
+        else:
+            # else wait for the remaining time left
+            wait_time = 12 * 3600 - (now - last_checked).total_seconds()
+            await lg_ch.send("Waiting for {} seconds from now for next **membership** check".format(wait_time))
+        await asyncio.sleep(wait_time)
+
 # List Coroutines to be executed
 coroutines = (
     jst_clock(),
     update_streams(),
-    find_streams()
+    find_streams(),
+    delete_expired_memberships()
 )
 
 # Main Coroutine
