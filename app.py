@@ -169,7 +169,7 @@ async def _dm_member(member_id, message, embed = False, attachment_url = None):
     return None
 
 ## Membership tools
-async def _check_membership_dates():
+async def _check_membership_dates(res = None, msg = None):
     # Performs a mass check on membership dates and delete expired membership with a default message
     # Returns an expired_membership list {id, last_membership}
 
@@ -191,6 +191,15 @@ async def _check_membership_dates():
 
             # Delete from database
             db["bodans"].delete_one(bodan)
+
+            # Remove zoopass role from user
+            botan_guild = client.get_guild(d["discord_ids"]["guild"])
+            target_member = botan_guild.get_member(bodan["id"])
+
+            zoopass_role_id = d["discord_ids"]["zoopass_role"]
+            zoopass_role = botan_guild.get_role(zoopass_role_id)
+
+            await target_member.remove_roles(zoopass_role)
 
             # dm expired membership
             await _dm_member(bodan["id"], "{}\n{}".format(message_title, message_desc), embed = True, attachment_url = message_image)
