@@ -402,7 +402,7 @@ async def shishilamy(res, msg):
     counter["shishilamy"] += 1
     sl_count = counter["shishilamy"]
     await res.channel.send("<:BotanLamyNY1:798476668733358110><:BotanLamyNY2:798476692795817994>")
-    await res.channel.send("{} Bodans on the ShishiLamy ship!")
+    await res.channel.send("{} Bodans on the ShishiLamy Teetee ship!")
     db["settings"].update_one({"name": "counter"}, {"$set": {"shishilamy": counter["shishilamy"]}})
 
 async def poi(res, msg):
