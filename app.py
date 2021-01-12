@@ -398,6 +398,13 @@ async def sleepy(res, msg):
     await res.channel.send("{} Sleepy Bodans sleeping on the floor.".format(sleep_count))
     db["settings"].update_one({"name": "counter"}, {"$set": {"sleepy": counter["sleepy"]}})
 
+async def shishilamy(res, msg):
+    counter["shishilamy"] += 1
+    sl_count = counter["shishilamy"]
+    await res.channel.send("<:BotanLamyNY1:798476668733358110><:BotanLamyNY2:798476692795817994>")
+    await res.channel.send("{} Bodans on the ShishiLamy ship!")
+    db["settings"].update_one({"name": "counter"}, {"$set": {"shishilamy": counter["shishilamy"]}})
+
 async def poi(res, msg):
     botan_nades = [
         "<:BotanNade:766659876532256788>",
@@ -933,7 +940,7 @@ async def set_membership(res, msg):
     else:
         dates = adjustment.split("/")
         if len(dates)!=3 or any(not is_integer(date) for date in dates):
-            await res.channel.send("Please provide a valid date (dd/mm/yy) or integer days (+/- integer).")
+            await res.channel.send("Please provide a valid date (dd/mm/yyyy) or integer days (+/- integer).")
             return
         new_date = dtime(year = int(dates[2]), month = int(dates[1]), day = int(dates[0]), tzinfo = timezone.utc)
     db["bodans"].update_one({"id": member_id}, {"$set": {"last_membership": new_date}})
@@ -1465,6 +1472,7 @@ commands = {
     "100": score_me,
     "poi": poi,
     "sleepy": sleepy,
+    "shishilamy": shishilamy,
     "subscribers": subscribers,
     "stream": live_streams,
     "voice": voice,

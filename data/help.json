@@ -70,6 +70,12 @@
         "usage": "$sleepy",
         "extra_fields": []
     },
+    "shishilamy": {
+        "desc": "Book your ticket before the TeeTee ship sails!!!!",
+        "alias": [],
+        "usage": "$shishilamy",
+        "extra_fields": []
+    },
     "subscribers": {
         "desc": "Check subscribers count of Botan's or other vtubers' YouTube channel.",
         "alias": ["subs", "subscriber"],
