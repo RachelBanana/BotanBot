@@ -881,6 +881,17 @@ async def del_art(res, msg):
 ### Membership (Zoopass)
 
 async def view_membership(res, msg):
+    # if msg is empty, show all members
+    if not msg:
+        m = []
+        for bodan in db["bodans"].find():
+            member_id = bodan["id"]
+            membership_date = bodan["last_membership"].replace(tzinfo = timezone.utc).strftime("%d/%m/%Y")
+            m.append("{}: {}".format(member_id, membership_date))
+        await res.channel.send("\n".join(m))
+        return
+
+    # if msg is not empty
     member_id = msg
 
     # Check if msg is numeric
