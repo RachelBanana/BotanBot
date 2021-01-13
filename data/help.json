@@ -25,7 +25,7 @@
     },
     "translate": {
         "desc": "Translate any text to english.",
-        "alias": ["trans"],
+        "alias": ["trans", "tl"],
         "usage": "$translate {text}",
         "extra_fields": []
     },

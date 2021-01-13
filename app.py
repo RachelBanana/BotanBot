@@ -1442,6 +1442,7 @@ aliases = {
     "hello": "greet",
     "lalion": "greet",
     "bday": "birthday",
+    "tl": "translate",
     "trans": "translate",
     "jp": "japanese",
     "addart": "add_art",
