@@ -120,6 +120,12 @@ def to_raw_text(msg):
     return msg
 
 ## Time tools
+months = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
+date_patterns = [
+    "(" + "|".join(months) + ") +\d{1,2},? +\d{4}", # jan 20, 2021
+    "\d{1,2} +(" + "|".join(months) + ") +\d{4}", # 20 jan 2021
+]
+
 def days_hours_minutes(td):
     return td.days, td.seconds//3600, (td.seconds//60)%60
 
@@ -138,6 +144,14 @@ def time_to_string(d, h, m):
     else:
         return ""
     return msg.format(*arr)
+
+def date_from_txt(s):
+    # given a string, extract and return a datetime object
+    s = s.lower()
+    for pattern in date_patterns:
+        match = re.search(pattern, s)
+        if match:
+            return match.group()
 
 ## Translating tools
 # fix: https://stackoverflow.com/questions/52455774/googletrans-stopped-working-with-error-nonetype-object-has-no-attribute-group
