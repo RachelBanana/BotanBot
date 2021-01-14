@@ -864,7 +864,7 @@ async def detect_image_text(res, msg):
 
         inverted_img = ImageOps.invert(background)
 
-        text = Tess.image_to_string(inverted_img)
+        text = await client.loop.run_in_executor(None, Tess.image_to_string, inverted_img)
         
         await res.channel.send(text)
 
