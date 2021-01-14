@@ -857,16 +857,23 @@ async def detect_image_text(res, msg):
         factor = 3
         img = enhancer.enhance(factor)
 
+        # get text (run as coroutine to not block the event loop)
+        text = await client.loop.run_in_executor(None, Tess.image_to_string, img)
+
         # remove alpha channel and invert image
-        img.load() # required for img.split()
-        background = Image.new("RGB", img.size, (255, 255, 255))
-        background.paste(img, mask=img.split()[3]) # 3 is the alpha channel
+        if img.mode == "RGBA":
+            img.load() # required for img.split()
+            background = Image.new("RGB", img.size, (255, 255, 255))
+            background.paste(img, mask=img.split()[3] if len(img.split()) >= 4 else None) # 3 is the alpha channel
+            img = background
 
-        inverted_img = ImageOps.invert(background)
+        inverted_img = ImageOps.invert(img)
 
-        text = await client.loop.run_in_executor(None, Tess.image_to_string, inverted_img)
+        # get inverted text (run as coroutine to not block the event loop)
+        inverted_text = await client.loop.run_in_executor(None, Tess.image_to_string, inverted_img)
         
-        await res.channel.send(text)
+        m = "```{}```\n```{}```".format(text, inverted_text)
+        await res.channel.send(m)
 
 ### database manipulation
 async def add_trivia(res, msg):
