@@ -848,6 +848,7 @@ async def read(res, msg):
 
 async def detect_image_text(res, msg):
     # use tesseract to detect text from attachments
+    await res.channel.send("Processing image...")
     for attachment in res.attachments:
         img = Image.open(requests.get(attachment.url, stream=True).raw)
 
@@ -856,7 +857,7 @@ async def detect_image_text(res, msg):
         factor = 3
         img = enhancer.enhance(factor)
 
-        text = Tess.image_to_string(img, lang='eng')
+        text = Tess.image_to_string(img)
         await res.channel.send(text)
 
 ### database manipulation
