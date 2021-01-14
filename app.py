@@ -2164,6 +2164,7 @@ async def delete_expired_memberships():
             # add wait time
             db["settings"].update_one({"name": "zoopass"}, {"$set": {"last_checked": now}})
             wait_time = 12 * 3600
+            await lg_ch.send("Set new wait time to {}".format(now))
         else:
             # else wait for the remaining time left
             wait_time = 12 * 3600 - (now - last_checked).total_seconds()
