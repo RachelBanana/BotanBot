@@ -11,8 +11,6 @@ from pymongo import MongoClient
 
 # python built-in libraries
 import os
-import gc
-import sys
 import re
 import json
 import random
