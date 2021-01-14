@@ -889,7 +889,7 @@ async def detect_image_text(res, msg):
     await res.channel.send("Processing image...")
     for attachment in res.attachments:
         
-        text, inverted_text = _detect_image_text(attachment.url)
+        text, inverted_text = await _detect_image_text(attachment.url)
 
         m = "```{}```\n```{}```".format(text, inverted_text)
         await res.channel.send(m)
