@@ -853,10 +853,10 @@ async def detect_image_text(res, msg):
 
         # sharpen image
         enhancer = ImageEnhance.Sharpness(img)
-        factor = 2
+        factor = 3
         img = enhancer.enhance(factor)
 
-        text = Tess.image_to_string(img)
+        text = Tess.image_to_string(img, lang='eng')
         await res.channel.send(text)
 
 ### database manipulation
