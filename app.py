@@ -860,10 +860,10 @@ async def detect_image_text(res, msg):
         text = Tess.image_to_string(img)
         
         await res.channel.send(text)
-        
-        inverted_img = ImageMath.eval('255-(a)',a=img.convert("1")).convert("RGB")
-        inverted_text = Tess.image_to_string(inverted_img)
-        await res.channel.send(inverted_text)
+
+        # inverted_img = ImageMath.eval('255-(a)',a=img.convert("1")).convert("RGB")
+        # inverted_text = Tess.image_to_string(inverted_img)
+        # await res.channel.send(inverted_text)
 
 ### database manipulation
 async def add_trivia(res, msg):
