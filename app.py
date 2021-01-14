@@ -1263,9 +1263,12 @@ async def verify_membership(res, msg):
     await member_veri_ch.send(content = None, embed = embed)
 
     # check date
-    text, inverted_text = await _detect_image_text(res.attachments[0].url)
-    img_date = date_from_txt(text) or date_from_txt(inverted_text)
-    await member_veri_ch.send(img_date)
+    try:
+        text, inverted_text = await _detect_image_text(res.attachments[0].url)
+        img_date = date_from_txt(text) or date_from_txt(inverted_text)
+        await member_veri_ch.send(img_date)
+    except:
+        print("date detection fail!")
 
     # add role
     botan_guild = client.get_guild(d["discord_ids"]["guild"])
