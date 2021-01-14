@@ -78,5 +78,19 @@
             "size": 45,
             "fill": [255, 255, 255, 255]
         }        
+    },
+    "approve": {
+        "file": "botan_approve.png",
+        "positions": [
+            [0.75, 0.25], 
+            [0.75, 0.75]
+        ],
+        "wrapsize": 0.5,
+        "align": "left",
+        "font": {
+            "name": "OpenSans-Regular.ttf",
+            "size": 26,
+            "fill": [0, 0, 0, 255]
+        }
     }
 }
