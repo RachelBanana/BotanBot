@@ -125,6 +125,10 @@ date_patterns = [
     "(" + "|".join(months) + ") +\d{1,2},? +\d{4}", # jan 20, 2021
     "\d{1,2} +(" + "|".join(months) + ") +\d{4}", # 20 jan 2021
 ]
+date_formats = [
+    "%b %d, %Y",
+    "%d %b %Y"
+]
 
 def days_hours_minutes(td):
     return td.days, td.seconds//3600, (td.seconds//60)%60
@@ -148,10 +152,11 @@ def time_to_string(d, h, m):
 def date_from_txt(s):
     # given a string, extract and return a datetime object
     s = s.lower()
-    for pattern in date_patterns:
+    for pattern, date_format in zip(date_patterns, date_formats):
         match = re.search(pattern, s)
         if match:
-            return match.group()
+            extracted_time = dtime.strptime(match.group(), date_format).replace(tzinfo = timezone.utc)
+            return extracted_time
 
 ## Translating tools
 # fix: https://stackoverflow.com/questions/52455774/googletrans-stopped-working-with-error-nonetype-object-has-no-attribute-group
