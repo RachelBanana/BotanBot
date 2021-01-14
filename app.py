@@ -39,7 +39,7 @@ embed_color = int(os.getenv("EMBED_COLOR"), 16)
 pingcord = "Pingcord#3283"
 
 ## tesseract location in heroku
-Tess.pytesseract.tesseract_cmd = os.getenv("TESSDATA_PREFIX")
+Tess.pytesseract.tesseract_cmd = os.path.join(os.getenv("TESSDATA_PREFIX"), "tesseract.exe")
 
 ## local directories
 data_dir = "data"
