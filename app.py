@@ -856,23 +856,23 @@ async def detect_image_text(res, msg):
         img_response = requests.get(attachment.url, stream=True)
         img_response.raw.decode_content = True
         img = Image.open(img_response.raw)
+        img.load()
 
         # sharpen image
         enhancer = ImageEnhance.Sharpness(img)
         factor = 3
         img = enhancer.enhance(factor)
 
-        # get text (run as coroutine to not block the event loop)
-        text = await client.loop.run_in_executor(None, img_to_str, img)
-
         # remove alpha channel and invert image
         if img.mode == "RGBA":
-            img.load() # required for img.split()
             background = Image.new("RGB", img.size, (255, 255, 255))
             background.paste(img, mask=img.split()[3] if len(img.split()) >= 4 else None) # 3 is the alpha channel
             img = background
 
         inverted_img = ImageOps.invert(img)
+
+        # get text (run as coroutine to not block the event loop)
+        text = await client.loop.run_in_executor(None, img_to_str, img)
 
         # get inverted text (run as coroutine to not block the event loop)
         inverted_text = await client.loop.run_in_executor(None, img_to_str, inverted_img)
