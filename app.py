@@ -4,6 +4,7 @@ from googletrans import Translator
 from PIL import Image, ImageDraw, ImageFont
 import googleapiclient.discovery
 import requests
+import pytesseract as Tess
 
 import pymongo
 from pymongo import MongoClient
@@ -36,6 +37,9 @@ owner = os.getenv("OWNER")
 prefix = os.getenv("PREFIX")
 embed_color = int(os.getenv("EMBED_COLOR"), 16)
 pingcord = "Pingcord#3283"
+
+## tesseract location in heroku
+Tess.pytesseract.tesseract_cmd = os.getenv("TESSDATA_PREFIX")
 
 ## local directories
 data_dir = "data"
