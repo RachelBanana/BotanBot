@@ -847,6 +847,13 @@ async def read(res, msg):
             embed.description = to_eng(embed.description).text
             await channel.send(content = None, embed = embed)
 
+async def detect_image_text(res, msg):
+    # use tesseract to detect text from attachments
+    for attachment in res.attachments:
+        img = Image.open(requests.get(attachment.url, stream=True).raw)
+        text = Tess.image_to_string(img)
+        await res.channel.send(text)
+
 ### database manipulation
 async def add_trivia(res, msg):
     counter["trivia"] += 1
@@ -1529,6 +1536,7 @@ admin_commands = {
     "view_zoopass": view_membership,
     "set_zoopass": set_membership,
     "del_zoopass": del_membership,
+    "img_txt": detect_image_text,
     # dev commands
     "xpost": cross_server_post,
     "xdm": direct_dm,
