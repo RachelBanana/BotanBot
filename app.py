@@ -849,7 +849,7 @@ async def read(res, msg):
 
 async def detect_image_text(res, msg):
     # use tesseract to detect text from attachments
-    img_to_str = partial(Tess.image_to_string, timeout=10)
+    img_to_str = partial(Tess.image_to_string, timeout=100)
     await res.channel.send("Processing image...")
     for attachment in res.attachments:
         img = Image.open(requests.get(attachment.url, stream=True).raw)
