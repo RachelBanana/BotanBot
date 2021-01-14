@@ -1241,7 +1241,7 @@ async def verify_membership(res, msg):
         return
     
     # Get membership time
-    new_membership_time = dtime.now(tz = timezone.utc)
+    new_membership_date = dtime.now(tz = timezone.utc)
 
     # if member exists, update date
     bodan = db["bodans"].find_one({"id": res.author.id})
@@ -1251,25 +1251,25 @@ async def verify_membership(res, msg):
         text, inverted_text = await _detect_image_text(res.attachments[0].url)
         img_date = date_from_txt(text) or date_from_txt(inverted_text)
         if img_date:
-            new_membership_time = img_date
+            new_membership_date = img_date - timedelta(days = 30)
     except:
         print("date detection fail!")
 
     if bodan:
         last_membership = bodan["last_membership"].replace(tzinfo = timezone.utc)
-        db["bodans"].update_one({"id": res.author.id}, {"$set": {"last_membership": max(new_membership_time, last_membership)}})
+        db["bodans"].update_one({"id": res.author.id}, {"$set": {"last_membership": max(new_membership_date, last_membership)}})
 
     # if not, create data
     else:
         db["bodans"].insert_one({
             "id": res.author.id,
-            "last_membership": new_membership_time
+            "last_membership": new_membership_date
         })
 
     # Send attachment and message to membership verification channel
     member_veri_ch = client.get_channel(d["discord_ids"]["membership_verification"])
     title = "Membership Verification: {}".format(str(res.author))
-    desc = "{}\n{}".format(res.author.id, new_membership_time.strftime("%d/%m/%Y, %H:%M:%S"))
+    desc = "{}\n{}".format(res.author.id, new_membership_date.strftime("%d/%m/%Y, %H:%M:%S"))
     embed = discord.Embed(title = title, description = desc, colour = embed_color)
     embed.set_image(url = res.attachments[0].url)
     await member_veri_ch.send(content = None, embed = embed)
