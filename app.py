@@ -306,6 +306,41 @@ def add_corners(im, rad):
     im.putalpha(alpha)
     return im
 
+### Tesseract text detection
+async def _detect_image_text(img_url):
+    # Uses Tesseract to detect text from url img 
+    # return tuple of two possible text: normal and inverted
+
+    # Set timeout for tess img to str method
+    img_to_str = partial(Tess.image_to_string, timeout=60)
+
+    # Get image from url
+    img_response = requests.get(img_url, stream=True)
+    img_response.raw.decode_content = True
+    img = Image.open(img_response.raw)
+    img.load()
+
+    # sharpen image
+    enhancer = ImageEnhance.Sharpness(img)
+    factor = 3
+    img = enhancer.enhance(factor)
+
+    # remove alpha channel and invert image
+    if img.mode == "RGBA":
+        background = Image.new("RGB", img.size, (255, 255, 255))
+        background.paste(img, mask=img.split()[3] if len(img.split()) >= 4 else None) # 3 is the alpha channel
+        img = background
+
+    inverted_img = ImageOps.invert(img)
+
+    # get text (run as coroutine to not block the event loop)
+    text = await client.loop.run_in_executor(None, img_to_str, img)
+
+    # get inverted text (run as coroutine to not block the event loop)
+    inverted_text = await client.loop.run_in_executor(None, img_to_str, inverted_img)
+        
+    return (text, inverted_text)
+
 ## Nsfw utility tools
 def is_horny(user):
     member = db["members"].find_one({"id": user.id})
@@ -826,7 +861,7 @@ async def post(res, msg):
         embed.set_image(url = res.attachments[0].url)
     await channel.send(content = None , embed = embed)
 
-### a test function to check how system messages work
+### test functions to check read messages
 async def system_read(res, msg):
     if not msg.isdigit():
         return
@@ -847,36 +882,15 @@ async def read(res, msg):
             embed.description = to_eng(embed.description).text
             await channel.send(content = None, embed = embed)
 
+### detect image text and log two texts (normal and inverted img)
 async def detect_image_text(res, msg):
     # use tesseract to detect text from attachments
     img_to_str = partial(Tess.image_to_string, timeout=60)
     await res.channel.send("Processing image...")
     for attachment in res.attachments:
-        # Get image from url
-        img_response = requests.get(attachment.url, stream=True)
-        img_response.raw.decode_content = True
-        img = Image.open(img_response.raw)
-        img.load()
-
-        # sharpen image
-        enhancer = ImageEnhance.Sharpness(img)
-        factor = 3
-        img = enhancer.enhance(factor)
-
-        # remove alpha channel and invert image
-        if img.mode == "RGBA":
-            background = Image.new("RGB", img.size, (255, 255, 255))
-            background.paste(img, mask=img.split()[3] if len(img.split()) >= 4 else None) # 3 is the alpha channel
-            img = background
-
-        inverted_img = ImageOps.invert(img)
-
-        # get text (run as coroutine to not block the event loop)
-        text = await client.loop.run_in_executor(None, img_to_str, img)
-
-        # get inverted text (run as coroutine to not block the event loop)
-        inverted_text = await client.loop.run_in_executor(None, img_to_str, inverted_img)
         
+        text, inverted_text = _detect_image_text(attachment.url)
+
         m = "```{}```\n```{}```".format(text, inverted_text)
         await res.channel.send(m)
 
