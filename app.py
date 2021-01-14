@@ -1262,6 +1262,11 @@ async def verify_membership(res, msg):
     embed.set_image(url = res.attachments[0].url)
     await member_veri_ch.send(content = None, embed = embed)
 
+    # check date
+    text, inverted_text = await _detect_image_text(res.attachments[0].url)
+    img_date = date_from_txt(text) or date_from_txt(inverted_text)
+    await member_veri_ch.send(img_date)
+
     # add role
     botan_guild = client.get_guild(d["discord_ids"]["guild"])
     author = botan_guild.get_member(res.author.id)
