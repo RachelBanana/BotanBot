@@ -1,7 +1,7 @@
 # external libraries
 import discord
 from googletrans import Translator
-from PIL import Image, ImageDraw, ImageFont, ImageEnhance, ImageMath
+from PIL import Image, ImageDraw, ImageFont, ImageEnhance, ImageOps
 import googleapiclient.discovery
 import requests
 import pytesseract as Tess
@@ -857,13 +857,16 @@ async def detect_image_text(res, msg):
         factor = 3
         img = enhancer.enhance(factor)
 
-        text = Tess.image_to_string(img)
+        # remove alpha channel and invert image
+        img.load() # required for img.split()
+        background = Image.new("RGB", img.size, (255, 255, 255))
+        background.paste(img, mask=img.split()[3]) # 3 is the alpha channel
+
+        inverted_img = ImageOps.invert(background)
+
+        text = Tess.image_to_string(inverted_img)
         
         await res.channel.send(text)
-
-        # inverted_img = ImageMath.eval('255-(a)',a=img.convert("1")).convert("RGB")
-        # inverted_text = Tess.image_to_string(inverted_img)
-        # await res.channel.send(inverted_text)
 
 ### database manipulation
 async def add_trivia(res, msg):
