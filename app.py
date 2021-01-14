@@ -386,8 +386,6 @@ async def on_ready():
 
 @client.event
 async def on_connect():
-    lg_ch = client.get_channel(d["discord_ids"]["log"])
-    await lg_ch.send("Botan is connected to discord as {0.user}.".format(client))
     print("Botan is connected to discord as {0.user}.".format(client))
 
 @client.event
