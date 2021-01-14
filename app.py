@@ -1,7 +1,7 @@
 # external libraries
 import discord
 from googletrans import Translator
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageEnhance
 import googleapiclient.discovery
 import requests
 import pytesseract as Tess
@@ -38,8 +38,7 @@ prefix = os.getenv("PREFIX")
 embed_color = int(os.getenv("EMBED_COLOR"), 16)
 pingcord = "Pingcord#3283"
 
-## tesseract location in heroku
-# Tess.pytesseract.tesseract_cmd = os.path.join(os.getenv("TESSDATA_PREFIX"))
+## TESSDATA_PREFIX is needed as environment variable
 
 ## local directories
 data_dir = "data"
@@ -851,6 +850,12 @@ async def detect_image_text(res, msg):
     # use tesseract to detect text from attachments
     for attachment in res.attachments:
         img = Image.open(requests.get(attachment.url, stream=True).raw)
+
+        # sharpen image
+        enhancer = ImageEnhance.Sharpness(img)
+        factor = 2
+        img = enhancer.enhance(factor)
+
         text = Tess.image_to_string(img)
         await res.channel.send(text)
 
