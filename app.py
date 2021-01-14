@@ -1272,7 +1272,7 @@ async def verify_membership(res, msg):
     desc = "{}\n{}".format(res.author.id, new_membership_date.strftime("%d/%m/%Y, %H:%M:%S"))
     embed = discord.Embed(title = title, description = None, colour = embed_color)
     embed.set_image(url = res.attachments[0].url)
-    await member_veri_ch.send(content = "```{}```".format(desc), embed = embed)
+    await member_veri_ch.send(content = "```\n{}\n```".format(desc), embed = embed)
 
     # add role
     botan_guild = client.get_guild(d["discord_ids"]["guild"])
