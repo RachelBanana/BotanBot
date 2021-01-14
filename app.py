@@ -383,7 +383,7 @@ async def on_disconnect():
     print("Botan is snoozing off from discord!")
 
 @client.event
-async def on_error(err):
+async def on_error(err, *args):
     lg_ch = client.get_channel(d["discord_ids"]["log"])
     await lg_ch.send(err)
     print(err)
