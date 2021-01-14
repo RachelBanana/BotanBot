@@ -849,7 +849,7 @@ async def read(res, msg):
 
 async def detect_image_text(res, msg):
     # use tesseract to detect text from attachments
-    img_to_str = partial(Tess.image_to_string, timeout=100)
+    img_to_str = partial(Tess.image_to_string, timeout=30)
     await res.channel.send("Processing image...")
     for attachment in res.attachments:
         img = Image.open(requests.get(attachment.url, stream=True).raw)
@@ -863,19 +863,19 @@ async def detect_image_text(res, msg):
         text = await client.loop.run_in_executor(None, img_to_str, img)
 
         # remove alpha channel and invert image
-        # if img.mode == "RGBA":
-        #     img.load() # required for img.split()
-        #     background = Image.new("RGB", img.size, (255, 255, 255))
-        #     background.paste(img, mask=img.split()[3] if len(img.split()) >= 4 else None) # 3 is the alpha channel
-        #     img = background
+        if img.mode == "RGBA":
+            img.load() # required for img.split()
+            background = Image.new("RGB", img.size, (255, 255, 255))
+            background.paste(img, mask=img.split()[3] if len(img.split()) >= 4 else None) # 3 is the alpha channel
+            img = background
 
-        # inverted_img = ImageOps.invert(img)
+        inverted_img = ImageOps.invert(img)
 
         # get inverted text (run as coroutine to not block the event loop)
-        # inverted_text = await client.loop.run_in_executor(None, Tess.image_to_string, inverted_img)
+        inverted_text = await client.loop.run_in_executor(None, img_to_str, inverted_img)
         
-        # m = "```{}```\n```{}```".format(text, inverted_text)
-        await res.channel.send(text)
+        m = "```{}```\n```{}```".format(text, inverted_text)
+        await res.channel.send(m)
 
 ### database manipulation
 async def add_trivia(res, msg):
