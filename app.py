@@ -2158,7 +2158,8 @@ async def delete_expired_memberships():
             expired_memberships = await _check_membership_dates()
             m = ["{}: {}".format(d["id"], d["last_membership"]) for d in expired_memberships]
             m = "\n".join(m)
-            await lg_ch.send(m)
+            if m:
+                await lg_ch.send(m)
 
             # add wait time
             db["settings"].update_one({"name": "zoopass"}, {"$set": {"last_checked": now}})
