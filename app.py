@@ -20,6 +20,7 @@ import asyncio
 from datetime import datetime as dtime, tzinfo
 from datetime import timezone, timedelta
 from collections import deque
+from functools import partial
 
 """For local testing purpose"""
 # config_file = "config.json"
@@ -848,6 +849,7 @@ async def read(res, msg):
 
 async def detect_image_text(res, msg):
     # use tesseract to detect text from attachments
+    img_to_str = partial(Tess.image_to_string, timeout=10)
     await res.channel.send("Processing image...")
     for attachment in res.attachments:
         img = Image.open(requests.get(attachment.url, stream=True).raw)
@@ -858,7 +860,7 @@ async def detect_image_text(res, msg):
         img = enhancer.enhance(factor)
 
         # get text (run as coroutine to not block the event loop)
-        text = await client.loop.run_in_executor(None, Tess.image_to_string, img)
+        text = await client.loop.run_in_executor(None, img_to_str, img)
 
         # remove alpha channel and invert image
         # if img.mode == "RGBA":
