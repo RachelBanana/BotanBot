@@ -1875,27 +1875,42 @@ async def on_member_join(member):
 
     await server_logs_ch.send(content = None, embed = embed)
 
-# On members banned
+# On members leaving the server
 @client.event
 async def on_member_remove(member):
     # Check if member is banned
-    is_banned = True
     try:
         await member.guild.fetch_ban(member)
         return
     except discord.NotFound:
-        is_banned = False
+        pass
 
     ## send member's join info to mods logs
     server_logs_ch = client.get_channel(d["discord_ids"]["server_log"])
     
-    t = "Member Banned" if is_banned else "Member left the server"
+    t = "Member left the server"
     m = "{} {}".format(member.mention, str(member))
 
-    embed = discord.Embed(title = t, description = m, colour = 0xFF0000 if is_banned else 0xFF6600)
+    embed = discord.Embed(title = t, description = m, colour = 0xFF6600)
     embed.set_thumbnail(url = member.avatar_url)
     embed.add_field(name = "Account Creation Date", value = member.created_at, inline = False)
     embed.set_footer(text = "ID: {}".format(member.id))
+
+    await server_logs_ch.send(content = None, embed = embed)
+
+# On members getting banned
+@client.event
+async def on_member_ban(guild, user):
+    ## send member's join info to mods logs
+    server_logs_ch = client.get_channel(d["discord_ids"]["server_log"])
+    
+    t = "Member Banned"
+    m = "{} {}".format(user.mention, str(user))
+
+    embed = discord.Embed(title = t, description = m, colour = 0xFF0000)
+    embed.set_thumbnail(url = user.avatar_url)
+    embed.add_field(name = "Account Creation Date", value = user.created_at, inline = False)
+    embed.set_footer(text = "ID: {}".format(user.id))
 
     await server_logs_ch.send(content = None, embed = embed)
 
