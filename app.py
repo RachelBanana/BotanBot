@@ -869,14 +869,14 @@ async def botan_art(res, msg):
 
 ### get the ban list
 async def get_bans(res, msg):
-    ban_list = [user.id for user in await res.guild.bans()]
+    ban_list = await res.guild.bans()
     m = ""
-    for user_id in ban_list:
+    for (user, reason) in ban_list:
         if len(m) <= 2000:
-            m += str(user_id) + "\n"
+            m += "{}: {}\n".format(str(user.id), reason)
         else:
             await res.send(m)
-            m = str(user_id)
+            m = "{}: {}\n".format(str(user.id), reason)
     await res.send(m)
 
 async def post(res, msg):
