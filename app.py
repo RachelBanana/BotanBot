@@ -1966,9 +1966,8 @@ async def on_member_update(before, after):
 @client.event
 async def on_message_delete(message):
     ## if message from other servers, return
-    botan_guild = client.get_guild(d["discord_ids"]["guild"])
-    # if (not message.guild) or message.guild.id != botan_guild:
-    #     return
+    if (not message.guild) or message.guild.id != d["discord_ids"]["guild"]:
+        return
 
     ## if message is from a bot, return
     if (message.author == client.user) or message.author.bot:
