@@ -1301,7 +1301,8 @@ async def verify_membership(res, msg):
     await author.add_roles(zoopass_role)
 
     # DM user that the verification process is complete
-    m = "Membership verified! You now have access to members-excusive content in the server."
+    m = "Membership applied! You now have temporary access to members-excusive content in the server."
+    m += "\nPlease note that our staff will double-confirm the verification photo and may revoke it on a case-by-case basis."
     m += "\nIf you have encountered any issue with accessing the channels or have a separate enquiry, please contact a mod."
     await res.channel.send(m)
     
@@ -1605,6 +1606,7 @@ booster_commands = {
 }
 
 admin_commands = {
+    # mods
     "post": post,
     "read": read, # redundant
     "xread": system_read, # redundant
@@ -1620,12 +1622,14 @@ admin_commands = {
     "del_zoopass": del_membership,
     "img_txt": detect_image_text,
     "get_bans": get_bans,
+    # admins
+    "ban": ban_member,
     # dev commands
     "xpost": cross_server_post,
     "xdm": direct_dm,
     "xroledm": mass_role_dm,
     "xclosetag": manual_close_tags,
-    "xmassdm": mass_dm
+    "xmassdm": mass_dm # all mods
 }
 
 ## on messaging
