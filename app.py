@@ -1979,7 +1979,7 @@ async def on_message_delete(message):
     
     m = "**Author:** {}\n**Channel:** {}\n**Content:** {}".format(str(member), str(message.channel), message.content)
     if message.attachments:
-        m += "\nAttachments: {}".format("\n".join(attachment.url for attachment in message.attachments))
+        m += "\n**Attachments:** {}".format("\n".join(attachment.url for attachment in message.attachments))
 
     embed = discord.Embed(title = "Message Deleted", description = m, colour = 0xFF9D5C)
     embed.set_thumbnail(url = member.avatar_url)
