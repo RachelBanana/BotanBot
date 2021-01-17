@@ -1970,8 +1970,8 @@ async def on_message_delete(message):
     if message.guild or message.guild.id != botan_guild:
         return
 
-    ## if message is from bot, return
-    if message.author == client.user:
+    ## if message is from a bot, return
+    if message.author == client.user or message.author.bot:
         return
 
     ## send message deletion info to mods logs
