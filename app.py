@@ -1622,8 +1622,6 @@ admin_commands = {
     "del_zoopass": del_membership,
     "img_txt": detect_image_text,
     "get_bans": get_bans,
-    # admins
-    "ban": ban_member,
     # dev commands
     "xpost": cross_server_post,
     "xdm": direct_dm,
