@@ -872,13 +872,14 @@ async def get_bans(res, msg):
     ban_list = await res.guild.bans()
     m = ""
     for ban_entry in ban_list:
-        if len(m + str(ban_entry) + "\n") <= 2000:
-            # m += "{}: {}\n".format(str(user.id), reason)
-            m += str(ban_entry) + "\n"
+        user_id = ban_entry.user.id
+        reason = ban_entry.reason
+        entry_str = "{}: {}\n".format(user_id, reason)
+        if len(m) + len(entry_str) <= 2000:
+            m += entry_str
         else:
             await res.channel.send(m)
-            # m = "{}: {}\n".format(str(user.id), reason)
-            m = str(ban_entry) + "\n"
+            m = entry_str
     await res.channel.send(m)
 
 async def post(res, msg):
