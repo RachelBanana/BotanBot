@@ -1845,6 +1845,16 @@ async def on_member_join(member):
     await wc_ch.send(m, file = discord.File(save_file))
 
     ## send member's join info to mods logs
+    server_logs_ch = client.get_channel(d["discord_ids"]["server_log"])
+    
+    m = "{} {}".format(member.mention, str(member))
+
+    embed = discord.Embed(title = "Member Joined", description = m, colour = 0xE2FAB5)
+    embed.set_thumbnail(url = member.avatar_url)
+    embed.add_field(name = "Account Creation Date", value = member.created_at, inline = False)
+    embed.set_footer("ID: {}".format(member.id))
+
+    await server_logs_ch.send(content = None, embed = embed)
 
 # On members updating their profiles
 @client.event
