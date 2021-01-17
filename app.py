@@ -879,7 +879,7 @@ async def get_bans(res, msg):
             await res.send(m)
             # m = "{}: {}\n".format(str(user.id), reason)
             m = str(ban_entry) + "\n"
-    await res.send(m)
+    await res.channel.send(m)
 
 async def post(res, msg):
     m = msg.split("\n")
