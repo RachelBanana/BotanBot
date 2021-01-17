@@ -1854,7 +1854,7 @@ async def on_member_join(member):
     embed = discord.Embed(title = "Member Joined", description = m, colour = 0xE2FAB5)
     embed.set_thumbnail(url = member.avatar_url)
     embed.add_field(name = "Account Creation Date", value = member.created_at, inline = False)
-    embed.set_footer("ID: {}".format(member.id))
+    embed.set_footer("ID: {}".format(text = member.id))
 
     await server_logs_ch.send(content = None, embed = embed)
 
