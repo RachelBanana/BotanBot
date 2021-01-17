@@ -1917,7 +1917,7 @@ async def on_message_delete(message):
     server_logs_ch = client.get_channel(d["discord_ids"]["server_log"])
     member = message.author
     
-    m = "**Author:** {}\n**Content:** {}".format(str(member), message.content)
+    m = "**Author:** {}\n**Channel:** {}\n**Content:** {}".format(str(member), str(message.channel), message.content)
     if message.attachments:
         m += "\nAttachments: {}".format("\n".join(message.attachments))
 
