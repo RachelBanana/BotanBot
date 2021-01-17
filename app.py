@@ -10,6 +10,7 @@ import pymongo
 from pymongo import MongoClient
 
 # python built-in libraries
+import sys
 import os
 import re
 import json
@@ -402,6 +403,7 @@ async def on_error(err, *args):
     lg_ch = client.get_channel(d["discord_ids"]["log"])
     await lg_ch.send(err)
     print(err)
+    print(sys.exc_info())
 
 ## public commands
 async def help_command(res, msg):
