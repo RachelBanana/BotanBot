@@ -1219,11 +1219,12 @@ async def del_booster_color_role(res, msg):
     db["boosters"].update_one({"id": res.author.id}, {"$set": {"custom_role": -1}})
     await res.channel.send("Role deletion successful! You may add a custom role again anytime you want.")
 
-async def booster_news(res, msg):
-    up_news_ch = client.get_channel(d["discord_ids"]["upcoming_news"])
-    last_news = await up_news_ch.fetch_message(up_news_ch.last_message_id)
-    embed =  last_news.embeds[0] if last_news.embeds else None
-    await res.channel.send(content = last_news.content, embed = embed)
+### Removed code of booster news
+# async def booster_news(res, msg):
+#     up_news_ch = client.get_channel(d["discord_ids"]["upcoming_news"])
+#     last_news = await up_news_ch.fetch_message(up_news_ch.last_message_id)
+#     embed =  last_news.embeds[0] if last_news.embeds else None
+#     await res.channel.send(content = last_news.content, embed = embed)
 
 ## dm commands
 """
@@ -1581,7 +1582,6 @@ booster_commands = {
     "greet": greet,
     "nickname": new_booster_nickname,
     "role": new_booster_color_role,
-    "news": booster_news,
     "help": booster_help,
     "delrole": del_booster_color_role
 }
@@ -1774,29 +1774,29 @@ async def on_member_join(member):
     if member.guild.id != d["discord_ids"]["guild"]:
         return
     
-    # get data for welcome message
+    ## get data for welcome message
     wc_ch = client.get_channel(d["discord_ids"]["welcome"])
     r_ch = client.get_channel(d["discord_ids"]["rules"])
     member_count  = member.guild.member_count
     m = "Paao~ Welcome to Shishiro Botan's Den, {}!\nPlease be sure to read the rules in {} and support our lion goddess Botan. ☀️"
     m = m.format(member.mention, r_ch.mention)
 
-    # get avatar and resize
+    ## get avatar and resize
     avatar_url = member.avatar_url
     av_img = Image.open(requests.get(avatar_url, stream=True).raw)
     av_img = av_img.resize((250, 250))
 
-    # draw a mask to crop the ellipse
+    ## draw a mask to crop the ellipse
     mask_im = Image.new("L", (250, 250), 0)
     draw = ImageDraw.Draw(mask_im)
     draw.ellipse((0, 0, 250, 250), fill=255)
 
-    # open background image, paste in the avatar and the cropping mask
+    ## open background image, paste in the avatar and the cropping mask
     bg_file_name = "welcome_background.png"
     back_im = Image.open(os.path.join(img_dir, bg_file_name)).copy()
     back_im.paste(av_img, (385, 50), mask_im)    
 
-    # add fonts
+    ## add fonts
     lg_ch = client.get_channel(d["discord_ids"]["log"])
     idraw = ImageDraw.Draw(back_im)
 
@@ -1807,12 +1807,12 @@ async def on_member_join(member):
     name_font = ImageFont.truetype(font_ttf, size = 37)
     count_font = ImageFont.truetype(font_ttf, size = 30)
 
-    # shadow layer
+    ## shadow layer
     shadow_fill = (0, 0, 0, 20)
     shadow_layer = Image.new('RGBA', back_im.size, (255,255,255,0))
     s_layer = ImageDraw.Draw(shadow_layer)
 
-    # write messages to image
+    ## write messages to image
     width, height = back_im.size
     fonts = (welcome_font, name_font, count_font)
     y_positions = (354, 406, 450)
@@ -1822,13 +1822,13 @@ async def on_member_join(member):
         txt_w, txt_h = idraw.textsize(msg, font)
         pos = ((width-txt_w)/2, y_pos - txt_h/2)
 
-        # add shadow
+        ## add shadow
         s_layer.text((pos[0] - 2, pos[1]), msg, font = font, fill = shadow_fill)
         s_layer.text((pos[0] + 3, pos[1]), msg, font = font, fill = shadow_fill)
         s_layer.text((pos[0], pos[1] - 3), msg, font = font, fill = shadow_fill)
         s_layer.text((pos[0], pos[1] + 2), msg, font = font, fill = shadow_fill)
 
-        # draw text over
+        ## draw text over
         idraw.text(
             pos,
             msg,
@@ -1838,11 +1838,13 @@ async def on_member_join(member):
     
     combined_im = Image.alpha_composite(back_im, shadow_layer)
 
-    # save image
+    ## save image
     save_file = os.path.join(save_dir, str(random.randint(1,20)) + "wc_bg.png")
     combined_im.save(save_file)
 
     await wc_ch.send(m, file = discord.File(save_file))
+
+    ## send member's join info to mods logs
 
 # On members updating their profiles
 @client.event
@@ -1861,7 +1863,6 @@ async def on_member_update(before, after):
                 " Here are some commands you may use in this DM channel with me (prefix not required):",
                 "\n\n``nickname``: Change your nickname so I can refer to you differently!",
                 "\n``role``: Create a custom color role for yourself in the server. Use the 'help role' command to for more information!",
-                "\n``news``: Sneak peek on any upcoming events, server updates that are yet to be announced to the public!",
                 "\n``help``: I can do more things! Use this command to find out.",
                 "\n\nStay tune for more exclusive features in the foreseeable future, and thanks again for your patronage!"
             ]

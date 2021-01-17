@@ -22,11 +22,5 @@
         "alias": [],
         "usage": "delrole",
         "extra_fields": []
-    },
-    "news": {
-        "desc": "Check for exclusive news on upcoming events, server updates that are yet to be announced to the public!",
-        "alias": [],
-        "usage": "news",
-        "extra_fields": []
     }
 }
