@@ -866,6 +866,19 @@ async def botan_art(res, msg):
     temp_art_deque.append(new_art_url)
 
 ## admin commands
+
+### get the ban list
+async def get_bans(res, msg):
+    ban_list = [user.id for user in await res.guild.bans()]
+    m = ""
+    for user_id in ban_list:
+        if len(m) <= 2000:
+            m += str(user_id) + "\n"
+        else:
+            await res.send(m)
+            m = str(user_id)
+    await res.send(m)
+
 async def post(res, msg):
     m = msg.split("\n")
     if len(m) < 3:
@@ -1603,6 +1616,7 @@ admin_commands = {
     "set_zoopass": set_membership,
     "del_zoopass": del_membership,
     "img_txt": detect_image_text,
+    "get_bans": get_bans,
     # dev commands
     "xpost": cross_server_post,
     "xdm": direct_dm,
