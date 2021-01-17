@@ -1971,7 +1971,7 @@ async def on_message_delete(message):
         return
 
     ## if message is from a bot, return
-    if message.author == client.user or message.author.bot:
+    if (message.author == client.user) or message.author.bot:
         return
 
     ## send message deletion info to mods logs
