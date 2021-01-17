@@ -872,7 +872,7 @@ async def get_bans(res, msg):
     ban_list = await res.guild.bans()
     m = ""
     for ban_entry in ban_list:
-        if len(m) + str(ban_entry) + "\n" <= 2000:
+        if len(m + str(ban_entry) + "\n") <= 2000:
             # m += "{}: {}\n".format(str(user.id), reason)
             m += str(ban_entry) + "\n"
         else:
