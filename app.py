@@ -876,7 +876,7 @@ async def get_bans(res, msg):
             # m += "{}: {}\n".format(str(user.id), reason)
             m += str(ban_entry) + "\n"
         else:
-            await res.send(m)
+            await res.channel.send(m)
             # m = "{}: {}\n".format(str(user.id), reason)
             m = str(ban_entry) + "\n"
     await res.channel.send(m)
