@@ -1270,7 +1270,7 @@ async def verify_membership(res, msg):
         if img_date:
             new_membership_date = img_date - timedelta(days = 30)
     except:
-        print("date detection fail!")
+        print("date detection fail!!")
 
     if bodan:
         last_membership = bodan["last_membership"].replace(tzinfo = timezone.utc)
