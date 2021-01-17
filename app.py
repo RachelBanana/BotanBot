@@ -1858,6 +1858,30 @@ async def on_member_join(member):
 
     await server_logs_ch.send(content = None, embed = embed)
 
+# On members banned
+@client.event
+async def on_member_remove(member):
+    # Check if member is banned
+    is_banned = True
+    try:
+        await member.guild.fetch_ban(member)
+        return
+    except discord.NotFound:
+        is_banned = False
+
+    ## send member's join info to mods logs
+    server_logs_ch = client.get_channel(d["discord_ids"]["server_log"])
+    
+    t = "Member Banned" if is_banned else "Member left the server"
+    m = "{} {}".format(member.mention, str(member))
+
+    embed = discord.Embed(title = t, description = m, colour = 0xFF0000 if is_banned else 0xFF6600)
+    embed.set_thumbnail(url = member.avatar_url)
+    embed.add_field(name = "Account Creation Date", value = member.created_at, inline = False)
+    embed.set_footer(text = "ID: {}".format(member.id))
+
+    await server_logs_ch.send(content = None, embed = embed)
+
 # On members updating their profiles
 @client.event
 async def on_member_update(before, after):
