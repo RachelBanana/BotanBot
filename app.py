@@ -1909,6 +1909,10 @@ async def on_member_update(before, after):
 # On message deleted
 @client.event
 async def on_message_delete(message):
+    ## if message is from bot, return
+    if message.author == client.user:
+        return
+
     ## send message deletion info to mods logs
     server_logs_ch = client.get_channel(d["discord_ids"]["server_log"])
     member = message.author
