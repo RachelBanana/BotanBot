@@ -118,6 +118,13 @@ def to_raw_text(msg):
     msg = re.sub(r"<#(\d+)>", repl_channel, msg)
     return msg
 
+## convert emoji to id
+def emoji_to_id(emoji_str):
+    id_match = re.match(r"<:\w+:(\d+)>", emoji_str)
+    if not id_match:
+        raise ValueError
+    return int(id_match.group(1))
+
 ## Time tools
 months = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
 date_patterns = [
