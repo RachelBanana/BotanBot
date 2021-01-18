@@ -1591,6 +1591,7 @@ aliases = {
     "setzoopass": "set_zoopass",
     "delpass": "del_zoopass",
     "delzoopass": "del_zoopass",
+    "rolreact": "role_reaction",
     "subs": "subscribers",
     "subscriber": "subscribers",
     "live": "stream",
@@ -1660,6 +1661,7 @@ admin_commands = {
     "del_zoopass": del_membership,
     "img_txt": detect_image_text,
     "get_bans": get_bans,
+    "role_reaction": new_role_reaction,
     # dev commands
     "xpost": cross_server_post,
     "xdm": direct_dm,
