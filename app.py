@@ -901,20 +901,26 @@ async def new_role_reaction(res, msg):
         await res.channel.send("Please insert valid ids for the arguments!")
         return
     
+    try:
+        emoji_id = emoji_to_id(emoji_str)
+    except ValueError:
+        await res.channel.send("Please insert a valid emoji for the argument!")
+        return
+    
     # retrieve variables objects
     target_channel = client.get_channel(ch_id)
     target_message = await target_channel.fetch_message(msg_id)
+    target_emoji = client.get_emoji(emoji_id)
     target_role = target_channel.guild.get_role(role_id)
 
     # return error if any of the objects is empty
-    if not all((target_channel, target_message, target_role)):
+    if not all((target_channel, target_message, target_emoji, target_role)):
         await res.channel.send("Can't find some of the ids, please check your arguments!")
         return
 
     # add reaction to message
     try:
-        await res.channel.send(emoji_str)
-        await target_message.add_reaction(emoji_str)
+        await target_message.add_reaction(target_emoji)
     except discord.NotFound:
         await res.channel.send("Failed to find targeted emoji, please try another one.")
         return
