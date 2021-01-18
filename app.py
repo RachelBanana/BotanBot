@@ -1946,8 +1946,8 @@ async def on_raw_reaction_add(payload):
     # remove emoji reaction
     ch_id = reaction_data["ch_id"]
     target_channel = client.get_channel(ch_id)
-    target_message = target_channel.fetch_message(msg_id)
-    target_message.remove_reaction(payload.emoji, member)
+    target_message = await target_channel.fetch_message(msg_id)
+    await target_message.remove_reaction(payload.emoji, member)
 
 # On members joining the server
 @client.event
