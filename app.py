@@ -120,8 +120,7 @@ def to_raw_text(msg):
 
 ## convert emoji to id
 def emoji_to_id(emoji_str):
-    print(emoji_str)
-    id_match = re.match(r"<:\w+:(\d+)>", emoji_str)
+    id_match = re.match(r"<a?:\w+:(\d+)>", emoji_str)
     if not id_match:
         raise ValueError
     return int(id_match.group(1))
