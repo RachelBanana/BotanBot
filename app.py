@@ -894,7 +894,7 @@ async def new_role_reaction(res, msg):
         return
 
     # convert variables
-    ch_id, msg_id, emoji_str, role_id = args
+    ch_id, msg_id, emoji_str, role_id = [x.strip() for x in args]
     try:
         ch_id, msg_id, role_id = int(ch_id), int(msg_id), int(role_id)
     except ValueError:
