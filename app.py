@@ -938,8 +938,12 @@ async def new_role_reaction(res, msg):
             }
         }
         db["reactions"].insert_one(reaction_data)
-    # else update data
+    elif reaction_data["reactions"].get(emoji_str, None):
+        # if reaction role already exists, return error
+        await res.channel.send("Reaction role already exists, please try another emote or message.")
+        return
     else:
+        # else update data
         db["reactions"].update_one(reaction_data, {"$set": {"reactions.{}".format(emoji_str): role_id}})
     
     await res.channel.send("Successfully added reaction role!")
