@@ -1880,6 +1880,10 @@ async def on_member_join(member):
 # On members leaving the server
 @client.event
 async def on_member_remove(member):
+    # Only for botan server
+    if member.guild.id != d["discord_ids"]["guild"]:
+        return
+
     # Check if member is banned
     try:
         await member.guild.fetch_ban(member)
