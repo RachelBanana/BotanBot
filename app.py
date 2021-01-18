@@ -1788,6 +1788,31 @@ async def on_message(res):
     if action:
         await action(res, msg)
 
+# On message deleted
+@client.event
+async def on_message_delete(message):
+    ## if message from other servers, return
+    if (not message.guild) or message.guild.id != d["discord_ids"]["guild"]:
+        return
+
+    ## if message is from a bot, return
+    if (message.author == client.user) or message.author.bot:
+        return
+
+    ## send message deletion info to mods logs
+    server_logs_ch = client.get_channel(d["discord_ids"]["server_log"])
+    member = message.author
+    
+    m = "**Author:** {}\n**Channel:** {}\n**Content:** {}".format(str(member), str(message.channel), message.content)
+    if message.attachments:
+        m += "\n**Attachments:** {}".format("\n".join(attachment.url for attachment in message.attachments))
+
+    embed = discord.Embed(title = "Message Deleted", description = m, colour = 0xFF9D5C)
+    embed.set_thumbnail(url = member.avatar_url)
+    embed.set_footer(text = "ID: {}".format(member.id))
+
+    await server_logs_ch.send(content = None, embed = embed)
+
 # On members joining the server
 @client.event
 async def on_member_join(member):
@@ -1966,33 +1991,7 @@ async def on_member_update(before, after):
             m += " Thank you so much for your patronage!"
             embed = discord.Embed(title = title, description = m, colour = embed_color)
             await after.send(content = None, embed = embed)
-            return
-
-# On message deleted
-@client.event
-async def on_message_delete(message):
-    ## if message from other servers, return
-    if (not message.guild) or message.guild.id != d["discord_ids"]["guild"]:
-        return
-
-    ## if message is from a bot, return
-    if (message.author == client.user) or message.author.bot:
-        return
-
-    ## send message deletion info to mods logs
-    server_logs_ch = client.get_channel(d["discord_ids"]["server_log"])
-    member = message.author
-    
-    m = "**Author:** {}\n**Channel:** {}\n**Content:** {}".format(str(member), str(message.channel), message.content)
-    if message.attachments:
-        m += "\n**Attachments:** {}".format("\n".join(attachment.url for attachment in message.attachments))
-
-    embed = discord.Embed(title = "Message Deleted", description = m, colour = 0xFF9D5C)
-    embed.set_thumbnail(url = member.avatar_url)
-    embed.set_footer(text = "ID: {}".format(member.id))
-
-    await server_logs_ch.send(content = None, embed = embed)
-        
+            return   
 
 # Coroutine Functions
 async def jst_clock():
