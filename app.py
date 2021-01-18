@@ -926,8 +926,22 @@ async def new_role_reaction(res, msg):
         return
     
     # store role reaction to database
-    # reaction_data = db["reactions"].find_one()
-    pass
+    reaction_data = db["reactions"].find_one({"msg_id": msg_id})
+
+    # if reaction data doesn't exist, create data
+    if not reaction_data:
+        reaction_data = {
+            "msg_id": msg_id,
+            "ch_id": ch_id,
+            "reactions": {
+                emoji_str: role_id
+            }
+        }
+    # else update data
+    else:
+        db["reactions"].update_one(reaction_data, {"$set": {"reactions.{}".format(emoji_str): role_id}})
+    
+    await res.channel.send("Successfully added reaction role!")
 
 ### remove role reaction from a message
 async def remove_role_reaction(res, msg):
