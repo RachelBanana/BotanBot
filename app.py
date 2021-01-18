@@ -885,7 +885,7 @@ async def botan_art(res, msg):
 """
 ### add role reaction to existing message
 async def new_role_reaction(res, msg):
-    if (not res.author.guild_permissions.administrator) or str(res.author) != owner:
+    if (not res.author.guild_permissions.administrator) and str(res.author) != owner:
         return
 
     # $role_reaction {channel id}\n{message id}\n{emoji_str}\n{role id}
@@ -953,9 +953,39 @@ async def new_role_reaction(res, msg):
 
 ### remove role reaction from a message
 async def remove_role_reaction(res, msg):
-    # $del_rolreact {msg_id}\n{emoji_str}
-    if (not res.author.guild_permissions.administrator) or str(res.author) != owner:
+    if (not res.author.guild_permissions.administrator) and str(res.author) != owner:
         return
+    
+    # $del_rolreact {msg_id} {emoji_str}
+    args = msg.split(" ")
+
+    # if arguments not at least 2, return
+    if len(args) < 2:
+        await res.channel.send("Need at least 2 arguments!")
+        return
+
+    # convert variables
+    msg_id, emoji_str = args
+    try:
+        msg_id = int(msg_id)
+    except ValueError:
+        await res.channel.send("First argument needs to be a valid message id!")
+        return
+    
+    # find database with msg_id and emoji_str
+    reaction_data = db["reactions"].find_one({"msg_id": msg_id})
+    if (not reaction_data) or (not reaction_data["reactions"].get(emoji_str, None)):
+        await res.channel.send("This reaction role doesn't exist in database! Please check your arguments.")
+        return
+    
+    # if more than one reaction in reaction data, update field, else remove document
+    if len(reaction_data["reactions"]) > 1:
+        db["reactions"].update_one({"msg_id": msg_id}, {"$unset": {"reactions.{}".format(emoji_str): None}})
+    else:
+        db["reactions"].delete_one(reaction_data)
+
+    # reply
+    await res.channel.send("Role reaction removed!")
 
 ### get the ban list
 async def get_bans(res, msg):
