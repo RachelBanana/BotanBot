@@ -885,6 +885,9 @@ async def botan_art(res, msg):
 """
 ### add role reaction to existing message
 async def new_role_reaction(res, msg):
+    if (not res.author.guild_permissions.administrator) or str(res.author) != owner:
+        return
+
     # $role_reaction {channel id}\n{message id}\n{emoji_str}\n{role id}
     args = msg.split("\n")
 
@@ -951,7 +954,8 @@ async def new_role_reaction(res, msg):
 ### remove role reaction from a message
 async def remove_role_reaction(res, msg):
     # $del_rolreact {msg_id}\n{emoji_str}
-    pass
+    if (not res.author.guild_permissions.administrator) or str(res.author) != owner:
+        return
 
 ### get the ban list
 async def get_bans(res, msg):
@@ -1640,6 +1644,8 @@ aliases = {
     "delpass": "del_zoopass",
     "delzoopass": "del_zoopass",
     "rolreact": "role_reaction",
+    "delrolreact": "delete_role_reaction",
+    "del_rolreact": "delete_role_reaction",
     "subs": "subscribers",
     "subscriber": "subscribers",
     "live": "stream",
@@ -1709,7 +1715,9 @@ admin_commands = {
     "del_zoopass": del_membership,
     "img_txt": detect_image_text,
     "get_bans": get_bans,
+    # admins
     "role_reaction": new_role_reaction,
+    "delete_role_reaction": remove_role_reaction,
     # dev commands
     "xpost": cross_server_post,
     "xdm": direct_dm,
