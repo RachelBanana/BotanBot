@@ -1913,12 +1913,13 @@ async def on_reaction_add(reaction, user):
     # get message id and reaction id
     msg_id = reaction.message.id
     emoji_str = str(reaction.emoji)
+    print(emoji_str)
 
     # get reaction data from database
     reaction_data = db["reactions"].find_one({"msg_id": msg_id})
 
     # if reaction_data doesn't exist or emoji_str doesnt exist, return
-    if not reaction_data or not reaction_data["reactions"].get(emoji_str, None):
+    if (not reaction_data) or (not reaction_data["reactions"].get(emoji_str, None)):
         return
 
     # check if user has role
