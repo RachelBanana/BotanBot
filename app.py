@@ -867,6 +867,15 @@ async def botan_art(res, msg):
 
 ## admin commands
 
+"""reactions
+{
+    "msg_id": int,
+    "ch_id": int,
+    "reactions": {
+        emoji_str (in str): role_id (as int)
+    }
+}
+"""
 ### add role reaction to existing message
 async def new_role_reaction(res, msg):
     # $role_reaction {channel id}\n{message id}\n{emote}\n{role id}
@@ -878,8 +887,9 @@ async def new_role_reaction(res, msg):
         return
 
     # convert variables
+    ch_id, msg_id, emoji_str, role_id = args
     try:
-        ch_id, msg_id, emoji_id, role_id = [int(x) for x in args]
+        ch_id, msg_id, role_id = int(ch_id), int(msg_id), int(role_id)
     except ValueError:
         await res.channel.send("Please insert valid ids for the arguments!")
         return
@@ -887,18 +897,22 @@ async def new_role_reaction(res, msg):
     # retrieve variables objects
     target_channel = client.get_channel(ch_id)
     target_message = await target_channel.fetch_message(msg_id)
-    target_emoji = client.get_emoji(emoji_id)
     target_role = target_channel.guild.get_role(role_id)
 
     # return error if any of the objects is empty
-    if not all((target_channel, target_message, target_emoji, target_role)):
+    if not all((target_channel, target_message, target_role)):
         await res.channel.send("Can't find some of the ids, please check your arguments!")
         return
 
     # add reaction to message
-    await target_message.add_reaction(target_emoji)
+    try:
+        await target_message.add_reaction(emoji_str)
+    except discord.NotFound:
+        await res.channel.send("Failed to find targeted emoji, please try another one.")
+        return
     
     # store role reaction to database
+
     pass
 
 ### remove role reaction from a message
