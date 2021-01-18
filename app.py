@@ -885,7 +885,7 @@ async def botan_art(res, msg):
 """
 ### add role reaction to existing message
 async def new_role_reaction(res, msg):
-    # $role_reaction {channel id}\n{message id}\n{emote}\n{role id}
+    # $role_reaction {channel id}\n{message id}\n{emoji_str}\n{role id}
     args = msg.split("\n")
 
     # if arguments num is less than 4, return error
@@ -950,6 +950,7 @@ async def new_role_reaction(res, msg):
 
 ### remove role reaction from a message
 async def remove_role_reaction(res, msg):
+    # $del_rolreact {msg_id}\n{emoji_str}
     pass
 
 ### get the ban list
@@ -1903,7 +1904,37 @@ async def on_message_delete(message):
 # On member reacting to a message
 @client.event
 async def on_reaction_add(reaction, user):
-    pass
+    # user needs to be Member
+
+    # return if reaction is botan bot
+    if client.user == user:
+        return
+
+    # get message id and reaction id
+    msg_id = reaction.message.id
+    emoji_str = str(reaction.emoji)
+
+    # get reaction data from database
+    reaction_data = db["reactions"].find_one({"msg_id": msg_id})
+
+    # if reaction_data doesn't exist or emoji_str doesnt exist, return
+    if not reaction_data or not reaction_data["reactions"].get(emoji_str, None):
+        return
+
+    # check if user has role
+    role_id = reaction_data["reactions"][emoji_str]
+    user_roles = set(role.id for role in user.roles)
+    target_role = user.guild.get_role(role_id)
+
+    # remove role
+    if role_id in user_roles:
+        await user.remove_roles(target_role)
+    # else add role
+    else:
+        await user.add_roles(target_role)
+
+    # remove emoji reaction
+    await reaction.remove(user)
 
 # On members joining the server
 @client.event
