@@ -906,13 +906,14 @@ async def new_role_reaction(res, msg):
 
     # add reaction to message
     try:
+        await res.channel.send(emoji_str)
         await target_message.add_reaction(emoji_str)
     except discord.NotFound:
         await res.channel.send("Failed to find targeted emoji, please try another one.")
         return
     
     # store role reaction to database
-
+    # reaction_data = db["reactions"].find_one()
     pass
 
 ### remove role reaction from a message
