@@ -1903,17 +1903,18 @@ async def on_message_delete(message):
 
 # On member reacting to a message
 @client.event
-async def on_reaction_add(reaction, user):
+async def on_raw_reaction_add(payload):
     # user needs to be Member
+    # if dm, return
+    member = payload.member
 
     # return if reaction is botan bot
-    if client.user == user:
+    if client.user == member:
         return
 
     # get message id and reaction id
-    msg_id = reaction.message.id
-    emoji_str = str(reaction.emoji)
-    print(emoji_str)
+    msg_id = payload.message_id
+    emoji_str = str(payload.emoji)
 
     # get reaction data from database
     reaction_data = db["reactions"].find_one({"msg_id": msg_id})
@@ -1924,18 +1925,18 @@ async def on_reaction_add(reaction, user):
 
     # check if user has role
     role_id = reaction_data["reactions"][emoji_str]
-    user_roles = set(role.id for role in user.roles)
-    target_role = user.guild.get_role(role_id)
+    user_roles = set(role.id for role in member.roles)
+    target_role = member.guild.get_role(role_id)
 
     # remove role
     if role_id in user_roles:
-        await user.remove_roles(target_role)
+        await member.remove_roles(target_role)
     # else add role
     else:
-        await user.add_roles(target_role)
+        await member.add_roles(target_role)
 
     # remove emoji reaction
-    await reaction.remove(user)
+    # await reaction.remove(user)
 
 # On members joining the server
 @client.event
