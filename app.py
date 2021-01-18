@@ -937,6 +937,7 @@ async def new_role_reaction(res, msg):
                 emoji_str: role_id
             }
         }
+        db["reactions"].insert_one(reaction_data)
     # else update data
     else:
         db["reactions"].update_one(reaction_data, {"$set": {"reactions.{}".format(emoji_str): role_id}})
