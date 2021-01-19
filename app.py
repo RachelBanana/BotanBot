@@ -5,6 +5,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageEnhance, ImageOps
 import googleapiclient.discovery
 import requests
 import pytesseract as Tess
+import tesserocr
 
 import pymongo
 from pymongo import MongoClient
@@ -39,6 +40,8 @@ embed_color = int(os.getenv("EMBED_COLOR"), 16)
 pingcord = "Pingcord#3283"
 
 ## TESSDATA_PREFIX is needed as environment variable
+# ./.apt/usr/share/tesseract-ocr/4.00/tessdata
+# /app/.apt/usr/share/tesseract-ocr/4.00/tessdata
 
 ## local directories
 data_dir = "data"
@@ -337,7 +340,8 @@ async def _detect_image_text(img_url):
     # return tuple of two possible text: normal and inverted
 
     # Set timeout for tess img to str method
-    img_to_str = partial(Tess.image_to_string, timeout=60)
+    # !!! img_to_str = partial(Tess.image_to_string, timeout=60)
+    tess_path = r"/app/.apt/usr/share/tesseract-ocr/4.00/tessdata"
 
     # Get image from url
     img_response = requests.get(img_url, stream=True)
@@ -359,10 +363,12 @@ async def _detect_image_text(img_url):
     inverted_img = ImageOps.invert(img)
 
     # get text (run as coroutine to not block the event loop)
-    text = await client.loop.run_in_executor(None, img_to_str, img)
+    # !!! text = await client.loop.run_in_executor(None, img_to_str, img)
+    text = tesserocr.image_to_text(img, path = tess_path)
 
     # get inverted text (run as coroutine to not block the event loop)
-    inverted_text = await client.loop.run_in_executor(None, img_to_str, inverted_img)
+    # !!! inverted_text = await client.loop.run_in_executor(None, img_to_str, inverted_img)
+    inverted_text = tesserocr.image_to_text(inverted_img, path = tess_path)
         
     return (text, inverted_text)
 

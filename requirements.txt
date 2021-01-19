@@ -5,3 +5,4 @@ pymongo[tls,srv,gssapi]==3.11.0
 google-api-python-client==1.10.0
 requests==2.24.0
 pytesseract==0.3.7
+tesserocr-2.4.0-cp36-cp36m-win_amd64.whl
