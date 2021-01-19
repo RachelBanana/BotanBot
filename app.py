@@ -1384,13 +1384,13 @@ async def verify_membership(res, msg):
     bodan = db["bodans"].find_one({"id": res.author.id})
 
     # check date
-    try:
-        text, inverted_text = await _detect_image_text(res.attachments[0].url)
-        img_date = date_from_txt(text) or date_from_txt(inverted_text)
-        if img_date:
-            new_membership_date = img_date - timedelta(days = 30)
-    except:
-        print("date detection fail!!")
+    # try:
+    #     text, inverted_text = await _detect_image_text(res.attachments[0].url)
+    #     img_date = date_from_txt(text) or date_from_txt(inverted_text)
+    #     if img_date:
+    #         new_membership_date = img_date - timedelta(days = 30)
+    # except:
+    #     print("date detection fail!!")
 
     if bodan:
         last_membership = bodan["last_membership"].replace(tzinfo = timezone.utc)
