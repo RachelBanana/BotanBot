@@ -1,4 +1,3 @@
-wheel==0.36.2
 discord.py==1.4.0
 googletrans==3.1.0a0
 pillow==7.2.0
@@ -6,4 +5,4 @@ pymongo[tls,srv,gssapi]==3.11.0
 google-api-python-client==1.10.0
 requests==2.24.0
 pytesseract==0.3.7
-tesserocr-2.4.0-cp37-cp37m-win_amd64.whl
+tesserocr-2.4.0-cp37-none-win32.whl
