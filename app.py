@@ -4,7 +4,7 @@ from googletrans import Translator
 from PIL import Image, ImageDraw, ImageFont, ImageEnhance, ImageOps
 import googleapiclient.discovery
 import requests
-import pytesseract as Tess
+# import pytesseract as Tess
 import tesserocr
 
 import pymongo
@@ -339,9 +339,9 @@ async def _detect_image_text(img_url):
     # Uses Tesseract to detect text from url img 
     # return tuple of two possible text: normal and inverted
 
-    # Set timeout for tess img to str method
-    # !!! img_to_str = partial(Tess.image_to_string, timeout=60)
+    # Set partial function for image_to_text
     tess_path = r"/app/.apt/usr/share/tesseract-ocr/4.00/tessdata"
+    img_to_txt = partial(tesserocr.image_to_text, path = tess_path)
 
     # Get image from url
     img_response = requests.get(img_url, stream=True)
@@ -363,12 +363,10 @@ async def _detect_image_text(img_url):
     inverted_img = ImageOps.invert(img)
 
     # get text (run as coroutine to not block the event loop)
-    # !!! text = await client.loop.run_in_executor(None, img_to_str, img)
-    text = tesserocr.image_to_text(img, path = tess_path)
+    text = await client.loop.run_in_executor(None, img_to_txt, img)
 
     # get inverted text (run as coroutine to not block the event loop)
-    # !!! inverted_text = await client.loop.run_in_executor(None, img_to_str, inverted_img)
-    inverted_text = tesserocr.image_to_text(inverted_img, path = tess_path)
+    inverted_text = await client.loop.run_in_executor(None, img_to_txt, inverted_img)
         
     return (text, inverted_text)
 
@@ -1044,7 +1042,7 @@ async def read(res, msg):
 ### detect image text and log two texts (normal and inverted img)
 async def detect_image_text(res, msg):
     # use tesseract to detect text from attachments
-    img_to_str = partial(Tess.image_to_string, timeout=60)
+    # img_to_str = partial(Tess.image_to_string, timeout=60)
     await res.channel.send("Processing image...")
     for attachment in res.attachments:
         
@@ -1390,13 +1388,13 @@ async def verify_membership(res, msg):
     bodan = db["bodans"].find_one({"id": res.author.id})
 
     # check date
-    # try:
-    #     text, inverted_text = await _detect_image_text(res.attachments[0].url)
-    #     img_date = date_from_txt(text) or date_from_txt(inverted_text)
-    #     if img_date:
-    #         new_membership_date = img_date - timedelta(days = 30)
-    # except:
-    #     print("date detection fail!!")
+    try:
+        text, inverted_text = await _detect_image_text(res.attachments[0].url)
+        img_date = date_from_txt(text) or date_from_txt(inverted_text)
+        if img_date:
+            new_membership_date = img_date - timedelta(days = 30)
+    except:
+        print("date detection fail!!")
 
     if bodan:
         last_membership = bodan["last_membership"].replace(tzinfo = timezone.utc)
