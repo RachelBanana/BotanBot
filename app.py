@@ -2114,6 +2114,10 @@ async def on_member_remove(member):
 # On members getting banned
 @client.event
 async def on_member_ban(guild, user):
+    # Only for botan server
+    if guild.id != d["discord_ids"]["guild"]:
+        return
+
     ## send member's join info to mods logs
     server_logs_ch = client.get_channel(d["discord_ids"]["server_log"])
     
