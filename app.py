@@ -987,9 +987,21 @@ async def remove_role_reaction(res, msg):
         db["reactions"].update_one({"msg_id": msg_id}, {"$unset": {"reactions.{}".format(emoji_str): None}})
     else:
         db["reactions"].delete_one(reaction_data)
+    
+    # if message still exists in channel with the bot reaction, remove it.
+    ch_id = reaction_data.get("ch_id", None)
+    target_channel = client.get_channel(ch_id)
+    if target_channel:
+        try:
+            target_message = await target_channel.fetch_message(msg_id)
+            for reaction in target_message.reactions:
+                if str(reaction.emoji) == emoji_str:
+                    await reaction.remove(client.user)
+        except discord.NotFound:
+            await res.channel.send("The specified Discord Message or Reaction Emoji is no longer found.")
 
     # reply
-    await res.channel.send("Role reaction removed!")
+    await res.channel.send("Role reaction removed from detabase!")
 
 ### get the ban list
 async def get_bans(res, msg):
