@@ -2006,7 +2006,7 @@ async def on_member_join(member):
     wc_ch = client.get_channel(d["discord_ids"]["welcome"])
     r_ch = client.get_channel(d["discord_ids"]["rules"])
     member_count  = member.guild.member_count
-    m = "Paao~ Welcome to Shishiro Botan's Den, {}!\nPlease be sure to read the rules in {} and support our lion goddess Botan. ☀️"
+    m = "Paao~! Welcome to Shishiro Botan's Den, {}!\nPlease be sure to read the rules in {} and support our lion goddess Botan. ☀️"
     m = m.format(member.mention, r_ch.mention)
 
     ## get avatar and resize
@@ -2187,7 +2187,7 @@ async def jst_clock():
         await client.change_presence(activity=discord.Game(name=timestr))
         await asyncio.sleep(60)        
 
-"""stream's data template
+"""stream data template
     "id": vid id,
     "title": vid title
     "status": "justlive", "live", "upcoming", "completed"
