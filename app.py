@@ -2229,6 +2229,7 @@ async def update_streams():
             actual_end_time_str = live_streaming_details.get("actualEndTime", None)
             if actual_end_time_str or vid.get("end", None):
                 actual_start_time_str = live_streaming_details["actualStartTime"]
+                print(actual_end_time_str)
                 actual_start_time = dtime.strptime(actual_start_time_str.split(".")[0], "%Y-%m-%dT%H:%M:%S").replace(tzinfo = timezone.utc)
                 if vid.get("end", None):
                     actual_end_time = dtime.strptime(actual_end_time_str, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo = timezone.utc)
