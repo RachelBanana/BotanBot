@@ -876,6 +876,20 @@ async def botan_art(res, msg):
     temp_art_set.add(new_art_url)
     temp_art_deque.append(new_art_url)
 
+## !!! Valentines Event
+async def register_participant(res, msg):
+    await res.channel.send("Do you love me?")
+
+    def check(m):
+        # Check if author is the same user and message channel is the same
+        return m.author == res.author and m.channel == res.channel
+    
+    new_res = await client.wait_for("message", check = check)
+    new_msg = new_res.content
+    await res.channel.send("Yay!" if new_msg.lower().startswith("yes") else "*Loads gun*")
+
+## !!! Valentines Event (End)
+
 ## admin commands
 
 """reactions
@@ -1729,6 +1743,7 @@ commands = {
 
 dm_commands = {
     "verify": verify_membership,
+    "valentines": register_participant,
     # horny exclusive commands
     "nsfw": nsfw_art,
     "add_nsfw": add_nsfw_art,
@@ -2229,7 +2244,6 @@ async def update_streams():
             actual_end_time_str = live_streaming_details.get("actualEndTime", None)
             if actual_end_time_str or vid.get("end", None):
                 actual_start_time_str = live_streaming_details["actualStartTime"]
-                print(actual_end_time_str)
                 try:
                     actual_start_time = dtime.strptime(actual_start_time_str.split(".")[0], "%Y-%m-%dT%H:%M:%S").replace(tzinfo = timezone.utc)
                 except:
