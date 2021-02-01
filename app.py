@@ -1920,7 +1920,6 @@ async def on_message(res):
         await admin_logs.send(content = None, embed = embed)
         return
 
-
     # read twitter tweets from botan (is pingcord and is in tweets channel)
     if str(res.author) == pingcord and res.channel.id == d["discord_ids"]["tweets"]:
         channel = client.get_channel(d["discord_ids"]["translated_tweets"])
@@ -1928,6 +1927,10 @@ async def on_message(res):
             embed.title = to_eng(embed.title).text
             embed.description = to_eng(embed.description).text
             await channel.send(content = None, embed = embed)
+    
+    # check for mp4 links and suppress embeds
+    if ".mp4" in res.content:
+        await res.edit(suppress = True)
         
     # if channel is fanart channel, automatically detects new tweets artwork.
     if res.channel.id == d["discord_ids"]["fanart"] and not res.content.startswith(prefix):
