@@ -1034,7 +1034,7 @@ async def get_bans(res, msg):
 
 ### get members count based on role
 async def get_members_count(res, msg):
-    if is_integer(msg):
+    if not is_integer(msg):
         await res.channel.send("Not a valid role id!")
         return
 
