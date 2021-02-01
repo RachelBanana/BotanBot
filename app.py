@@ -1044,7 +1044,7 @@ async def get_members_count(res, msg):
         await res.channel.send("Not a valid role id!")
         return
     
-    return len(target_role.members)
+    await res.channel.send(len(target_role.members))
 
 async def post(res, msg):
     m = msg.split("\n")
