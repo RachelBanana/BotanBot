@@ -1032,6 +1032,20 @@ async def get_bans(res, msg):
             m = entry_str
     await res.channel.send(m)
 
+### get members count based on role
+async def get_members_count(res, msg):
+    if is_integer(msg):
+        await res.channel.send("Not a valid role id!")
+        return
+
+    target_role = res.guild.get_role(int(msg))
+
+    if not target_role:
+        await res.channel.send("Not a valid role id!")
+        return
+    
+    return len(target_role.members)
+
 async def post(res, msg):
     m = msg.split("\n")
     if len(m) < 3:
@@ -1776,6 +1790,7 @@ admin_commands = {
     "del_zoopass": del_membership,
     "img_txt": detect_image_text,
     "get_bans": get_bans,
+    "members_count": get_members_count,
     # admins
     "role_reaction": new_role_reaction,
     "delete_role_reaction": remove_role_reaction,
