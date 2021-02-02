@@ -925,6 +925,7 @@ async def send_valentines_message(res, msg):
     # wait for correct reaction and record
     def check(reaction, user):
         reacted_emote = str(reaction.emoji)
+        print(reacted_emote)
         return reaction.message == edit_msg and user == res.author and (reacted_emote == tick_emote or reacted_emote == cross_emote)
 
     try:
