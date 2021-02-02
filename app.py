@@ -917,8 +917,8 @@ async def send_valentines_message(res, msg):
     edit_msg = await res.channel.send(content = None , embed = embed)
     
     # Ask confirmation from author through reactions
-    tick_emote = ":white_check_mark:"
-    cross_emote = ":no_entry_sign:"
+    tick_emote = u"\u2705"
+    cross_emote = u"\U0001F6AB"
     await edit_msg.add_reaction(tick_emote)
     await edit_msg.add_reaction(cross_emote)
 
