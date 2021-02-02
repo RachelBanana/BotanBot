@@ -885,6 +885,8 @@ async def send_valentines_message(res, msg):
     if not participant:
         m = "I'm sorry {}, it seems like you are not assigned a match for the Valentine's event yet!"
         m += "\nTo participate in the event, kindly refer to the announcement channel of Botan's fan server or contact a mod."
+        m += "\nIf you have already reacted to the Secret Guardian role in the server, please note that it may take a while to match new people."
+        m += "\nWe will notify you again upon matching."
         await res.channel.send(m.format(booster_nickname(res.author)))
         return
 
