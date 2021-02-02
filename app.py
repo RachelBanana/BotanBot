@@ -899,7 +899,9 @@ async def send_valentines_message(res, msg):
         return
 
     # if last sent exists and is not more than 8 hours ago
-    last_sent = participant.get("last_sent", None).replace(tzinfo = timezone.utc)
+    last_sent = participant.get("last_sent", None)
+    if last_sent:
+        last_sent = last_sent.replace(tzinfo = timezone.utc)
     time_now = dtime.now(tz = timezone.utc)
     if last_sent and (time_now - last_sent) < timedelta(hours = 8):
         # tell the remaining time left till next available send and return
