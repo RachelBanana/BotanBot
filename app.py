@@ -964,7 +964,7 @@ async def push_new_valentines_batch(res, msg):
     existing_participants = set(member["id"] for member in db["valentines"].find({}, projection = {"id": True, "_id": False}))
     new_participants = all_participants - existing_participants
 
-    await res.channel.send(", ".join(map(int, new_participants)))
+    await res.channel.send(", ".join(map(str, new_participants)))
 
 ## !!! Valentines Event (End)
 
