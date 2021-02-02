@@ -962,9 +962,16 @@ async def push_new_valentines_batch(res, msg):
     # get new participants with unassigned match
     all_participants = set(member.id for member in guardian_role.members)
     existing_participants = set(member["id"] for member in db["valentines"].find({}, projection = {"id": True, "_id": False}))
-    new_participants = all_participants - existing_participants
+    new_participants = list(all_participants - existing_participants)
 
-    await res.channel.send(", ".join(map(str, new_participants)))
+    # match each member to a target and guardian
+    for i in range(len(new_participants)):
+        new_participant = {
+            "id": new_participants[i],
+            "guardian": new_participants[i-1],
+            "target": new_participants[(i+1)%len(new_participants)]
+        }
+        db["valentines"].insert_one(new_participant)
 
 ## !!! Valentines Event (End)
 
