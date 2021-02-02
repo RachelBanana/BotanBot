@@ -1518,10 +1518,12 @@ async def verify_membership(res, msg):
 
     # check date
     try:
-        text, inverted_text = await _detect_image_text(res.attachments[0].url)
+        text, inverted_text = await asyncio.wait_for(_detect_image_text(res.attachments[0].url), timeout = 30)
         img_date = date_from_txt(text) or date_from_txt(inverted_text)
         if img_date:
             new_membership_date = img_date - timedelta(days = 30)
+    except asyncio.TimeoutError:
+        print("timeout error detecting image!")
     except:
         print("date detection fail!!")
 
