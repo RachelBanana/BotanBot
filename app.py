@@ -894,6 +894,7 @@ async def send_valentines_message(res, msg):
     if not msg:
         # show secret match name and command details
         m = "Your Valentine's secret match is {}, use the same command again along with a message to send them an anonymous letter!"
+        m += " You may even attach a photo!"
         m += "\n``valentines {{Message}}``"
         await res.channel.send(m.format(str(target)))
         return
