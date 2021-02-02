@@ -956,9 +956,15 @@ async def send_valentines_message(res, msg):
     db["valentines"].update_one({"id": res.author.id}, {"$set": {"last_sent" : time_now}})
 
 async def push_new_valentines_batch(res, msg):
-    existing_participants = list(db["valentines"].find({}, projection = {"id": True, "_id": False}))
-    print_str = ", ".join(p["id"] for p in existing_participants)
-    await res.channel.send(print_str)
+    botan_guild = client.get_guild(d["discord_ids"]["guild"])
+    guardian_role = botan_guild.get_role(805774276618878977)
+
+    # get new participants with unassigned match
+    all_participants = set(member.id for member in guardian_role.members)
+    existing_participants = set(db["valentines"].find({}, projection = {"id": True, "_id": False}))
+    new_participants = all_participants - existing_participants
+
+    await res.channel.send(", ".join(map(int, new_participants)))
 
 ## !!! Valentines Event (End)
 
