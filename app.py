@@ -1810,7 +1810,7 @@ commands = {
 
 dm_commands = {
     "verify": verify_membership,
-    "valentines": send_valentines_message,
+    # "valentines": send_valentines_message,
     # horny exclusive commands
     "nsfw": nsfw_art,
     "add_nsfw": add_nsfw_art,
