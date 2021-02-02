@@ -905,7 +905,7 @@ async def send_valentines_message(res, msg):
     time_now = dtime.now(tz = timezone.utc)
     if last_sent and (time_now - last_sent) < timedelta(hours = 8):
         # tell the remaining time left till next available send and return
-        timeleft_str = time_to_string(*days_hours_minutes(time_now - last_sent))
+        timeleft_str = time_to_string(*days_hours_minutes(timedelta(hours = 8) - (time_now - last_sent)))
         m = "Sorry {}, you still need to wait for another {} before you can send {} another anonymous letter!"
         await res.channel.send(m.format(booster_nickname(res.author), timeleft_str, target.name))
         return
