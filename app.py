@@ -890,7 +890,14 @@ async def send_valentines_message(res, msg):
         await res.channel.send(m.format(booster_nickname(res.author)))
         return
 
-    target = client.get_user(participant["target"])
+    botan_guild = client.get_guild(d["discord_ids"]["guild"])
+    target = botan_guild.get_member(participant["target"])
+    # If target is  empty or not in guild, return error and ask member to contact mod
+    if not target:
+        m = "I'm sorry {}, I can't find your secret match in the server anymore!"
+        m += " It is possible that they may have left the server. Please contact a mod for manual reassignment."
+        await res.channel.send(m.format(booster_nickname(res.author)))
+        return
 
     # if msg is empty
     if not msg:
