@@ -877,16 +877,69 @@ async def botan_art(res, msg):
     temp_art_deque.append(new_art_url)
 
 ## !!! Valentines Event
-async def register_participant(res, msg):
-    await res.channel.send("Do you love me?")
+async def send_valentines_message(res, msg):
+    # retrieve user form valentines database
+    participant = db["valentines"].find_one({"id": res.author.id})
 
-    def check(m):
-        # Check if author is the same user and message channel is the same
-        return m.author == res.author and m.channel == res.channel
+    # if user not in valentines database
+    if not participant:
+        m = "I'm sorry {}, it seems like you are not assigned a match for the Valentine's event yet!"
+        m += "\nTo participate in the event, kindly refer to the announcement channel of Botan's fan server or contact a mod."
+        await res.channel.send(m.format(booster_nickname(res.author)))
+        return
+
+    target = client.get_user(participant["target"])
+
+    # if msg is empty
+    if not msg:
+        # show secret match name and command details
+        m = "Your Valentine's secret match is {}, use the same command again along with a message to send them an anonymous letter!"
+        m += "\n``valentines {Message Here}``"
+        await res.channel.send(m.format(str(target)))
+        return
+
+    # if last sent exists and is not more than 8 hours ago
+    last_sent = participant.get("last_sent", None).replace(tzinfo = timezone.utc)
+    time_now = dtime.now(tz = timezone.utc)
+    if last_sent and (time_now - last_sent) < timedelta(hours = 8):
+        # tell the remaining time left till next available send and return
+        timeleft_str = time_to_string(*days_hours_minutes(time_now - last_sent))
+        m = "Sorry {}, you still need to wait for another {} before you can send {} another anonymous letter!"
+        await res.channel.send(m.format(booster_nickname(res.author), timeleft_str, target.name))
+        return
+
+    # Show embed of message including photo
+    embed = discord.Embed(title = "React to Send Your Message", description = msg, colour = embed_color)
+    if res.attachments:
+        embed.set_image(url = res.attachments[0].url)
+    edit_msg = await res.channel.send(content = None , embed = embed)
     
-    new_res = await client.wait_for("message", check = check)
-    new_msg = new_res.content
-    await res.channel.send("Yay!" if new_msg.lower().startswith("yes") else "*Loads gun*")
+    # Ask confirmation from author through reactions
+    tick_emote = ":white_check_mark:"
+    cross_emote = ":no_entry_sign:"
+    await edit_msg.add_reaction(tick_emote)
+    await edit_msg.add_reaction(cross_emote)
+
+    # wait for correct reaction and record
+
+    # remove all reactions
+    # if overtime, remove reaction and change embed to overtime msg. return
+    # if cancelled, remove reaction and change embed to cancelled msg. return
+
+    # else, send message to target including photo
+    # tell that message is successfully sent, and to wait 12 hours for next send
+    # update last sent to now in database
+
+
+    # await res.channel.send("Do you love me?")
+
+    # def check(m):
+    #     # Check if author is the same user and message channel is the same
+    #     return m.author == res.author and m.channel == res.channel
+    
+    # new_res = await client.wait_for("message", check = check)
+    # new_msg = new_res.content
+    # await res.channel.send("Yay!" if new_msg.lower().startswith("yes") else "*Loads gun*")
 
 ## !!! Valentines Event (End)
 
@@ -1757,7 +1810,7 @@ commands = {
 
 dm_commands = {
     "verify": verify_membership,
-    "valentines": register_participant,
+    "valentines": send_valentines_message,
     # horny exclusive commands
     "nsfw": nsfw_art,
     "add_nsfw": add_nsfw_art,
