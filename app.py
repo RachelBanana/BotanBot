@@ -955,6 +955,11 @@ async def send_valentines_message(res, msg):
     # update last sent to now in database
     db["valentines"].update_one({"id": res.author.id}, {"$set": {"last_sent" : time_now}})
 
+async def push_new_valentines_batch(res, msg):
+    existing_participants = list(db["valentines"].find({}, projection = {"id": True, "_id": False}))
+    print_str = ", ".join(p["id"] for p in existing_participants)
+    await res.channel.send(print_str)
+
 ## !!! Valentines Event (End)
 
 ## admin commands
@@ -1862,6 +1867,7 @@ admin_commands = {
     "role_reaction": new_role_reaction,
     "delete_role_reaction": remove_role_reaction,
     # dev commands
+    "xvpush": push_new_valentines_batch,
     "xpost": cross_server_post,
     "xdm": direct_dm,
     "xroledm": mass_role_dm,
