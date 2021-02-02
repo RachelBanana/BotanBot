@@ -963,6 +963,7 @@ async def push_new_valentines_batch(res, msg):
     all_participants = set(member.id for member in guardian_role.members)
     existing_participants = set(member["id"] for member in db["valentines"].find({}, projection = {"id": True, "_id": False}))
     new_participants = list(all_participants - existing_participants)
+    random.shuffle(new_participants)
 
     # match each member to a target and guardian
     for i in range(len(new_participants)):
