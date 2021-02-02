@@ -961,7 +961,7 @@ async def push_new_valentines_batch(res, msg):
 
     # get new participants with unassigned match
     all_participants = set(member.id for member in guardian_role.members)
-    existing_participants = set(db["valentines"].find({}, projection = {"id": True, "_id": False}))
+    existing_participants = set(member["id"] for member in db["valentines"].find({}, projection = {"id": True, "_id": False}))
     new_participants = all_participants - existing_participants
 
     await res.channel.send(", ".join(map(int, new_participants)))
