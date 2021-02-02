@@ -923,26 +923,37 @@ async def send_valentines_message(res, msg):
     await edit_msg.add_reaction(cross_emote)
 
     # wait for correct reaction and record
+    def check(reaction, user):
+        reacted_emote = str(reaction.emoji)
+        return reaction.message == edit_msg and user == res.author and (reacted_emote == tick_emote or reacted_emote == cross_emote)
 
-    # remove all reactions
-    # if overtime, remove reaction and change embed to overtime msg. return
-    # if cancelled, remove reaction and change embed to cancelled msg. return
+    try:
+        reaction, user = await client.wait_for('reaction_add', timeout = 60.0, check=check)
+    except asyncio.TimeoutError:
+        # if overtime, send timeout message and return
+        m = "The pending message has been cancelled, you may use the valentines command again for a new message."
+        timeout_embed = discord.Embed(title = "Timeout", description = m, colour = 0xFF0000)
+        await res.channel.send(content = None, embed = timeout_embed)
+        return
+
+    # if cancelled, send cancellation message and return
+    if str(reaction.emoji) == cross_emote:
+        m = "The pending message has been cancelled, you may use the valentines command again for a new message."
+        timeout_embed = discord.Embed(title = "Cancelled Letter", description = m, colour = 0xFF0000)
+        await res.channel.send(content = None, embed = timeout_embed)
+        return
 
     # else, send message to target including photo
-    # tell that message is successfully sent, and to wait 12 hours for next send
+    target_embed = discord.Embed(title = "Your Secret Guardian has just sent you a letter!", description = msg, colour = 0xFFB6B6)
+    if res.attachments:
+        target_embed.set_image(url = res.attachments[0].url)
+    await target.send(content = None, embed = target_embed)
+
+    # tell that message is successfully sent, and to wait 8 hours for next send
+    await res.channel.send("We have sent your letter to {}! You may send a new one after 8 hours.".format(target.name))
+
     # update last sent to now in database
-
-
-    # await res.channel.send("Do you love me?")
-
-    # def check(m):
-    #     # Check if author is the same user and message channel is the same
-    #     return m.author == res.author and m.channel == res.channel
-    
-    # new_res = await client.wait_for("message", check = check)
-    # new_msg = new_res.content
-    # await res.channel.send("Yay!" if new_msg.lower().startswith("yes") else "*Loads gun*")
-    pass
+    db["valentines"].update_one({"id": res.author.id}, {"$set": {"last_sent" : time_now}})
 
 ## !!! Valentines Event (End)
 
