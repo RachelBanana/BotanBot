@@ -982,6 +982,16 @@ async def push_new_valentines_batch(res, msg):
     new_participants = list(all_participants - existing_participants)
     random.shuffle(new_participants)
 
+    m = [
+            "Ohayou {}!\n\nThe Secret Guardian Event is currently underway",
+            " and the person you will be ~~stalking~~ protecting for the next few weeks is {}.",
+            " Keep your identity anonymous and use the secret command ``valentines`` here",
+            " to send secret love letters to your new date. There is an 8-hour cooldown between messages,",
+            " so choose your words wisely! But don't worry about testing the command, BOTan will double confirm with you before sending a message.",
+            "\n\nImportant Note: Your personal secret guardian is different from the person you are protecting."
+    ]
+    title = "Cupid Alert!!"
+
     # match each member to a target and guardian
     for i in range(len(new_participants)):
         new_participant = {
@@ -990,6 +1000,22 @@ async def push_new_valentines_batch(res, msg):
             "target": new_participants[(i+1)%len(new_participants)]
         }
         db["valentines"].insert_one(new_participant)
+
+        # send new participant instructions
+        participant = client.get_user(new_participant["id"])
+        target = client.get_user(new_participant["target"])
+
+        if not (participant and target):
+            print(new_participant)
+            continue
+
+        msg = "".join(m).format(booster_nickname(participant), str(target))
+        embed = discord.Embed(title = title, description = msg, colour = embed_color)
+        embed.set_thumbnail(url = target.avatar_url)
+        await participant.send(content = None, embed = embed)
+    
+    await res.channel.send("Done pushing!")
+
 
 # temp valentines mass dm command
 async def valentines_dm(res, msg):
