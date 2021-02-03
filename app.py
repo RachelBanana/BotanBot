@@ -991,6 +991,38 @@ async def push_new_valentines_batch(res, msg):
         }
         db["valentines"].insert_one(new_participant)
 
+# temp valentines mass dm command
+async def valentines_dm(res, msg):
+    # retrieve db participants
+    participants = db["valentines"].find()
+
+    # craft message content
+    m = [
+            "Ohayou {}!\n\nThe Secret Guardian Event is currently underway",
+            " and the person you will be ~~stalking~~ protecting for the next few weeks is {}.",
+            " Keep your identity anonymous and use the secret command ``valentines`` here",
+            " to send secret love letters to your new date. There is an 8-hour cooldown between messages,",
+            " so choose your words wisely! But don't worry about testing the command, BOTan will double confirm with you before sending a message.",
+            "\n\nImportant Note: Your personal secret guardian is different from the person you are protecting."
+    ]
+    title = "Cupid Alert!!"
+
+    # for each participant, send content
+    for participant_data in participants:
+        participant = client.get_user(participant_data["id"])
+        target = client.get_user(participant_data["target"])
+
+        if not (participant and target):
+            print(participant_data)
+            continue
+
+        msg = "".join(m).format(booster_nickname(participant), str(target))
+        embed = discord.Embed(title = title, description = msg, colour = embed_color)
+        embed.set_thumbnail(url = target.avatar_url)
+        await participant.send(content = None, embed = embed)
+
+    await res.channel.send("Done sending!")
+
 ## !!! Valentines Event (End)
 
 ## admin commands
@@ -1901,6 +1933,7 @@ admin_commands = {
     "delete_role_reaction": remove_role_reaction,
     # dev commands
     "xvpush": push_new_valentines_batch,
+    "xvannounce": valentines_dm,
     "xpost": cross_server_post,
     "xdm": direct_dm,
     "xroledm": mass_role_dm,
