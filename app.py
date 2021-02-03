@@ -1292,12 +1292,16 @@ async def del_art(res, msg):
 async def view_membership(res, msg):
     # if msg is empty, show all members
     if not msg:
-        m = []
+        m = ""
         for bodan in db["bodans"].find():
             member_id = bodan["id"]
             membership_date = bodan["last_membership"].replace(tzinfo = timezone.utc).strftime("%d/%m/%Y")
-            m.append("{}: {}".format(member_id, membership_date))
-        await res.channel.send("\n".join(m))
+            new_line = "{}: {}\n".format(member_id, membership_date)
+            if len(m) + len(new_line) > 2000:
+                await res.channel.send(m)
+                m = ""
+            m += new_line
+        await res.channel.send(m)
         return
 
     # if msg is not empty
