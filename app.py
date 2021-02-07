@@ -2110,6 +2110,28 @@ async def on_message(res):
         if match:
             await add_art(res, match.group())
         return
+    
+    # !!! valentines
+    """
+    {
+        time: datetime
+        name: str
+        avatar: avatar_url
+        message: None or str
+        image: None or attachment
+    }
+    """
+    if res.channel.id == d["discord_ids"]["shishilamy"] and not res.content.startswith(prefix):
+        image_url = None
+        if res.attachments:
+            image_url = res.attachments[0].url
+        db["shishilamy"].insert_one({
+            "time": dtime.now(tz = timezone.utc),
+            "name": res.author.nick if res.author.nick else res.author.name,
+            "avatar": res.author.avatar_url,
+            "message": res.clean_content,
+            "image": image_url
+        })
 
     # checks if message needs attention (has prefix)
     if not res.content.startswith(prefix):
