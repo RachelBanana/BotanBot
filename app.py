@@ -207,7 +207,7 @@ async def _check_membership_dates(res = None, msg = None):
 
     # Get all data from bodans
     expired_memberships = []
-    expired_start_date = dtime.now(tz = timezone.utc) - timedelta(days = 30)
+    expired_start_date = dtime.now(tz = timezone.utc) - timedelta(days = 31)
 
     message_title = "Zoopass Membership Expired"
     message_desc = "Your access to our Botan's members-only channel has just expired!"
@@ -216,7 +216,7 @@ async def _check_membership_dates(res = None, msg = None):
     message_image = "https://media.discordapp.net/attachments/735145401094504538/798419209112518687/botan_cat.jpg"
 
     for bodan in db["bodans"].find():
-        # For each bodan, if membership date ended (30 days)
+        # For each bodan, if membership date ended (31 days) 30 days with one day buffer
         if (not bodan["last_membership"]) or bodan["last_membership"].replace(tzinfo = timezone.utc) < expired_start_date:
             # Add to delete list
             expired_memberships.append(bodan)
@@ -1016,6 +1016,9 @@ async def push_new_valentines_batch(res, msg):
     
     await res.channel.send("Done pushing!")
 
+# remove inactive guardians
+async def remove_valentines_inactive(res, msg):
+    pass
 
 # temp valentines mass dm command
 async def valentines_dm(res, msg):
