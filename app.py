@@ -2128,7 +2128,7 @@ async def on_message(res):
         db["shishilamy"].insert_one({
             "time": dtime.now(tz = timezone.utc),
             "name": res.author.nick if res.author.nick else res.author.name,
-            "avatar": res.author.avatar_url,
+            "avatar": str(res.author.avatar_url),
             "message": res.clean_content,
             "image": image_url
         })
