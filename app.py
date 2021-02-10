@@ -511,7 +511,7 @@ async def random_choice(res, msg):
         return
     
     # splits msg according to commas and new lines, and strip extra spaces
-    choices = [i.strip() for i in re.split(",\n", msg) if i]
+    choices = [i.strip() for i in re.split(",|\n", msg) if i]
     await res.channel.send(random.choice(choices))
 
 async def debut(res, msg):
