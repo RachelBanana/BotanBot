@@ -2146,6 +2146,17 @@ async def on_message(res):
             "image": image_url
         })
 
+    if res.channel.id == d["discord_ids"]["secret_guardian_chat"] and not res.content.startswith(prefix):
+        # randomly 1 in 5 chances
+        if random.randint(1, 5) == 3 or "aloe" in res.content:
+            chars = "aeolmn"
+            m = "".join("_" if c in chars else c for c in res.content)
+
+            await res.delete()
+            await res.channel.send(m)
+
+    # !!! valentines
+
     # checks if message needs attention (has prefix)
     if not res.content.startswith(prefix):
         return
