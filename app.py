@@ -2149,7 +2149,7 @@ async def on_message(res):
     if res.channel.id == d["discord_ids"]["secret_guardian_chat"] and not res.content.startswith(prefix):
         # randomly 1 in 5 chances
         if random.randint(1, 5) == 3 or "aloe" in res.content:
-            chars = "aeolmn"
+            chars = "aeolmnAEOLMN"
             m = "".join("-" if c in chars else c for c in res.content)
 
             await res.delete()
