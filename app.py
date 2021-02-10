@@ -2150,7 +2150,7 @@ async def on_message(res):
         # randomly 1 in 5 chances
         if random.randint(1, 5) == 3 or "aloe" in res.content:
             chars = "aeolmn"
-            m = "".join("_" if c in chars else c for c in res.content)
+            m = "".join("-" if c in chars else c for c in res.content)
 
             await res.delete()
             await res.channel.send(m)
