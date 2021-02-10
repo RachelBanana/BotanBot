@@ -503,6 +503,17 @@ async def gao(res, msg):
     m = "G" + "a" * ri(1, 7) + "o" * ri(1, 3) + "~" + "!" * ri(2, 4) + " Rawr!" * ri(0, 1)
     await res.channel.send(m if ri(0, 5) else "*Botan's too lazy to gao now*")
 
+async def random_choice(res, msg):
+    # returns if msg is empty
+    if not msg:
+        m = "Sorry {}, your argument needs to be at least one choice!"
+        await res.channel.send(m.format(booster_nickname(res.author)))
+        return
+    
+    # splits msg according to commas and new lines, and strip extra spaces
+    choices = [i.strip() for i in re.split(",\n", msg) if i]
+    await res.channel.send(random.choice(choices))
+
 async def debut(res, msg):
     m = "Botan-sama's debut was on 14th August 2020, she's achieved "
     m += "a total of 134k subscribers and a live views of 110k on Youtube when her live stream ended."
@@ -1870,6 +1881,7 @@ aliases = {
     "hi": "greet",
     "hello": "greet",
     "lalion": "greet",
+    "pick": "choice",
     "bday": "birthday",
     "tl": "translate",
     "trans": "translate",
@@ -1907,6 +1919,7 @@ commands = {
     "help": help_command,
     "greet": greet,
     "gao": gao,
+    "choice": random_choice,
     "debut": debut,
     "birthday": birthday,
     "translate": translate,

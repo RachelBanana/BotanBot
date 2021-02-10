@@ -11,6 +11,12 @@
         "usage": "$gao",
         "extra_fields": []
     },
+    "choice": {
+        "desc": "Let the botan help make your life choices!",
+        "alias": ["pick"],
+        "usage": "$choice {choice 1}, {choice 2}...\n{choice 3}...",
+        "extra_fields": []
+    },
     "debut": {
         "desc": "Check time left until debut.",
         "alias": [],
