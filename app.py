@@ -980,7 +980,8 @@ async def send_valentines_message(res, msg):
     await target.send(content = None, embed = target_embed)
 
     # tell that message is successfully sent, and to wait 8 hours for next send
-    await res.channel.send("We have sent your letter to {}! You may send a new one after 8 hours.".format(target.name))
+    # super_nenechi
+    await res.channel.send("We have sent your letter to {} {}! You may send a new one after 8 hours.".format(super_nenechi, target.name))
 
     # update last sent to now in database
     db["valentines"].update_one({"id": res.author.id}, {"$set": {"last_sent" : time_now}})
