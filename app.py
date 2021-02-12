@@ -926,14 +926,14 @@ async def send_valentines_message(res, msg):
         await res.channel.send(m.format(str(target)))
         return
 
-    # if last sent exists and is not more than 8 hours ago
+    # if last sent exists and is not more than 2 hours ago
     last_sent = participant.get("last_sent", None)
     if last_sent:
         last_sent = last_sent.replace(tzinfo = timezone.utc)
     time_now = dtime.now(tz = timezone.utc)
-    if last_sent and (time_now - last_sent) < timedelta(hours = 8):
+    if last_sent and (time_now - last_sent) < timedelta(hours = 2):
         # tell the remaining time left till next available send and return
-        timeleft_str = time_to_string(*days_hours_minutes(timedelta(hours = 8) - (time_now - last_sent)))
+        timeleft_str = time_to_string(*days_hours_minutes(timedelta(hours = 2) - (time_now - last_sent)))
         m = "Sorry {}, you still need to wait for another {} before you can send {} another anonymous letter!"
         await res.channel.send(m.format(booster_nickname(res.author), timeleft_str, target.name))
         return
@@ -977,8 +977,8 @@ async def send_valentines_message(res, msg):
         target_embed.set_image(url = res.attachments[0].url)
     await target.send(content = None, embed = target_embed)
 
-    # tell that message is successfully sent, and to wait 8 hours for next send
-    await res.channel.send("We have sent your letter to {}! You may send a new one after 8 hours.".format(target.name))
+    # tell that message is successfully sent, and to wait 2 hours for next send
+    await res.channel.send("We have sent your letter to {}! You may send a new one after 2 hours.".format(target.name))
 
     # update last sent to now in database
     db["valentines"].update_one({"id": res.author.id}, {"$set": {"last_sent" : time_now}})
