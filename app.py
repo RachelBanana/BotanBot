@@ -2113,9 +2113,9 @@ async def on_message(res):
             embed.description = to_eng(embed.description).text
             await channel.send(content = None, embed = embed)
     
-    # check for mp4 links and suppress embeds
-    if ".mp4" in res.content:
-        await res.edit(suppress = True)
+    # # check for mp4 links and suppress embeds
+    # if ".mp4" in res.content:
+    #     await res.edit(suppress = True)
         
     # if channel is fanart channel, automatically detects new tweets artwork.
     if res.channel.id == d["discord_ids"]["fanart"] and not res.content.startswith(prefix):
