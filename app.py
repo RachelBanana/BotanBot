@@ -2423,12 +2423,11 @@ async def on_member_update(before, after):
 
 # Coroutine Functions
 async def jst_clock():
-    await client.change_presence(activity=discord.Game(name="I'm 666k subs VTuber!"))
-    # while not client.is_closed():
-    #     # now = dtime.now(tz = timezone.utc) + timedelta(hours = 9)
-    #     # timestr = now.strftime("%H:%M JST, %d/%m/%Y")
-    #     # await client.change_presence(activity=discord.Game(name=timestr))
-    #     # await asyncio.sleep(60)        
+    while not client.is_closed():
+        now = dtime.now(tz = timezone.utc) + timedelta(hours = 9)
+        timestr = now.strftime("%H:%M JST, %d/%m/%Y")
+        await client.change_presence(activity=discord.Game(name=timestr))
+        await asyncio.sleep(60)        
 
 """stream data template
     "id": vid id,
