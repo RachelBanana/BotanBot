@@ -918,14 +918,12 @@ async def send_valentines_message(res, msg):
         return
 
     # if msg is empty
-    # Super Hyper Ultra Ultimate Deluxe Perfect Amazing Shining God 東方不敗 Master Ginga Victory Strong Cute Beautiful Galaxy Baby 無限 無敵 無双
-    super_nenechi = "Super Hyper Ultra Ultimate Deluxe Perfect Amazing Shining God 東方不敗 Master Ginga Victory Strong Cute Beautiful Galaxy Baby 無限 無敵 無双"
     if not msg:
         # show secret match name and command details
-        m = "Your Valentine's secret match is {} {}, use the same command again along with a message to send them an anonymous letter!"
+        m = "Your Valentine's secret match is {}, use the same command again along with a message to send them an anonymous letter!"
         m += " You may even attach a photo!"
         m += "\n``valentines {{Message}}``"
-        await res.channel.send(m.format(super_nenechi, str(target)))
+        await res.channel.send(m.format(str(target)))
         return
 
     # if last sent exists and is not more than 8 hours ago
@@ -936,7 +934,7 @@ async def send_valentines_message(res, msg):
     if last_sent and (time_now - last_sent) < timedelta(hours = 8):
         # tell the remaining time left till next available send and return
         timeleft_str = time_to_string(*days_hours_minutes(timedelta(hours = 8) - (time_now - last_sent)))
-        m = "Sorry {}, you still need to wait for another {} before you can send {} another **Neo armstrong cyclone jet armstrong Cannon**!"
+        m = "Sorry {}, you still need to wait for another {} before you can send {} another anonymous letter!"
         await res.channel.send(m.format(booster_nickname(res.author), timeleft_str, target.name))
         return
 
@@ -980,8 +978,7 @@ async def send_valentines_message(res, msg):
     await target.send(content = None, embed = target_embed)
 
     # tell that message is successfully sent, and to wait 8 hours for next send
-    # super_nenechi
-    await res.channel.send("We have sent your letter to {} {}! You may send a new one after 8 hours.".format(super_nenechi, target.name))
+    await res.channel.send("We have sent your letter to {}! You may send a new one after 8 hours.".format(target.name))
 
     # update last sent to now in database
     db["valentines"].update_one({"id": res.author.id}, {"$set": {"last_sent" : time_now}})
