@@ -906,7 +906,7 @@ async def valentines_confession(res, msg):
         return
     
     # if user has already confessed
-    if participant.get("already_confesseed", None):
+    if participant.get("already_confessed", None):
         m = "Sorry {}, it seems like you already made a confession! Contact Rachel if you wish to reset."
         await res.channel.send(m.format(booster_nickname(res.author)))
         return
@@ -963,7 +963,7 @@ async def valentines_confession(res, msg):
     await confession_channel.send(content = None, embed = target_embed)
 
     # tell that message is successfully sent, and to wait 2 hours for next send
-    await res.channel.send("We have sent your confession to the channel! Please contact Rachel if you to change anything.")
+    await res.channel.send("We have sent your confession to the channel! Please contact Rachel if you need to change anything.")
 
     # update last sent to now in database
     db["valentines"].update_one({"id": res.author.id}, {"$set": {"already_confessed" : True}})
