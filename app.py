@@ -895,6 +895,79 @@ async def botan_art(res, msg):
     temp_art_deque.append(new_art_url)
 
 ## !!! Valentines Event
+async def valentines_confession(res, msg):
+    # retrieve user form valentines database
+    participant = db["valentines"].find_one({"id": res.author.id})
+
+    # if user not in valentines database
+    if not participant:
+        m = "I'm sorry {}, this command is only available to Valentine's event participant!"
+        await res.channel.send(m.format(booster_nickname(res.author)))
+        return
+    
+    # if user has already confessed
+    if participant.get("already_confesseed", None):
+        m = "Sorry {}, it seems like you already made a confession! Contact Rachel if you wish to reset."
+        await res.channel.send(m.format(booster_nickname(res.author)))
+        return
+    
+    confession_channel = client.get_channel(d["discord_ids"]["valentines_confession"])
+
+    # if msg is empty
+    if not msg:
+        # show confession method
+        m = "Happy Valentine's Day {}! Do you have anything to tell your guardian or target but are just too shy to "
+        m += "say in public? Or do you just want to share your feelings about this event or the server in general? "
+        m += "Whatever it is, make your confession here! It is completely anonymous. You only get to confess once, so make it count."
+        m += "\n``confess {{Message}}``"
+        await res.channel.send(m.format(booster_nickname(res.author)))
+        return
+    
+    # Show embed of message including photo
+    embed = discord.Embed(title = "React to Send Your Confession", description = msg, colour = 0xFCE16D)
+    if res.attachments:
+        embed.set_image(url = res.attachments[0].url)
+    edit_msg = await res.channel.send(content = None , embed = embed)
+
+    # Ask confirmation from author through reactions
+    tick_emote = u"\u2705"
+    cross_emote = u"\U0001F6AB"
+    await edit_msg.add_reaction(tick_emote)
+    await edit_msg.add_reaction(cross_emote)
+
+    # wait for correct reaction and record
+    def check(reaction, user):
+        reacted_emote = str(reaction.emoji)
+        return reaction.message.id == edit_msg.id and user == res.author and (reacted_emote == tick_emote or reacted_emote == cross_emote)
+
+    try:
+        reaction, user = await client.wait_for('reaction_add', timeout = 60.0, check=check)
+    except asyncio.TimeoutError:
+        # if overtime, send timeout message and return
+        m = "The pending message has been cancelled, you may use the confess command again for a new message."
+        timeout_embed = discord.Embed(title = "Timeout", description = m, colour = 0xFF0000)
+        await res.channel.send(content = None, embed = timeout_embed)
+        return
+
+    # if cancelled, send cancellation message and return
+    if str(reaction.emoji) == cross_emote:
+        m = "The pending message has been cancelled, you may use the confess command again for a new message."
+        timeout_embed = discord.Embed(title = "Cancelled Letter", description = m, colour = 0xFF0000)
+        await res.channel.send(content = None, embed = timeout_embed)
+        return
+
+    # else, send message to target including photo
+    target_embed = discord.Embed(title = None, description = msg, colour = 0xFFB6B6)
+    if res.attachments:
+        target_embed.set_image(url = res.attachments[0].url)
+    await confession_channel.send(content = None, embed = target_embed)
+
+    # tell that message is successfully sent, and to wait 2 hours for next send
+    await res.channel.send("We have sent your confession to the channel! Please contact Rachel if you to change anything.")
+
+    # update last sent to now in database
+    db["valentines"].update_one({"id": res.author.id}, {"$set": {"already_confessed" : True}})
+
 async def send_valentines_message(res, msg):
     # retrieve user form valentines database
     participant = db["valentines"].find_one({"id": res.author.id})
@@ -1941,6 +2014,7 @@ commands = {
 dm_commands = {
     "verify": verify_membership,
     "valentines": send_valentines_message,
+    "confess": valentines_confession,
     # horny exclusive commands
     "nsfw": nsfw_art,
     "add_nsfw": add_nsfw_art,
