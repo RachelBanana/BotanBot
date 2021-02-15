@@ -1876,7 +1876,7 @@ async def cross_server_message(res, msg):
         return
     target_channel = client.get_channel(int(m[0]))
     attachment = discord.File(res.attachments[0]) if res.attachments else None
-    await target_channel.send(content = m[1], file = discord.File(attachment))
+    await target_channel.send(content = m[1], file = attachment)
         
 
 async def direct_dm(res, msg, override = False):
