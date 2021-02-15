@@ -1863,7 +1863,21 @@ async def cross_server_post(res, msg):
         return
     target_channel = client.get_channel(int(m[0]))
     embed = discord.Embed(title = m[1], description = "\n".join(m[2:]), colour = embed_color)
+    if res.attachments:
+        embed.set_image(url = res.attachments[0].url)
     await target_channel.send(content = None, embed = embed)
+
+async def cross_server_message(res, msg):
+    if str(res.author) != owner:
+        return
+    m = msg.split("\n", 1)
+    if len(m) < 2:
+        await res.channel.send("Need at least {} more arguments!".format(2 - len(m)))
+        return
+    target_channel = client.get_channel(int(m[0]))
+    attachment = discord.File(res.attachments[0]) if res.attachments else None
+    await target_channel.send(content = m[1], file = discord.File(attachment))
+        
 
 async def direct_dm(res, msg, override = False):
     if str(res.author) != owner and not override:
@@ -2055,6 +2069,7 @@ admin_commands = {
     "xvpush": push_new_valentines_batch,
     "xvannounce": valentines_dm,
     "xpost": cross_server_post,
+    "xmessage": cross_server_message,
     "xdm": direct_dm,
     "xroledm": mass_role_dm,
     "xclosetag": manual_close_tags,
